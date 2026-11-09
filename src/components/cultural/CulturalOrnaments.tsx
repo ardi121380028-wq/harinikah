@@ -197,18 +197,25 @@ export const KawungMotifDivider: React.FC<{ className?: string; isLight?: boolea
 );
 
 // Ronce Melati Wedding Garland Motif
-export const RonceMelatiDivider: React.FC<{ className?: string }> = ({ className = 'w-44 h-4' }) => (
+export const RonceMelatiDivider: React.FC<{ className?: string; isLight?: boolean }> = ({ 
+  className = 'w-44 h-4',
+  isLight = false 
+}) => (
   <div className={`flex items-center justify-center gap-1.5 ${className}`}>
-    <div className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-400/50" />
+    <div className={`h-px flex-1 ${isLight ? 'bg-gradient-to-r from-transparent to-amber-600/50' : 'bg-gradient-to-r from-transparent to-amber-400/50'}`} />
     {[-2, -1, 0, 1, 2].map((i) => (
       <div
         key={i}
-        className={`rounded-full bg-gradient-to-b from-amber-200 to-amber-500 shadow-sm ${
-          i === 0 ? 'w-2 h-2 ring-2 ring-amber-300/40' : 'w-1.5 h-1.5 opacity-80'
+        className={`rounded-full shadow-sm ${
+          isLight
+            ? 'bg-gradient-to-b from-amber-500 to-amber-700'
+            : 'bg-gradient-to-b from-amber-200 to-amber-500'
+        } ${
+          i === 0 ? 'w-2 h-2 ring-2 ring-amber-400/40' : 'w-1.5 h-1.5 opacity-80'
         }`}
       />
     ))}
-    <div className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-400/50" />
+    <div className={`h-px flex-1 ${isLight ? 'bg-gradient-to-l from-transparent to-amber-600/50' : 'bg-gradient-to-l from-transparent to-amber-400/50'}`} />
   </div>
 );
 

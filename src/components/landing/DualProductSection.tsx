@@ -68,13 +68,13 @@ export const DualProductSection: React.FC<DualProductSectionProps> = ({
                 Undangan Digital (Website)
               </h3>
               <p className={`text-xs sm:text-sm mt-2 leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-                Undangan website responsif modern dengan fitur interaktif lengkap. Dilengkapi editor visual multi-page layaknya Canva, sebar nama tamu personal via WhatsApp, dan amplop digital otomatis.
+                Undangan website responsif modern dengan fitur interaktif lengkap. Dilengkapi Studio Editor visual multi-page, sebar nama tamu personal via WhatsApp, dan amplop digital otomatis.
               </p>
 
               {/* Feature Highlights */}
               <div className="mt-8 space-y-3.5">
                 {[
-                  "Editor visual modern multi-halaman layaknya Canva",
+                  "Studio Editor visual modern multi-halaman interaktif",
                   "Sebar WhatsApp satu-klik dengan nama tamu personal (?to=Nama)",
                   "Konfirmasi kehadiran (RSVP) & Doa ucapan masuk real-time",
                   "Amplop digital (QRIS otomatis & tombol salin nomor rekening)",

@@ -27,7 +27,7 @@ export const Footer: React.FC = () => {
               />
             </div>
             <p className={`text-xs max-w-sm leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
-              Platform undangan pernikahan modern & adat nusantara no. 1 di Indonesia. Menyediakan pembuatan undangan digital website interaktif berkonsep multi-halaman layaknya Canva serta pemesanan produk fisik mewah resmi melalui Shopee Official Store.
+              Platform undangan pernikahan modern & adat nusantara no. 1 di Indonesia. Menyediakan pembuatan undangan digital website interaktif berkonsep multi-halaman berestetika tinggi serta pemesanan produk fisik mewah resmi melalui Shopee Official Store.
             </p>
             <div className={`pt-2 text-xs space-y-1.5 ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
               <p className="flex items-start gap-1.5">
@@ -47,7 +47,7 @@ export const Footer: React.FC = () => {
               Fitur Platform
             </h4>
             <ul className={`space-y-2.5 text-xs ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
-              <li><a href="/editor" className="hover:text-amber-700 transition-colors">Canva Editor Multi-Halaman</a></li>
+              <li><a href="/editor" className="hover:text-amber-700 transition-colors">Studio Editor Multi-Halaman</a></li>
               <li><a href="/broadcast" className="hover:text-amber-700 transition-colors flex items-center gap-1 font-medium text-emerald-500"><Send className="w-3 h-3" /> Broadcast WhatsApp Tamu</a></li>
               <li><a href="/#katalog" className="hover:text-amber-700 transition-colors">Katalog Desain Jawa & Minang</a></li>
               <li><a href="/profile" className="hover:text-amber-700 transition-colors">Kelola Undangan Saya</a></li>

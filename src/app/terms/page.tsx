@@ -68,7 +68,7 @@ export default function TermsPage() {
 
           <section className="space-y-2">
             <h2 className={`text-base font-bold ${isLight ? 'text-stone-900' : 'text-white'}`}>
-              2. Penggunaan Editor Canva & Aset Desain
+              2. Penggunaan Studio Editor & Aset Desain
             </h2>
             <p>
               Platform HariNikah memberikan lisensi terbatas, non-eksklusif, dan tidak dapat dipindahtangankan kepada pengguna untuk membuat, mengedit, dan mempublikasikan undangan pernikahan pribadi. Pengguna dilarang memperjualbelikan kembali aset grafis, ornamen adat, atau kode sumber template HariNikah kepada pihak ketiga tanpa izin tertulis.

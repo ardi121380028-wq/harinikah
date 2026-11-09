@@ -85,19 +85,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <p className={`text-sm sm:text-base max-w-2xl mx-auto lg:mx-0 leading-relaxed font-normal ${
               isLight ? 'text-stone-600' : 'text-stone-300'
             }`}>
-              Platform undangan pernikahan nomor satu di Indonesia. Nikmati kebebasan mendesain undangan digital interaktif layaknya Canva dengan sistem per-halaman, atau hadirkan kemewahan fisik berbalut velvet, hotprint emas murni, dan wax seal cap lilin.
+              Platform undangan pernikahan nomor satu di Indonesia. Nikmati kebebasan mendesain undangan digital interaktif multi-halaman berestetika tinggi, atau hadirkan kemewahan fisik berbalut velvet, hotprint emas murni, dan wax seal cap lilin.
             </p>
 
             {/* Primary Action Buttons */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5">
               
-              {/* Canva Editor Direct CTA */}
+              {/* Studio Editor Direct CTA */}
               <button
                 onClick={onOpenEditor}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-bold text-black bg-gradient-to-r from-amber-400 via-gold-300 to-amber-500 rounded-full shadow-gold-glow hover:scale-105 active:scale-95 transition-all"
               >
                 <Layers className="w-4 h-4" />
-                <span>Buka Demo Editor Canva</span>
+                <span>Buka Studio Editor Pro</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
@@ -116,7 +116,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="pt-3 grid grid-cols-2 sm:grid-cols-3 gap-3 text-left max-w-lg mx-auto lg:mx-0">
               <div className={`flex items-center gap-2 text-xs font-medium ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
                 <CheckCircle2 className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                <span>Editor Canva Multi-Page</span>
+                <span>Studio Editor Multi-Page</span>
               </div>
               <div className={`flex items-center gap-2 text-xs font-medium ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
                 <CheckCircle2 className="w-4 h-4 text-amber-500 flex-shrink-0" />

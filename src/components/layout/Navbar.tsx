@@ -217,7 +217,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-gold-400 text-black font-bold text-xs shadow-gold-sm flex items-center justify-center gap-2 mb-2"
           >
             <Layers className="w-4 h-4" />
-            <span>Mulai Desain di Canva Editor</span>
+            <span>Mulai Desain di Studio Editor Pro</span>
           </button>
 
           <a href="#digital" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">

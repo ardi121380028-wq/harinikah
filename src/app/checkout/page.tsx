@@ -53,7 +53,7 @@ export default function CheckoutPage() {
   };
 
   const planTitle = 
-    selectedPlan === 'premium' ? 'Paket Digital Premium (Canva Editor)' :
+    selectedPlan === 'premium' ? 'Paket Digital Premium (Studio Editor Pro)' :
     selectedPlan === 'dfy' ? 'Paket Digital Eksklusif (Mode Terima Beres)' :
     'Paket Bundling Nusantara (Cetak Fisik + Web)';
 
@@ -156,7 +156,7 @@ Mohon verifikasi dan aktifkan akun editor saya. Terima kasih!`;
                   <div className="flex items-center justify-between">
                     <div>
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-500">Paling Pas & Terlaris</span>
-                      <h3 className="text-sm font-bold mt-0.5">Paket Premium Canva Editor (DIY)</h3>
+                      <h3 className="text-sm font-bold mt-0.5">Paket Premium Studio Editor (DIY)</h3>
                       <p className="text-[11px] text-stone-400">Akses penuh editor multi-halaman, unlimited nama tamu, amplop QRIS</p>
                     </div>
                     <span className="text-base font-bold text-amber-500 whitespace-nowrap">Rp 110.000</span>

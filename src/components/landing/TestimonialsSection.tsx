@@ -22,8 +22,8 @@ export const TestimonialsSection: React.FC = () => {
       location: "Surabaya",
       date: "September 2026",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80",
-      type: "Canva Editor Pro (DIY)",
-      review: "Editor Canva-nya seru banget! Bisa edit per-halaman, ganti foto prewed, atur urutan akad & resepsi, terus ada simulasi nama tamu langsung keluar di link WhatsApp. Teman-teman pada puji undangannya beda dari yang lain."
+      type: "Studio Editor Pro (DIY)",
+      review: "Studio Editor-nya seru banget! Bisa edit per-halaman, ganti foto prewed, atur urutan akad & resepsi, terus ada simulasi nama tamu langsung keluar di link WhatsApp. Teman-teman pada puji undangannya beda dari yang lain."
     },
     {
       couple: "Farhan & Tania",

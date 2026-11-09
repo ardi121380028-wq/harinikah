@@ -336,7 +336,7 @@ export default function ProfilePage() {
                   <tbody className={`divide-y ${isLight ? 'divide-stone-200' : 'divide-gold-subtle/30'}`}>
                     <tr>
                       <td className="py-3 px-4 font-mono font-semibold">INV-HN-2026-0814</td>
-                      <td className="py-3 px-4 font-medium">Paket Premium Canva Editor + Mode Terima Beres</td>
+                      <td className="py-3 px-4 font-medium">Paket Premium Studio Editor + Mode Terima Beres</td>
                       <td className="py-3 px-4 text-stone-400">18 Juli 2026</td>
                       <td className="py-3 px-4">QRIS Instant</td>
                       <td className="py-3 px-4 font-bold text-amber-500">Rp 180.000</td>

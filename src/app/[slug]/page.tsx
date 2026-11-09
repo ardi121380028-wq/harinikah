@@ -48,6 +48,7 @@ import {
   SuntiangMinang,
   BatikParangDivider,
   MinangUkiranDivider,
+  RonceMelatiDivider,
   BotanicalArchFrame,
   BotanicalCornerOrnament,
   VinylMusicBadge
@@ -242,7 +243,7 @@ export default function GuestInvitationPage() {
   const eventsData = pages[2]?.data || {};
   const giftData = pages[4]?.data || {};
 
-  // Render any custom elements added by user via the Canva Elements tool
+  // Render any custom elements added by user via the Studio Elements tool
   const renderSectionCustomElements = (pageIdx: number) => {
     const elements = pages[pageIdx]?.customElements;
     if (!elements || elements.length === 0) return null;
@@ -251,33 +252,125 @@ export default function GuestInvitationPage() {
         {elements.map((el: any) => (
           <div key={el.id} className="p-1">
             {el.type === 'heading' && (
-              <h2 className={`font-serif font-bold text-2xl text-gold-bright leading-snug ${
-                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-              }`}>
+              <h2 
+                style={{
+                  fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                  color: el.color || undefined,
+                  fontWeight: el.fontWeight || 'bold',
+                  fontStyle: el.fontStyle || 'normal',
+                }}
+                className={`font-serif leading-snug ${
+                  !el.color ? 'text-gold-bright' : ''
+                } ${
+                  el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                }`}
+              >
                 {el.content}
               </h2>
             )}
             {el.type === 'subheading' && (
-              <p className={`text-xs uppercase tracking-wider font-bold text-gold-300 ${
-                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-              }`}>
+              <p 
+                style={{
+                  fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                  color: el.color || undefined,
+                  fontWeight: el.fontWeight || 'semibold',
+                  fontStyle: el.fontStyle || 'normal',
+                }}
+                className={`uppercase tracking-wider ${
+                  !el.color ? 'text-gold-300' : ''
+                } ${
+                  el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                }`}
+              >
                 {el.content}
               </p>
             )}
             {el.type === 'paragraph' && (
-              <p className={`text-xs text-stone-200 leading-relaxed max-w-md mx-auto ${
-                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-              }`}>
+              <p 
+                style={{
+                  fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                  color: el.color || undefined,
+                  fontWeight: el.fontWeight || 'normal',
+                  fontStyle: el.fontStyle || 'normal',
+                }}
+                className={`leading-relaxed max-w-md mx-auto ${
+                  !el.color ? 'text-stone-200' : ''
+                } ${
+                  el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                }`}
+              >
                 {el.content}
               </p>
             )}
             {el.type === 'quote' && (
-              <blockquote className={`italic text-xs text-gold-200/90 max-w-sm mx-auto px-4 py-2 border-l-2 border-gold-400/60 bg-black/20 rounded-r-xl ${
-                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-              }`}>
+              <blockquote 
+                style={{
+                  fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                  color: el.color || undefined,
+                }}
+                className={`italic max-w-sm mx-auto px-4 py-2 border-l-2 border-gold-400/60 bg-black/20 rounded-r-xl ${
+                  !el.color ? 'text-gold-200/90' : ''
+                } ${
+                  el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                }`}
+              >
                 "{el.content}"
               </blockquote>
             )}
+
+            {/* Divider Element */}
+            {el.type === 'divider' && (
+              <div className="w-full py-2">
+                {el.dividerStyle === 'batik' && (
+                  <div className="flex justify-center">
+                    <BatikParangDivider isLight={isGuestLight} className="w-56 h-3 text-amber-400" />
+                  </div>
+                )}
+                {el.dividerStyle === 'minang' && (
+                  <div className="flex justify-center">
+                    <MinangUkiranDivider isLight={isGuestLight} className="w-56 h-3 text-amber-400" />
+                  </div>
+                )}
+                {el.dividerStyle === 'melati' && (
+                  <div className="flex justify-center">
+                    <RonceMelatiDivider isLight={isGuestLight} className="w-56 h-3 text-amber-400" />
+                  </div>
+                )}
+                {el.dividerStyle === 'dashed' && (
+                  <div className="w-3/4 border-b border-dashed border-amber-400/80 mx-auto my-2" />
+                )}
+                {(!el.dividerStyle || el.dividerStyle === 'gold_hairline') && (
+                  <div className="w-full flex items-center justify-center my-2">
+                    <div className="h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent w-3/4 flex items-center justify-center relative">
+                      <span className="w-2 h-2 rotate-45 bg-amber-400 shadow-gold-sm" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Spacer Element */}
+            {el.type === 'spacer' && (
+              <div style={{ height: `${el.spacerHeight || 24}px` }} className="w-full pointer-events-none" />
+            )}
+
+            {/* PNG Overlay Element */}
+            {el.type === 'png_overlay' && (
+              <div 
+                className={`w-full flex ${
+                  el.align === 'left' ? 'justify-start' : el.align === 'right' ? 'justify-end' : 'justify-center'
+                } py-1`}
+                style={{ opacity: (el.pngOpacity ?? 90) / 100 }}
+              >
+                <img 
+                  src={el.pngUrl || el.content} 
+                  alt="Stiker" 
+                  className="object-contain max-h-56 filter drop-shadow-md"
+                  style={{ transform: `scale(${(el.pngScale ?? 100) / 100})` }}
+                />
+              </div>
+            )}
+
             {el.type === 'ornament' && (
               <div className={`text-2xl ${
                 el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
@@ -640,7 +733,7 @@ export default function GuestInvitationPage() {
                 </p>
               </div>
 
-              {/* Custom Elements from Canva Editor (Page 0) */}
+              {/* Custom Elements from Studio Editor (Page 0) */}
               {renderSectionCustomElements(0)}
             </div>
           </section>
@@ -706,7 +799,7 @@ export default function GuestInvitationPage() {
               </div>
             </div>
 
-            {/* Custom Elements from Canva Editor (Page 1) */}
+            {/* Custom Elements from Studio Editor (Page 1) */}
             {renderSectionCustomElements(1)}
           </section>
 
@@ -826,7 +919,7 @@ export default function GuestInvitationPage() {
                 </button>
               </div>
 
-              {/* Custom Elements from Canva Editor (Page 2 - Acara) */}
+              {/* Custom Elements from Studio Editor (Page 2 - Acara) */}
               {renderSectionCustomElements(2)}
             </div>
           </section>
@@ -880,7 +973,7 @@ export default function GuestInvitationPage() {
               ))}
             </div>
 
-            {/* Custom Elements from Canva Editor (Page 3 - Story/Galeri) */}
+            {/* Custom Elements from Studio Editor (Page 3 - Story/Galeri) */}
             {renderSectionCustomElements(3)}
           </section>
 
@@ -949,7 +1042,7 @@ export default function GuestInvitationPage() {
               <span>Bayar Cepat via QRIS (Semua E-Wallet)</span>
             </button>
 
-            {/* Custom Elements from Canva Editor (Page 4 - Amplop) */}
+            {/* Custom Elements from Studio Editor (Page 4 - Amplop) */}
             {renderSectionCustomElements(4)}
           </section>
 
@@ -1049,7 +1142,7 @@ export default function GuestInvitationPage() {
               </div>
             </div>
 
-            {/* Custom Elements from Canva Editor (Page 5 - RSVP) */}
+            {/* Custom Elements from Studio Editor (Page 5 - RSVP) */}
             {renderSectionCustomElements(5)}
           </section>
 

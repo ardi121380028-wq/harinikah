@@ -107,7 +107,7 @@ export const EditorView: React.FC<EditorViewProps> = ({ onBackToHome, onActivate
   return (
     <div className="h-screen w-screen flex flex-col bg-[#051817] text-stone-100 overflow-hidden font-sans">
       
-      {/* 1. TOP BAR (CANVA-STYLE NAVIGATION) */}
+      {/* 1. TOP BAR (STUDIO NAVIGATION) */}
       <header className="h-16 border-b border-gold-subtle bg-[#041514] px-4 flex items-center justify-between z-30 flex-shrink-0">
         
         {/* Left: Brand & Return */}
@@ -193,7 +193,7 @@ export const EditorView: React.FC<EditorViewProps> = ({ onBackToHome, onActivate
       {/* 2. MAIN WORKSPACE (LEFT TOOLS + CENTER CANVAS + RIGHT INSPECTOR) */}
       <div className="flex-1 flex overflow-hidden">
         
-        {/* LEFT TOOLBAR TABS (CANVA NAVIGATION) */}
+        {/* LEFT TOOLBAR TABS (STUDIO NAVIGATION) */}
         <div className="w-16 sm:w-20 bg-[#031110] border-r border-gold-subtle flex flex-col items-center py-3 gap-2 flex-shrink-0 z-20">
           {[
             { id: 'pages', label: 'Halaman', icon: <Layers className="w-5 h-5" /> },
@@ -583,7 +583,7 @@ export const EditorView: React.FC<EditorViewProps> = ({ onBackToHome, onActivate
 
         </div>
 
-        {/* CENTER STAGE: THE CANVA CANVAS VIEW */}
+        {/* CENTER STAGE: THE STUDIO CANVAS VIEW */}
         <div className="flex-1 flex flex-col bg-[#020b0a] relative overflow-hidden">
           
           {/* FLOATING TOP FORMATTING TOOLBAR */}
@@ -872,7 +872,7 @@ export const EditorView: React.FC<EditorViewProps> = ({ onBackToHome, onActivate
 
           </div>
 
-          {/* 3. CANVA BOTTOM FILMSTRIP (PAGE THUMBNAILS BAR) */}
+          {/* 3. STUDIO PRO BOTTOM FILMSTRIP (PAGE THUMBNAILS BAR) */}
           <div className="h-24 bg-[#031110] border-t border-gold-subtle flex items-center px-4 overflow-x-auto gap-3 flex-shrink-0 z-20">
             {pages.map((page, index) => (
               <div

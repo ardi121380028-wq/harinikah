@@ -10,9 +10,11 @@ interface InvitationContextType {
   setActivePageIndex: (idx: number) => void;
   updatePageData: (pageIndex: number, key: string, value: any) => void;
   updatePageTheme: (pageIndex: number, theme: BackgroundTheme) => void;
+  updatePageConfig: (pageIndex: number, updates: Partial<PageData>) => void;
   addCustomElement: (pageIndex: number, element: Omit<CustomElement, 'id'>) => void;
   updateCustomElement: (pageIndex: number, elementId: string, updates: Partial<CustomElement>) => void;
   deleteCustomElement: (pageIndex: number, elementId: string) => void;
+  moveCustomElement: (pageIndex: number, elementId: string, direction: 'up' | 'down') => void;
   addPage: (title: string, type: PageType, bgTheme?: BackgroundTheme) => void;
   duplicatePage: (pageIndex: number) => void;
   deletePage: (pageIndex: number) => void;
@@ -131,6 +133,22 @@ export const InvitationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     });
   };
 
+  // Update layout and container configuration of a page (Elementor style)
+  const updatePageConfig = (pageIndex: number, updates: Partial<PageData>) => {
+    setPages(prev => {
+      const copy = [...prev];
+      if (!copy[pageIndex]) return prev;
+      copy[pageIndex] = {
+        ...copy[pageIndex],
+        ...updates
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
+      } catch (err) {}
+      return copy;
+    });
+  };
+
   // Add a custom element to a page
   const addCustomElement = (pageIndex: number, element: Omit<CustomElement, 'id'>) => {
     setPages(prev => {
@@ -179,6 +197,30 @@ export const InvitationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         ...copy[pageIndex],
         customElements: copy[pageIndex].customElements.filter(el => el.id !== elementId)
       };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
+      } catch (err) {}
+      return copy;
+    });
+  };
+
+  // Move a custom element up or down
+  const moveCustomElement = (pageIndex: number, elementId: string, direction: 'up' | 'down') => {
+    setPages(prev => {
+      const copy = [...prev];
+      const page = copy[pageIndex];
+      if (!page || !page.customElements) return prev;
+      const elements = [...page.customElements];
+      const index = elements.findIndex(el => el.id === elementId);
+      if (index === -1) return prev;
+      const targetIndex = direction === 'up' ? index - 1 : index + 1;
+      if (targetIndex < 0 || targetIndex >= elements.length) return prev;
+
+      const temp = elements[index];
+      elements[index] = elements[targetIndex];
+      elements[targetIndex] = temp;
+
+      copy[pageIndex] = { ...page, customElements: elements };
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
       } catch (err) {}
@@ -317,9 +359,11 @@ export const InvitationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setActivePageIndex,
         updatePageData,
         updatePageTheme,
+        updatePageConfig,
         addCustomElement,
         updateCustomElement,
         deleteCustomElement,
+        moveCustomElement,
         addPage,
         duplicatePage,
         deletePage,

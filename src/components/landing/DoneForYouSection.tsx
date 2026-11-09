@@ -31,7 +31,7 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
           </h2>
           <p className={`text-sm sm:text-base mt-4 leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'
             }`}>
-            Kami mengerti kesibukan calon pengantin. Kamu bisa bebas bereksplorasi mendesain sendiri dengan Canva Editor Pro kami, atau santai rebahan dan serahkan seluruh prosesnya ke desainer ahli HariNikah.
+            Kami mengerti kesibukan calon pengantin. Kamu bisa bebas bereksplorasi mendesain sendiri dengan Studio Editor Pro kami, atau santai rebahan dan serahkan seluruh prosesnya ke desainer ahli HariNikah.
           </p>
         </div>
 
@@ -47,7 +47,7 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
               <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold mb-4 ${isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-gold-950/80 border-gold-subtle text-gold-300'
                 }`}>
                 <MousePointerClick className="w-3.5 h-3.5" />
-                Mode Mandiri (Canva Editor)
+                Mode Desain Mandiri (Studio Editor)
               </div>
               <h3 className={`text-2xl font-bold ${isLight ? 'text-stone-900' : 'text-white'}`}>
                 Bikin Sendiri Suka-Suka
@@ -59,7 +59,7 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
               {/* 3 Step Process */}
               <div className="mt-6 space-y-4">
                 {[
-                  { title: "Pilih Template", desc: "Pilih ratusan tema siap pakai di Canva Pro editor kami" },
+                  { title: "Pilih Template", desc: "Pilih tema siap pakai di Studio Editor kami" },
                   { title: "Edit Konten Langsung", desc: "Klik langsung pada kanvas HP untuk ganti foto & teks" },
                   { title: "Langsung Bagikan", desc: "Sebar undangan seketika via WhatsApp ke seluruh kontak" }
                 ].map((s, idx) => (

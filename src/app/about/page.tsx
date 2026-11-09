@@ -88,7 +88,7 @@ export default function AboutPage() {
             Merayakan Cinta dengan Kemegahan Tradisi & Inovasi Modern
           </h1>
           <p className={`text-sm sm:text-base max-w-2xl mx-auto leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-            HariNikah lahir di <strong>Bandar Lampung</strong> dari sebuah cita-cita: menghadirkan undangan pernikahan yang tidak hanya sekadar link biasa, melainkan mahakarya visual interaktif per-halaman layaknya Canva yang memuliakan adat luhur Nusantara.
+            HariNikah lahir di <strong>Bandar Lampung</strong> dari sebuah cita-cita: menghadirkan undangan pernikahan yang tidak hanya sekadar link biasa, melainkan mahakarya visual interaktif per-halaman dengan studio editor mandiri yang memuliakan adat luhur Nusantara.
           </p>
         </div>
       </section>
@@ -104,7 +104,7 @@ export default function AboutPage() {
               <Sparkles className="w-6 h-6" />
             </div>
             <h3 className={`text-lg font-bold font-serif ${isLight ? 'text-amber-900' : 'text-gold-300'}`}>
-              Canva-Like Experience
+              Studio Editor Multi-Page
             </h3>
             <p className={`text-xs leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
               Sistem pengeditan multi-halaman yang fleksibel. Klik langsung teks di layar, atur foto prewedding, ubah urutan acara, dan sesuaikan tipografi tanpa kesulitan.

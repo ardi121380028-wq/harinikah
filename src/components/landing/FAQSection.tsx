@@ -16,8 +16,8 @@ export const FAQSection: React.FC = () => {
       a: "Sekali aktivasi, undangan digital HariNikah aktif selamanya tanpa batas waktu dan tanpa biaya perpanjangan bulanan. Kamu juga tetap bisa mengubah tanggal, foto, lagu, atau detail acara kapan saja tanpa biaya tambahan."
     },
     {
-      q: "Bagaimana cara kerja Canva Editor Multi-Halaman?",
-      a: "Sistem editor HariNikah dirancang fleksibel layaknya Canva. Undanganmu dipecah menjadi beberapa halaman terpisah (Cover, Profil Mempelai, Jadwal Akad & Resepsi, Galeri Foto & Love Story, Amplop Digital, dan Form RSVP). Kamu bisa mengedit teks, mengganti foto, mengubah urutan halaman, dan menambah halaman baru dengan mudah."
+      q: "Bagaimana cara kerja Studio Editor Multi-Halaman?",
+      a: "Sistem editor HariNikah dirancang fleksibel dengan konsep visual per-halaman. Undanganmu dipecah menjadi beberapa halaman terpisah (Cover, Profil Mempelai, Jadwal Akad & Resepsi, Galeri Foto & Love Story, Amplop Digital, dan Form RSVP). Kamu bisa mengedit teks, memperbesar ukuran font, menambah divider ornamen, mengganti warna background, dan menambah objek PNG dengan sangat mudah."
     },
     {
       q: "Saya gaptek dan tidak punya waktu desain. Apakah bisa dibantu?",

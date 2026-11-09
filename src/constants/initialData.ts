@@ -631,7 +631,7 @@ export const TESTIMONIALS_DATA: TestimonialItem[] = [
     date: "Menikah Mei 2026",
     avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
     type: "Template Jawa Kasunanan",
-    review: "Ornamen gunungan wayang emas dan motif sogan keratonnya benar-benar elegan tanpa terkesan kuno. Editornya sangat mudah diubah langsung di layar seperti Canva!"
+    review: "Ornamen gunungan wayang emas dan motif sogan keratonnya benar-benar elegan tanpa terkesan kuno. Editornya sangat mudah diubah langsung di layar secara visual dan praktis!"
   },
   {
     couple: "Reza & Fadilla",
@@ -646,7 +646,7 @@ export const TESTIMONIALS_DATA: TestimonialItem[] = [
 export const FAQ_DATA: FAQItem[] = [
   {
     q: "Apakah saya bisa mengubah tema dari Modern ke Adat Jawa atau Minang?",
-    a: "Tentu saja! Di dalam editor Canva HariNikah, Anda dapat mengganti tema budaya kapan saja dengan 1-klik, dan seluruh ornamen, kutipan adat, palet warna, serta musik akan otomatis disesuaikan."
+    a: "Tentu saja! Di dalam Studio Editor HariNikah, Anda dapat mengganti tema budaya kapan saja dengan 1-klik, dan seluruh ornamen, kutipan adat, palet warna, serta musik akan otomatis disesuaikan."
   },
   {
     q: "Bagaimana cara kerja edit langsung di layar canvas?",

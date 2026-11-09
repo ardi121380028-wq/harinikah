@@ -45,7 +45,7 @@ export const CatalogSection: React.FC<CatalogSectionProps> = ({ onSelectTheme })
           <p className={`text-sm sm:text-base mt-3 ${
             isLight ? 'text-stone-600' : 'text-stone-300'
           }`}>
-            Setiap desain dibuat dengan ketelitian tinggi oleh tim desainer senior, siap dikustomisasi langsung di Canva Editor maupun dicetak dengan material fisik premium.
+            Setiap desain dibuat dengan ketelitian tinggi oleh tim desainer senior, siap dikustomisasi langsung di Studio Editor Pro maupun dicetak dengan material fisik premium.
           </p>
 
           {/* Category Filter Pills */}

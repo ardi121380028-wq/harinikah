@@ -38,6 +38,8 @@ import {
   Tag,
   Sliders,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Edit3,
   PanelLeftClose,
   PanelLeftOpen,
@@ -49,9 +51,22 @@ import {
   AlignRight,
   Upload,
   Image as ImageIcon,
-  PlusCircle
+  PlusCircle,
+  SlidersHorizontal,
+  Maximize2,
+  Minus
 } from 'lucide-react';
 import { TEMPLATE_PRESETS } from '../../constants/initialData';
+import {
+  LUXURY_BG_COLORS,
+  LUXURY_BG_GRADIENTS,
+  LUXURY_PNG_PRESETS,
+  DIVIDER_STYLES,
+  SPACER_PRESETS,
+  FONT_SIZE_PRESETS,
+  CONTAINER_PADDING_OPTIONS,
+  CONTAINER_RADIUS_OPTIONS
+} from '../../constants/designElements';
 import { 
   GununganWayang, 
   SuntiangMinang, 
@@ -82,6 +97,7 @@ export default function EditorPage() {
     setActivePageIndex,
     updatePageData,
     updatePageTheme,
+    updatePageConfig,
     addPage,
     duplicatePage,
     deletePage,
@@ -100,6 +116,7 @@ export default function EditorPage() {
     addCustomElement,
     updateCustomElement,
     deleteCustomElement,
+    moveCustomElement,
   } = useInvitation();
 
   const isLight = themeMode === 'light';
@@ -113,10 +130,51 @@ export default function EditorPage() {
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [rightPanelTab, setRightPanelTab] = useState<'sections' | 'layers'>('sections');
   
-  // File input refs for local photo uploads
+  // File input refs for local photo & PNG uploads
   const groomFileInputRef = useRef<HTMLInputElement>(null);
   const brideFileInputRef = useRef<HTMLInputElement>(null);
   const customPhotoInputRef = useRef<HTMLInputElement>(null);
+  const customPngInputRef = useRef<HTMLInputElement>(null);
+  const [pngUploadMode, setPngUploadMode] = useState<'element' | 'watermark'>('element');
+  const [selectedSpacerHeight, setSelectedSpacerHeight] = useState<number>(24);
+  const [selectedDividerStyle, setSelectedDividerStyle] = useState<'gold_hairline' | 'batik' | 'minang' | 'melati' | 'dashed'>('gold_hairline');
+
+  // Direct PNG File Upload Handler (for Element sticker or Container Background Watermark)
+  const handleCustomPngUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Ukuran file maksimal 8MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        if (pngUploadMode === 'element') {
+          addCustomElement(activePageIndex, {
+            type: 'png_overlay',
+            content: result,
+            pngUrl: result,
+            pngScale: 100,
+            pngOpacity: 90,
+            align: 'center',
+          });
+        } else {
+          updatePageConfig(activePageIndex, {
+            bgPngOverlay: {
+              url: result,
+              opacity: 35,
+              scale: 100,
+              position: 'center',
+            }
+          });
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
 
   // Element Click-to-Edit State
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
@@ -298,7 +356,7 @@ export default function EditorPage() {
     }`}>
       
       {/* =========================================================================
-          1. TOP CANVA-STYLE NAVIGATION BAR
+          1. TOP STUDIO PRO NAVIGATION BAR
           ========================================================================= */}
       <header className={`h-16 border-b px-3 sm:px-5 flex items-center justify-between z-30 flex-shrink-0 transition-colors ${
         isLight ? 'bg-white border-[#E5DAC6] text-stone-900 shadow-sm' : 'bg-[#041514] border-gold-subtle text-stone-100'
@@ -544,7 +602,7 @@ export default function EditorPage() {
           ========================================================================= */}
       <div className="flex-1 flex overflow-hidden relative">
         
-        {/* LEFT TOOLBAR TABS (CANVA NAVIGATION) */}
+        {/* LEFT TOOLBAR TABS (STUDIO NAVIGATION) */}
         <div className={`w-16 sm:w-20 border-r flex flex-col items-center py-3 gap-2 flex-shrink-0 z-20 overflow-y-auto transition-colors ${
           isLight ? 'bg-[#FAF8F5] border-[#E5DAC6]' : 'bg-[#031110] border-gold-subtle'
         }`}>
@@ -781,24 +839,33 @@ export default function EditorPage() {
               </div>
             )}
 
-            {/* TAB: TAMBAH OBJEK / ELEMEN (CANVA STYLE) */}
+            {/* TAB: TAMBAH OBJEK / ELEMEN (STUDIO BUILDER) */}
             {activeTab === 'elements' && (
               <div className="space-y-4 text-xs">
+                {/* Hidden File Input for Custom PNG Uploads */}
+                <input
+                  ref={customPngInputRef}
+                  type="file"
+                  accept="image/png,image/webp,image/svg+xml"
+                  onChange={handleCustomPngUpload}
+                  className="hidden"
+                />
+
                 <div className={`pb-2 border-b-2 ${
                   isLight ? 'border-amber-200' : 'border-gold-subtle'
                 }`}>
                   <span className={`text-[10px] font-black uppercase tracking-widest ${
                     isLight ? 'text-amber-800' : 'text-gold-400'
                   }`}>
-                    FITUR ELEMEN CANVA
+                    STUDIO EDITOR PRO • ELEMEN
                   </span>
                   <h3 className={`text-xs font-black uppercase tracking-wider mt-0.5 ${
                     isLight ? 'text-amber-950' : 'text-gold-300'
                   }`}>
-                    Tambah Objek ke Hal {activePageIndex + 1}
+                    Tambah & Atur Objek Hal {activePageIndex + 1}
                   </h3>
                   <p className={`text-[11px] mt-1 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-                    Tambahkan teks kustom, doa, ornamen adat, atau foto langsung ke halaman yang sedang aktif.
+                    Geser urutan atas/bawah, ubah ukuran font, garis divider adat, spacer jarak, dan stiker PNG kustom.
                   </p>
                 </div>
 
@@ -818,7 +885,9 @@ export default function EditorPage() {
                         type: 'heading',
                         content: 'Judul Baru',
                         align: 'center',
-                        size: 'xl'
+                        fontSize: 24,
+                        fontWeight: 'bold',
+                        color: '#E6CA65'
                       })}
                       className={`p-2 rounded-xl border text-left font-serif font-bold text-xs transition-all hover:scale-102 ${
                         isLight ? 'bg-white border-amber-300 text-stone-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-gold-200 hover:bg-white/10'
@@ -832,7 +901,9 @@ export default function EditorPage() {
                         type: 'subheading',
                         content: 'Subjudul atau Salam Pembuka',
                         align: 'center',
-                        size: 'base'
+                        fontSize: 14,
+                        fontWeight: 'semibold',
+                        color: '#F59E0B'
                       })}
                       className={`p-2 rounded-xl border text-left font-sans font-semibold text-[11px] transition-all hover:scale-102 ${
                         isLight ? 'bg-white border-amber-300 text-stone-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-gold-200 hover:bg-white/10'
@@ -844,15 +915,16 @@ export default function EditorPage() {
                       type="button"
                       onClick={() => addCustomElement(activePageIndex, {
                         type: 'paragraph',
-                        content: 'Tuliskan pesan, petunjuk parkir, atau doa restu di sini.',
+                        content: 'Tuliskan pesan doa, petunjuk lokasi, atau informasi pelengkap di sini.',
                         align: 'center',
-                        size: 'sm'
+                        fontSize: 12,
+                        color: '#E2E8F0'
                       })}
                       className={`p-2 rounded-xl border text-left font-sans text-[10px] transition-all hover:scale-102 ${
                         isLight ? 'bg-white border-amber-300 text-stone-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-stone-200 hover:bg-white/10'
                       }`}
                     >
-                      + Paragraf / Doa
+                      + Paragraf / Pesan
                     </button>
                     <button
                       type="button"
@@ -860,108 +932,200 @@ export default function EditorPage() {
                         type: 'quote',
                         content: 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu.',
                         align: 'center',
-                        size: 'sm'
+                        fontSize: 12,
+                        fontStyle: 'italic',
+                        color: '#FDE68A'
                       })}
                       className={`p-2 rounded-xl border text-left font-serif italic text-[10px] transition-all hover:scale-102 ${
                         isLight ? 'bg-white border-amber-300 text-amber-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-gold-300 hover:bg-white/10'
                       }`}
                     >
-                      + Kutipan Romantis
+                      + Ayat / Kutipan
                     </button>
                   </div>
                 </div>
 
-                {/* Submenu 2: Ornamen & Stiker Budaya */}
+                {/* Submenu 2: Garis Pembatas (Divider Elementor-Style) */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-amber-950' : 'text-gold-300'
+                    }`}>
+                      ⚜️ Garis Pembatas (Divider)
+                    </span>
+                    <span className="text-[10px] text-amber-500 font-semibold">Elementor Style</span>
+                  </div>
+                  <p className={`text-[10px] leading-tight ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
+                    Pilih ornamen garis pembatas emas untuk memisahkan bagian halaman:
+                  </p>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {DIVIDER_STYLES.map((style) => (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => addCustomElement(activePageIndex, {
+                          type: 'divider',
+                          content: 'divider',
+                          dividerStyle: style.id as any,
+                          align: 'center'
+                        })}
+                        className={`p-2 rounded-xl border text-left transition-all hover:scale-[1.01] flex items-center justify-between ${
+                          isLight
+                            ? 'bg-white border-amber-200 hover:border-amber-400 text-stone-900 shadow-xs'
+                            : 'bg-white/5 border-gold-400/30 hover:border-gold-400 text-stone-100'
+                        }`}
+                      >
+                        <div>
+                          <p className="font-bold text-[11px] text-amber-400">{style.name}</p>
+                          <p className="text-[9px] text-stone-400">{style.desc}</p>
+                        </div>
+                        <Plus className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Submenu 3: Jarak Pemisah (Spacer Elementor-Style) */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-amber-950' : 'text-gold-300'
+                    }`}>
+                      📏 Jarak / Pemisah (Spacer)
+                    </span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 font-bold">
+                      {selectedSpacerHeight} px
+                    </span>
+                  </div>
+
+                  {/* Preset Pills */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {SPACER_PRESETS.map((p) => (
+                      <button
+                        key={p.height}
+                        type="button"
+                        onClick={() => setSelectedSpacerHeight(p.height)}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-semibold border transition-all ${
+                          selectedSpacerHeight === p.height
+                            ? 'bg-amber-400 text-black border-amber-400 font-bold'
+                            : isLight ? 'bg-white border-amber-200 text-stone-700' : 'bg-white/5 border-gold-subtle text-stone-300'
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Height Slider */}
+                  <div className="space-y-1">
+                    <input
+                      type="range"
+                      min={8}
+                      max={100}
+                      step={4}
+                      value={selectedSpacerHeight}
+                      onChange={(e) => setSelectedSpacerHeight(Number(e.target.value))}
+                      className="w-full accent-amber-400 cursor-pointer h-1.5"
+                    />
+                    <div className="flex justify-between text-[9px] text-stone-400">
+                      <span>Rapat (8px)</span>
+                      <span>Sedang (48px)</span>
+                      <span>Luas (100px)</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => addCustomElement(activePageIndex, {
+                      type: 'spacer',
+                      content: `${selectedSpacerHeight}px`,
+                      spacerHeight: selectedSpacerHeight,
+                      align: 'center'
+                    })}
+                    className="w-full py-2 px-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-[11px] shadow-sm transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Sisipkan Spacer ({selectedSpacerHeight}px)</span>
+                  </button>
+                </div>
+
+                {/* Submenu 4: Ornamen & Stiker PNG Transparan */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-amber-950' : 'text-gold-300'
+                    }`}>
+                      🖼️ Stiker & Ornamen PNG
+                    </span>
+                    <span className="text-[10px] text-stone-400">Transparan</span>
+                  </div>
+                  
+                  {/* Gallery of Luxury PNG Assets */}
+                  <div className="grid grid-cols-3 gap-2">
+                    {LUXURY_PNG_PRESETS.map((preset) => (
+                      <div
+                        key={preset.id}
+                        onClick={() => addCustomElement(activePageIndex, {
+                          type: 'png_overlay',
+                          content: preset.previewUrl,
+                          pngUrl: preset.previewUrl,
+                          pngScale: preset.defaultScale,
+                          pngOpacity: preset.defaultOpacity,
+                          align: 'center'
+                        })}
+                        className={`p-2 rounded-xl border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all hover:scale-105 ${
+                          isLight
+                            ? 'bg-white border-amber-200 hover:border-amber-400 shadow-xs'
+                            : 'bg-black/60 border-gold-400/30 hover:border-gold-400'
+                        }`}
+                        title={`Tambahkan ${preset.name}`}
+                      >
+                        <div className="w-12 h-12 flex items-center justify-center overflow-hidden">
+                          <img
+                            src={preset.previewUrl}
+                            alt={preset.name}
+                            className="max-w-full max-h-full object-contain filter drop-shadow-sm"
+                          />
+                        </div>
+                        <span className="text-[9px] font-medium text-center line-clamp-1 text-stone-300">
+                          {preset.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Direct PNG Upload from Local Device */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPngUploadMode('element');
+                      customPngInputRef.current?.click();
+                    }}
+                    className={`w-full py-2 px-3 rounded-xl border border-dashed transition-all flex items-center justify-center gap-1.5 font-bold text-[11px] ${
+                      isLight
+                        ? 'border-amber-400 text-amber-900 bg-amber-100/50 hover:bg-amber-100'
+                        : 'border-gold-400/60 text-gold-300 bg-white/5 hover:bg-white/10'
+                    }`}
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload PNG Transparan Sendiri</span>
+                  </button>
+                </div>
+
+                {/* Submenu 5: Sisipkan Foto Kustom */}
                 <div className={`p-3 rounded-2xl border space-y-2 ${
                   isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
                 }`}>
                   <span className={`font-black block text-[11px] uppercase tracking-wider ${
                     isLight ? 'text-amber-950' : 'text-gold-300'
                   }`}>
-                    ✨ Stiker & Ornamen Mewah
-                  </span>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => addCustomElement(activePageIndex, {
-                        type: 'ornament',
-                        content: '🌿',
-                        ornamentType: 'leaf',
-                        align: 'center'
-                      })}
-                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
-                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
-                      }`}
-                    >
-                      <span>🌿</span> Daun Botanical
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addCustomElement(activePageIndex, {
-                        type: 'ornament',
-                        content: '💍',
-                        ornamentType: 'ring',
-                        align: 'center'
-                      })}
-                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
-                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
-                      }`}
-                    >
-                      <span>💍</span> Cincin Nikah
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addCustomElement(activePageIndex, {
-                        type: 'ornament',
-                        content: '✨',
-                        ornamentType: 'sparkle',
-                        align: 'center'
-                      })}
-                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
-                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
-                      }`}
-                    >
-                      <span>✨</span> Kilau Emas
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addCustomElement(activePageIndex, {
-                        type: 'ornament',
-                        content: '🕊️',
-                        ornamentType: 'dove',
-                        align: 'center'
-                      })}
-                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
-                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
-                      }`}
-                    >
-                      <span>🕊️</span> Merpati Putih
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => addCustomElement(activePageIndex, {
-                        type: 'ornament',
-                        content: 'divider',
-                        ornamentType: 'divider',
-                        align: 'center'
-                      })}
-                      className={`col-span-2 p-2 rounded-xl border flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
-                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
-                      }`}
-                    >
-                      <span>⚜️ Garis Pembatas Emas Mewah</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Submenu 3: Sisipkan Foto Baru */}
-                <div className={`p-3 rounded-2xl border space-y-2 ${
-                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
-                }`}>
-                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
-                    isLight ? 'text-amber-950' : 'text-gold-300'
-                  }`}>
-                    📷 Sisipkan Foto Baru
+                    📷 Sisipkan Foto Prewedding
                   </span>
                   <input
                     ref={customPhotoInputRef}
@@ -980,32 +1144,80 @@ export default function EditorPage() {
                   </button>
                 </div>
 
-                {/* Submenu 4: Daftar Objek di Halaman Aktif */}
-                <div className="space-y-2 pt-2 border-t border-white/10">
-                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
-                    isLight ? 'text-stone-700' : 'text-stone-300'
-                  }`}>
-                    Daftar Objek di Hal {activePageIndex + 1} ({activePage.customElements?.length || 0})
-                  </span>
+                {/* Submenu 6: Daftar & Urutan Objek di Halaman Aktif */}
+                <div className="space-y-2.5 pt-3 border-t border-white/10">
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-stone-800' : 'text-stone-200'
+                    }`}>
+                      🗂️ Daftar & Posisi Objek ({activePage.customElements?.length || 0})
+                    </span>
+                    <span className="text-[10px] text-stone-400 font-medium">Hal {activePageIndex + 1}</span>
+                  </div>
 
                   {(!activePage.customElements || activePage.customElements.length === 0) ? (
-                    <p className={`text-[11px] italic py-2 text-center ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>
-                      Belum ada objek kustom di halaman ini. Klik tombol di atas untuk menambahkan.
-                    </p>
+                    <div className={`p-4 rounded-2xl border border-dashed text-center space-y-1 ${
+                      isLight ? 'border-stone-300 text-stone-500' : 'border-gold-subtle/50 text-stone-400'
+                    }`}>
+                      <p className="text-xs font-semibold">Belum ada objek kustom</p>
+                      <p className="text-[10px]">Pilih teks, divider, spacer, atau PNG di atas untuk menambahkan elemen ke halaman ini.</p>
+                    </div>
                   ) : (
-                    <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                    <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
                       {activePage.customElements.map((el, idx) => (
                         <div
                           key={el.id}
-                          className={`p-2.5 rounded-xl border space-y-2 transition-all ${
-                            isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-black/50 border-gold-subtle'
+                          className={`p-3 rounded-2xl border space-y-2.5 transition-all ${
+                            selectedElementId === el.id
+                              ? 'ring-2 ring-amber-400 bg-amber-400/10 border-amber-400'
+                              : isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-black/60 border-gold-subtle'
                           }`}
                         >
+                          {/* Element Header with Move Up/Down, Align & Delete Controls */}
                           <div className="flex items-center justify-between">
-                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? 'text-amber-900' : 'text-gold-400'}`}>
-                              #{idx + 1} {el.type}
-                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 font-mono text-[10px] font-bold flex items-center justify-center">
+                                {idx + 1}
+                              </span>
+                              <span className={`text-[11px] font-black uppercase tracking-wider ${isLight ? 'text-amber-900' : 'text-gold-300'}`}>
+                                {el.type === 'heading' && 'Judul'}
+                                {el.type === 'subheading' && 'Subjudul'}
+                                {el.type === 'paragraph' && 'Paragraf'}
+                                {el.type === 'quote' && 'Kutipan'}
+                                {el.type === 'divider' && `Divider (${el.dividerStyle || 'hairline'})`}
+                                {el.type === 'spacer' && `Spacer (${el.spacerHeight || 24}px)`}
+                                {el.type === 'png_overlay' && 'Stiker PNG'}
+                                {el.type === 'photo' && 'Foto'}
+                                {el.type === 'ornament' && 'Ornamen'}
+                              </span>
+                            </div>
+
+                            {/* Action Toolbar */}
                             <div className="flex items-center gap-1">
+                              {/* Move Up */}
+                              <button
+                                type="button"
+                                disabled={idx === 0}
+                                onClick={() => moveCustomElement(activePageIndex, el.id, 'up')}
+                                className="p-1 rounded hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-stone-300"
+                                title="Geser Ke Atas"
+                              >
+                                <ChevronUp className="w-3.5 h-3.5" />
+                              </button>
+
+                              {/* Move Down */}
+                              <button
+                                type="button"
+                                disabled={idx === activePage.customElements.length - 1}
+                                onClick={() => moveCustomElement(activePageIndex, el.id, 'down')}
+                                className="p-1 rounded hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-stone-300"
+                                title="Geser Ke Bawah"
+                              >
+                                <ChevronDown className="w-3.5 h-3.5" />
+                              </button>
+
+                              <div className="w-px h-3 bg-white/20 mx-0.5" />
+
                               {/* Alignment controls */}
                               <button
                                 type="button"
@@ -1031,10 +1243,14 @@ export default function EditorPage() {
                               >
                                 <AlignRight className="w-3 h-3" />
                               </button>
+
+                              <div className="w-px h-3 bg-white/20 mx-0.5" />
+
+                              {/* Delete */}
                               <button
                                 type="button"
                                 onClick={() => deleteCustomElement(activePageIndex, el.id)}
-                                className="p-1 text-rose-400 hover:text-rose-300 ml-1"
+                                className="p-1 text-rose-400 hover:text-rose-300"
                                 title="Hapus Objek"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -1042,21 +1258,203 @@ export default function EditorPage() {
                             </div>
                           </div>
 
-                          {el.type !== 'ornament' && el.type !== 'photo' && (
-                            <textarea
-                              rows={2}
-                              value={el.content}
-                              onChange={(e) => updateCustomElement(activePageIndex, el.id, { content: e.target.value })}
-                              className={`w-full rounded-lg px-2.5 py-1 text-xs ${
-                                isLight
-                                  ? 'bg-[#FAF8F5] border border-amber-300 text-stone-900'
-                                  : 'bg-[#041514] border border-gold-subtle text-stone-100'
-                              }`}
-                            />
+                          {/* Detail Editor: If Text Element */}
+                          {(el.type === 'heading' || el.type === 'subheading' || el.type === 'paragraph' || el.type === 'quote') && (
+                            <div className="space-y-2 pt-1 border-t border-white/5">
+                              {/* Font Size & Weight Toolbar */}
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-1">
+                                  <span className="text-[10px] text-stone-400">Ukuran:</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const current = el.fontSize || (el.type === 'heading' ? 24 : 12);
+                                      updateCustomElement(activePageIndex, el.id, { fontSize: Math.max(10, current - 2) });
+                                    }}
+                                    className="px-1.5 py-0.5 rounded bg-white/10 text-stone-200 hover:bg-white/20 font-bold text-[10px]"
+                                    title="Kecilkan Font"
+                                  >
+                                    A-
+                                  </button>
+                                  <span className="text-[10px] font-mono text-amber-400 font-bold px-1">
+                                    {el.fontSize || (el.type === 'heading' ? 24 : el.type === 'subheading' ? 14 : 12)}px
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const current = el.fontSize || (el.type === 'heading' ? 24 : 12);
+                                      updateCustomElement(activePageIndex, el.id, { fontSize: Math.min(56, current + 2) });
+                                    }}
+                                    className="px-1.5 py-0.5 rounded bg-white/10 text-stone-200 hover:bg-white/20 font-bold text-[10px]"
+                                    title="Besarkan Font"
+                                  >
+                                    A+
+                                  </button>
+                                </div>
+
+                                {/* Bold & Italic Toggles */}
+                                <div className="flex items-center gap-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => updateCustomElement(activePageIndex, el.id, {
+                                      fontWeight: el.fontWeight === 'bold' ? 'normal' : 'bold'
+                                    })}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                      el.fontWeight === 'bold' ? 'bg-amber-400 text-black' : 'bg-white/10 text-stone-300'
+                                    }`}
+                                  >
+                                    B
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => updateCustomElement(activePageIndex, el.id, {
+                                      fontStyle: el.fontStyle === 'italic' ? 'normal' : 'italic'
+                                    })}
+                                    className={`px-2 py-0.5 rounded text-[10px] italic ${
+                                      el.fontStyle === 'italic' ? 'bg-amber-400 text-black font-bold' : 'bg-white/10 text-stone-300'
+                                    }`}
+                                  >
+                                    I
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* Font Size Slider */}
+                              <input
+                                type="range"
+                                min={10}
+                                max={48}
+                                step={1}
+                                value={el.fontSize || (el.type === 'heading' ? 24 : el.type === 'subheading' ? 14 : 12)}
+                                onChange={(e) => updateCustomElement(activePageIndex, el.id, { fontSize: Number(e.target.value) })}
+                                className="w-full accent-amber-400 cursor-pointer h-1"
+                              />
+
+                              {/* Color Swatches */}
+                              <div className="flex items-center gap-1.5 pt-0.5">
+                                <span className="text-[9px] text-stone-400">Warna:</span>
+                                {[
+                                  { color: '#E6CA65', label: 'Emas' },
+                                  { color: '#F59E0B', label: 'Amber' },
+                                  { color: '#FAF8F5', label: 'Putih Sutra' },
+                                  { color: '#FEE2E2', label: 'Mawar' },
+                                  { color: '#1C1917', label: 'Hitam' },
+                                ].map((c) => (
+                                  <div
+                                    key={c.color}
+                                    onClick={() => updateCustomElement(activePageIndex, el.id, { color: c.color })}
+                                    className={`w-4 h-4 rounded-full cursor-pointer border transition-transform hover:scale-125 ${
+                                      el.color === c.color ? 'ring-2 ring-amber-400 scale-110 border-white' : 'border-stone-500'
+                                    }`}
+                                    style={{ backgroundColor: c.color }}
+                                    title={c.label}
+                                  />
+                                ))}
+                                <input
+                                  type="color"
+                                  value={el.color || '#E6CA65'}
+                                  onChange={(e) => updateCustomElement(activePageIndex, el.id, { color: e.target.value })}
+                                  className="w-5 h-5 rounded cursor-pointer border-0 bg-transparent p-0"
+                                  title="Pilih Warna Kustom"
+                                />
+                              </div>
+
+                              {/* Text Content Editor */}
+                              <textarea
+                                rows={2}
+                                value={el.content}
+                                onChange={(e) => updateCustomElement(activePageIndex, el.id, { content: e.target.value })}
+                                className={`w-full rounded-xl px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-amber-400 focus:outline-none ${
+                                  isLight
+                                    ? 'bg-[#FAF8F5] border border-amber-300 text-stone-900'
+                                    : 'bg-[#041514] border border-gold-subtle text-stone-100'
+                                }`}
+                              />
+                            </div>
                           )}
 
+                          {/* Detail Editor: If Divider Element */}
+                          {el.type === 'divider' && (
+                            <div className="space-y-1.5 pt-1 border-t border-white/5">
+                              <span className="text-[10px] text-stone-400">Gaya Divider:</span>
+                              <div className="grid grid-cols-3 gap-1">
+                                {DIVIDER_STYLES.map((d) => (
+                                  <button
+                                    key={d.id}
+                                    type="button"
+                                    onClick={() => updateCustomElement(activePageIndex, el.id, { dividerStyle: d.id as any })}
+                                    className={`p-1 text-[9px] rounded-lg border font-medium truncate ${
+                                      el.dividerStyle === d.id
+                                        ? 'bg-amber-400 text-black border-amber-400 font-bold'
+                                        : 'bg-white/5 border-white/10 text-stone-300'
+                                    }`}
+                                  >
+                                    {d.name.split(' ')[0]}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Detail Editor: If Spacer Element */}
+                          {el.type === 'spacer' && (
+                            <div className="space-y-1.5 pt-1 border-t border-white/5">
+                              <div className="flex justify-between items-center text-[10px]">
+                                <span className="text-stone-400">Tinggi Jarak:</span>
+                                <span className="font-mono text-amber-400 font-bold">{el.spacerHeight || 24} px</span>
+                              </div>
+                              <input
+                                type="range"
+                                min={8}
+                                max={100}
+                                step={4}
+                                value={el.spacerHeight || 24}
+                                onChange={(e) => updateCustomElement(activePageIndex, el.id, { spacerHeight: Number(e.target.value) })}
+                                className="w-full accent-amber-400 cursor-pointer h-1"
+                              />
+                            </div>
+                          )}
+
+                          {/* Detail Editor: If PNG Overlay */}
+                          {el.type === 'png_overlay' && (
+                            <div className="space-y-2 pt-1 border-t border-white/5">
+                              <div className="flex items-center gap-2">
+                                <img
+                                  src={el.pngUrl || el.content}
+                                  alt="PNG"
+                                  className="w-10 h-10 object-contain rounded-lg border border-gold-400/50 bg-black/40"
+                                />
+                                <div className="flex-1 space-y-1">
+                                  <div className="flex justify-between text-[9px]">
+                                    <span className="text-stone-400">Ukuran: {el.pngScale || 100}%</span>
+                                    <span className="text-stone-400">Transparansi: {el.pngOpacity || 90}%</span>
+                                  </div>
+                                  <input
+                                    type="range"
+                                    min={40}
+                                    max={180}
+                                    step={5}
+                                    value={el.pngScale || 100}
+                                    onChange={(e) => updateCustomElement(activePageIndex, el.id, { pngScale: Number(e.target.value) })}
+                                    className="w-full accent-amber-400 cursor-pointer h-1"
+                                  />
+                                  <input
+                                    type="range"
+                                    min={10}
+                                    max={100}
+                                    step={5}
+                                    value={el.pngOpacity || 90}
+                                    onChange={(e) => updateCustomElement(activePageIndex, el.id, { pngOpacity: Number(e.target.value) })}
+                                    className="w-full accent-amber-400 cursor-pointer h-1"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Detail Editor: If Photo */}
                           {el.type === 'photo' && (
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 pt-1 border-t border-white/5">
                               <img src={el.content} alt="Thumbnail" className="w-10 h-10 object-cover rounded-lg border border-gold-400/50" />
                               <span className="text-[10px] text-stone-400">Foto Kustom Berhasil Disisipkan</span>
                             </div>
@@ -1815,54 +2213,290 @@ export default function EditorPage() {
               </div>
             )}
 
-            {/* TAB: TEMA BG */}
+            {/* TAB: CONTAINER & LATAR BELAKANG (ELEMENTOR-STYLE BUILDER) */}
             {activeTab === 'theme' && (
               <div className="space-y-4 text-xs">
                 <div className={`pb-3 border-b-2 ${isLight ? 'border-amber-200' : 'border-gold-subtle'}`}>
                   <span className={`text-[10px] font-extrabold uppercase tracking-widest ${isLight ? 'text-amber-800' : 'text-gold-400'}`}>
-                    WARNA & LATAR BELAKANG
+                    STUDIO PRO • CONTAINER & BACKGROUND
                   </span>
                   <h3 className={`text-base font-black mt-0.5 ${isLight ? 'text-stone-900' : 'text-gold-bright'}`}>
-                    Pilihan Latar Halaman
+                    Latar & Box Model Hal {activePageIndex + 1}
                   </h3>
                   <p className={`text-[11px] mt-1 leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-                    Pilih nuansa warna kartu undangan: Beludru Emerald, Sutra Ivory, atau Adat Budaya.
+                    Konsep Elementor Container: atur warna solid/gradien, padding breathing room, sudut radius, dan watermark PNG transparan.
                   </p>
                 </div>
 
-                <div className="space-y-2.5">
-                  {[
-                    { id: 'velvet', name: 'Royal Emerald Velvet', desc: 'Kemewahan kain beludru hijau zamrud gelap', color: '#051817' },
-                    { id: 'ivory', name: 'Champagne Ivory Silk', desc: 'Keanggunan kertas sutra gading & aksen emas murni', color: '#FAF8F5' },
-                    { id: 'jawa_sogan', name: 'Sogan Kasunanan Jawa', desc: 'Warna coklat sogan tanah keraton Solo & Jogja', color: '#180e09' },
-                    { id: 'minang_marawa', name: 'Marawa Crimson Minang', desc: 'Merah marun kebesaran ranah Minangkabau', color: '#220508' },
-                  ].map((bg) => (
-                    <div
-                      key={bg.id}
-                      onClick={() => updatePageTheme(activePageIndex, bg.id as any)}
-                      className={`p-3 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between ${
-                        activePage.bgTheme === bg.id
-                          ? isLight
-                            ? 'border-amber-500 bg-amber-50 shadow-md ring-2 ring-amber-300/30'
-                            : 'border-gold-400 bg-gold-950/70 shadow-sm'
-                          : isLight
-                          ? 'border-stone-200 bg-white hover:border-amber-300 shadow-sm'
-                          : 'border-white/10 bg-white/5 hover:border-gold-subtle'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2.5">
+                {/* 1. Warna Solid Mewah */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-amber-950' : 'text-gold-300'
+                    }`}>
+                      🎨 Palet Warna Solid Mewah
+                    </span>
+                    <label className="flex items-center gap-1 cursor-pointer text-[10px] text-amber-400 font-bold">
+                      <span>Kustom Hex</span>
+                      <input
+                        type="color"
+                        value={activePage.customBgColor || '#041514'}
+                        onChange={(e) => updatePageConfig(activePageIndex, {
+                          customBgColor: e.target.value,
+                          customBgGradient: undefined
+                        })}
+                        className="w-4 h-4 rounded cursor-pointer border-0 bg-transparent p-0"
+                      />
+                    </label>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    {LUXURY_BG_COLORS.map((bg) => (
+                      <div
+                        key={bg.id}
+                        onClick={() => {
+                          updatePageTheme(activePageIndex, bg.id as any);
+                          updatePageConfig(activePageIndex, {
+                            customBgColor: bg.hex,
+                            customBgGradient: undefined
+                          });
+                        }}
+                        className={`p-2 rounded-xl border cursor-pointer transition-all flex items-center gap-2 ${
+                          activePage.customBgColor === bg.hex || (!activePage.customBgColor && activePage.bgTheme === bg.id)
+                            ? 'border-amber-400 bg-amber-400/20 ring-1 ring-amber-400'
+                            : isLight ? 'border-stone-200 bg-white hover:border-amber-300' : 'border-white/10 bg-white/5 hover:border-gold-subtle'
+                        }`}
+                      >
                         <div
-                          className="w-8 h-8 rounded-xl border-2 border-stone-300 shadow-inner flex-shrink-0"
-                          style={{ backgroundColor: bg.color }}
+                          className="w-5 h-5 rounded-lg border border-stone-400/50 shadow-inner flex-shrink-0"
+                          style={{ backgroundColor: bg.hex }}
                         />
-                        <div>
-                          <p className={`font-bold ${isLight ? 'text-stone-900' : 'text-stone-100'}`}>{bg.name}</p>
-                          <p className={`text-[10px] ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>{bg.desc}</p>
-                        </div>
+                        <span className={`text-[10px] font-bold truncate ${isLight ? 'text-stone-900' : 'text-stone-200'}`}>
+                          {bg.name.split(' ')[0]} {bg.name.split(' ')[1]}
+                        </span>
                       </div>
-                      {activePage.bgTheme === bg.id && <Check className="w-4 h-4 text-emerald-600 font-bold" />}
+                    ))}
+                  </div>
+                </div>
+
+                {/* 2. Preset Gradien Latar Belakang */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-amber-950' : 'text-gold-300'
+                    }`}>
+                      🌈 Gradien Mewah
+                    </span>
+                    {activePage.customBgGradient && (
+                      <button
+                        type="button"
+                        onClick={() => updatePageConfig(activePageIndex, { customBgGradient: undefined })}
+                        className="text-[9px] text-rose-400 hover:text-rose-300 underline"
+                      >
+                        Reset ke Solid
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    {LUXURY_BG_GRADIENTS.map((grad) => (
+                      <div
+                        key={grad.id}
+                        onClick={() => updatePageConfig(activePageIndex, {
+                          customBgGradient: grad.gradient
+                        })}
+                        className={`p-2 rounded-xl border cursor-pointer transition-all flex items-center gap-2 ${
+                          activePage.customBgGradient === grad.gradient
+                            ? 'border-amber-400 bg-amber-400/20 ring-1 ring-amber-400'
+                            : isLight ? 'border-stone-200 bg-white hover:border-amber-300' : 'border-white/10 bg-white/5 hover:border-gold-subtle'
+                        }`}
+                      >
+                        <div
+                          className="w-5 h-5 rounded-lg border border-amber-400/40 shadow-inner flex-shrink-0"
+                          style={{ background: grad.gradient }}
+                        />
+                        <span className={`text-[10px] font-bold truncate ${isLight ? 'text-stone-900' : 'text-stone-200'}`}>
+                          {grad.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Container Box Model (Elementor Padding & Radius) */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                    isLight ? 'text-amber-950' : 'text-gold-300'
+                  }`}>
+                    📦 Container Box Model (Padding & Radius)
+                  </span>
+
+                  {/* Padding Options */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-stone-400">Jarak Tepi / Padding Konten:</span>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {CONTAINER_PADDING_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => updatePageConfig(activePageIndex, { containerPadding: opt.id as any })}
+                          className={`py-1.5 px-2 rounded-xl text-[10px] font-bold border transition-all ${
+                            (activePage.containerPadding || 'normal') === opt.id
+                              ? 'bg-amber-400 text-black border-amber-400'
+                              : isLight ? 'bg-white border-stone-200 text-stone-700' : 'bg-white/5 border-white/10 text-stone-300'
+                          }`}
+                        >
+                          {opt.label.split(' ')[0]}
+                        </button>
+                      ))}
                     </div>
-                  ))}
+                  </div>
+
+                  {/* Corner Radius Options */}
+                  <div className="space-y-1 pt-1">
+                    <span className="text-[10px] text-stone-400">Lengkung Sudut Frame:</span>
+                    <div className="grid grid-cols-4 gap-1">
+                      {CONTAINER_RADIUS_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => updatePageConfig(activePageIndex, { containerRadius: opt.id as any })}
+                          className={`py-1.5 px-1 rounded-xl text-[9px] font-bold border transition-all truncate ${
+                            (activePage.containerRadius || '3xl') === opt.id
+                              ? 'bg-amber-400 text-black border-amber-400'
+                              : isLight ? 'bg-white border-stone-200 text-stone-700' : 'bg-white/5 border-white/10 text-stone-300'
+                          }`}
+                        >
+                          {opt.label.split(' ')[0]}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 4. Watermark / Overlay PNG Latar Belakang */}
+                <div className={`p-3 rounded-2xl border space-y-2.5 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                      isLight ? 'text-amber-950' : 'text-gold-300'
+                    }`}>
+                      🖼️ Watermark PNG Latar Belakang
+                    </span>
+                    {activePage.bgPngOverlay?.url && (
+                      <button
+                        type="button"
+                        onClick={() => updatePageConfig(activePageIndex, { bgPngOverlay: undefined })}
+                        className="text-[9px] text-rose-400 hover:text-rose-300 underline"
+                      >
+                        Hapus Watermark
+                      </button>
+                    )}
+                  </div>
+
+                  <p className={`text-[10px] leading-tight ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
+                    Pilih ornamen emas transparan yang muncul secara anggun di belakang konten:
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {LUXURY_PNG_PRESETS.map((preset) => (
+                      <div
+                        key={preset.id}
+                        onClick={() => updatePageConfig(activePageIndex, {
+                          bgPngOverlay: {
+                            url: preset.previewUrl,
+                            opacity: 30,
+                            scale: 100,
+                            position: 'center'
+                          }
+                        })}
+                        className={`p-2 rounded-xl border flex flex-col items-center justify-center gap-1 cursor-pointer transition-all hover:scale-105 ${
+                          activePage.bgPngOverlay?.url === preset.previewUrl
+                            ? 'border-amber-400 bg-amber-400/20 ring-1 ring-amber-400'
+                            : isLight ? 'bg-white border-amber-200' : 'bg-black/60 border-gold-400/30'
+                        }`}
+                        title={preset.name}
+                      >
+                        <div className="w-10 h-10 flex items-center justify-center overflow-hidden">
+                          <img
+                            src={preset.previewUrl}
+                            alt={preset.name}
+                            className="max-w-full max-h-full object-contain"
+                          />
+                        </div>
+                        <span className="text-[8px] font-medium text-center line-clamp-1 text-stone-300">
+                          {preset.name.split(' ')[0]}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Watermark controls if active */}
+                  {activePage.bgPngOverlay?.url && (
+                    <div className="space-y-2 pt-2 border-t border-white/10">
+                      <div className="flex justify-between text-[10px]">
+                        <span className="text-stone-400">Transparansi Watermark:</span>
+                        <span className="font-mono text-amber-400 font-bold">{activePage.bgPngOverlay.opacity ?? 30}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={5}
+                        max={70}
+                        step={5}
+                        value={activePage.bgPngOverlay.opacity ?? 30}
+                        onChange={(e) => updatePageConfig(activePageIndex, {
+                          bgPngOverlay: {
+                            ...activePage.bgPngOverlay!,
+                            opacity: Number(e.target.value)
+                          }
+                        })}
+                        className="w-full accent-amber-400 cursor-pointer h-1"
+                      />
+
+                      <div className="flex justify-between text-[10px]">
+                        <span className="text-stone-400">Ukuran Skala:</span>
+                        <span className="font-mono text-amber-400 font-bold">{activePage.bgPngOverlay.scale ?? 100}%</span>
+                      </div>
+                      <input
+                        type="range"
+                        min={50}
+                        max={160}
+                        step={5}
+                        value={activePage.bgPngOverlay.scale ?? 100}
+                        onChange={(e) => updatePageConfig(activePageIndex, {
+                          bgPngOverlay: {
+                            ...activePage.bgPngOverlay!,
+                            scale: Number(e.target.value)
+                          }
+                        })}
+                        className="w-full accent-amber-400 cursor-pointer h-1"
+                      />
+                    </div>
+                  )}
+
+                  {/* Upload custom PNG Watermark */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPngUploadMode('watermark');
+                      customPngInputRef.current?.click();
+                    }}
+                    className={`w-full py-2 px-3 rounded-xl border border-dashed transition-all flex items-center justify-center gap-1.5 font-bold text-[10px] ${
+                      isLight
+                        ? 'border-amber-400 text-amber-900 bg-amber-100/50 hover:bg-amber-100'
+                        : 'border-gold-400/60 text-gold-300 bg-white/5 hover:bg-white/10'
+                    }`}
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Watermark PNG Sendiri</span>
+                  </button>
                 </div>
               </div>
             )}
@@ -1871,7 +2505,7 @@ export default function EditorPage() {
         )}
 
         {/* =========================================================================
-            CENTER STAGE: CANVA LIVE CANVAS VIEW (WITH DIRECT CLICK-TO-EDIT)
+            CENTER STAGE: STUDIO PRO LIVE CANVAS VIEW (WITH DIRECT CLICK-TO-EDIT)
             ========================================================================= */}
         <div className={`flex-1 flex flex-col relative overflow-hidden transition-colors ${
           isLight ? 'bg-[#F5EFE6]' : 'bg-[#020b0a]'
@@ -1964,25 +2598,56 @@ export default function EditorPage() {
             
             {/* SMARTPHONE CANVAS FRAME */}
             <div 
-              style={{ transform: `scale(${zoomLevel / 100})`, transformOrigin: 'center center' }}
+              style={{ 
+                transform: `scale(${zoomLevel / 100})`, 
+                transformOrigin: 'center center',
+                borderRadius: activePage.containerRadius === 'sm' ? 12 : activePage.containerRadius === 'md' ? 24 : activePage.containerRadius === '2xl' ? 36 : 44
+              }}
               className={`relative shadow-2xl border-4 border-gold-500/50 overflow-hidden flex flex-col transition-all duration-300 ${
                 deviceMode === 'mobile'
-                  ? 'w-[370px] h-[720px] rounded-[44px]'
-                  : 'w-[760px] h-[720px] rounded-[24px]'
+                  ? 'w-[370px] h-[720px]'
+                  : 'w-[760px] h-[720px]'
               }`}
             >
               
               {/* PAGE BACKGROUND LAYER */}
               <div 
                 className={`absolute inset-0 bg-cover bg-center transition-all duration-500 ${
-                  isJawa
+                  activePage.customBgGradient || activePage.customBgColor
+                    ? ''
+                    : isJawa
                     ? 'bg-[#180e09]'
                     : isMinang
                     ? 'bg-[#220508]'
                     : 'bg-[#051817] bg-velvet-texture'
                 }`}
+                style={{
+                  background: activePage.customBgGradient || activePage.customBgColor || undefined
+                }}
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
+
+                {/* Background Watermark / PNG Overlay */}
+                {activePage.bgPngOverlay?.url && (
+                  <div 
+                    className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0"
+                    style={{
+                      opacity: (activePage.bgPngOverlay.opacity ?? 30) / 100,
+                      alignItems: activePage.bgPngOverlay.position === 'top' ? 'flex-start' : activePage.bgPngOverlay.position === 'bottom' ? 'flex-end' : 'center',
+                    }}
+                  >
+                    <img 
+                      src={activePage.bgPngOverlay.url} 
+                      alt="Watermark" 
+                      className="object-contain filter drop-shadow-md"
+                      style={{
+                        transform: `scale(${(activePage.bgPngOverlay.scale ?? 100) / 100})`,
+                        maxWidth: activePage.bgPngOverlay.position === 'full' ? '100%' : '80%',
+                        maxHeight: activePage.bgPngOverlay.position === 'full' ? '100%' : '70%'
+                      }}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* 4-CORNER ROYAL FILIGREE ORNAMENTS & INNER BORDER */}
@@ -1996,7 +2661,13 @@ export default function EditorPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.25 }}
-                  className="relative z-10 w-full h-full flex flex-col p-6 text-center overflow-y-auto scrollbar-none font-sans"
+                  className={`relative z-10 w-full h-full flex flex-col text-center overflow-y-auto scrollbar-none font-sans ${
+                    activePage.containerPadding === 'compact'
+                      ? 'p-3'
+                      : activePage.containerPadding === 'relaxed'
+                      ? 'p-8'
+                      : 'p-6'
+                  }`}
                 >
                   
                   {/* ====================================================
@@ -2421,11 +3092,11 @@ export default function EditorPage() {
                   )}
 
                   {/* ====================================================
-                      RENDER ACTIVE PAGE CUSTOM ELEMENTS (CANVA SYSTEM)
+                      RENDER ACTIVE PAGE CUSTOM ELEMENTS (STUDIO SYSTEM)
                       ==================================================== */}
                   {activePage.customElements && activePage.customElements.length > 0 && (
-                    <div className="w-full my-3 space-y-2 pt-2 border-t border-dashed border-gold-400/30">
-                      {activePage.customElements.map((el) => (
+                    <div className="w-full my-3 space-y-2.5 pt-2 border-t border-dashed border-gold-400/30">
+                      {activePage.customElements.map((el, elIdx) => (
                         <div 
                           key={el.id}
                           onClick={(e) => {
@@ -2433,40 +3104,148 @@ export default function EditorPage() {
                             setSelectedElementId(el.id);
                             setActiveTab('elements');
                           }}
-                          className={`group relative p-2 rounded-xl transition-all cursor-pointer ${
+                          className={`group relative p-1.5 rounded-xl transition-all cursor-pointer ${
                             selectedElementId === el.id
                               ? 'ring-2 ring-amber-400 bg-amber-400/20'
                               : 'hover:ring-1 hover:ring-amber-400/50 hover:bg-white/5'
                           }`}
                         >
+                          {/* Heading */}
                           {el.type === 'heading' && (
-                            <h2 className={`font-serif font-bold text-xl text-gold-bright leading-snug ${
-                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-                            }`}>
+                            <h2 
+                              style={{
+                                fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                                color: el.color || undefined,
+                                fontWeight: el.fontWeight || 'bold',
+                                fontStyle: el.fontStyle || 'normal',
+                              }}
+                              className={`font-serif leading-snug ${
+                                !el.color ? (isLight ? 'text-stone-900' : 'text-gold-bright') : ''
+                              } ${
+                                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                              }`}
+                            >
                               {el.content}
                             </h2>
                           )}
+
+                          {/* Subheading */}
                           {el.type === 'subheading' && (
-                            <p className={`text-xs uppercase tracking-wider font-bold text-gold-300 ${
-                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-                            }`}>
+                            <p 
+                              style={{
+                                fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                                color: el.color || undefined,
+                                fontWeight: el.fontWeight || 'semibold',
+                                fontStyle: el.fontStyle || 'normal',
+                              }}
+                              className={`uppercase tracking-wider ${
+                                !el.color ? (isLight ? 'text-amber-800' : 'text-gold-300') : ''
+                              } ${
+                                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                              }`}
+                            >
                               {el.content}
                             </p>
                           )}
+
+                          {/* Paragraph */}
                           {el.type === 'paragraph' && (
-                            <p className={`text-xs text-stone-200 leading-relaxed ${
-                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-                            }`}>
+                            <p 
+                              style={{
+                                fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                                color: el.color || undefined,
+                                fontWeight: el.fontWeight || 'normal',
+                                fontStyle: el.fontStyle || 'normal',
+                              }}
+                              className={`leading-relaxed ${
+                                !el.color ? (isLight ? 'text-stone-700' : 'text-stone-200') : ''
+                              } ${
+                                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                              }`}
+                            >
                               {el.content}
                             </p>
                           )}
+
+                          {/* Quote */}
                           {el.type === 'quote' && (
-                            <blockquote className={`italic text-xs text-gold-200/90 px-3 py-1.5 border-l-2 border-gold-400/60 bg-black/20 rounded-r-lg ${
-                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
-                            }`}>
+                            <blockquote 
+                              style={{
+                                fontSize: el.fontSize ? `${el.fontSize}px` : undefined,
+                                color: el.color || undefined,
+                                fontWeight: el.fontWeight || 'normal',
+                              }}
+                              className={`italic px-3 py-1.5 border-l-2 border-gold-400/60 bg-black/20 rounded-r-lg ${
+                                !el.color ? (isLight ? 'text-stone-800' : 'text-gold-200/90') : ''
+                              } ${
+                                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                              }`}
+                            >
                               "{el.content}"
                             </blockquote>
                           )}
+
+                          {/* Divider Element */}
+                          {el.type === 'divider' && (
+                            <div className="w-full py-1">
+                              {el.dividerStyle === 'batik' && (
+                                <div className="flex justify-center">
+                                  <BatikParangDivider isLight={isLight} className="w-48 h-3 text-amber-400" />
+                                </div>
+                              )}
+                              {el.dividerStyle === 'minang' && (
+                                <div className="flex justify-center">
+                                  <MinangUkiranDivider isLight={isLight} className="w-48 h-3 text-amber-400" />
+                                </div>
+                              )}
+                              {el.dividerStyle === 'melati' && (
+                                <div className="flex justify-center">
+                                  <RonceMelatiDivider isLight={isLight} className="w-48 h-3 text-amber-400" />
+                                </div>
+                              )}
+                              {el.dividerStyle === 'dashed' && (
+                                <div className="w-3/4 border-b border-dashed border-amber-400/80 mx-auto my-1.5" />
+                              )}
+                              {(!el.dividerStyle || el.dividerStyle === 'gold_hairline') && (
+                                <div className="w-full flex items-center justify-center my-1.5">
+                                  <div className="h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent w-3/4 flex items-center justify-center relative">
+                                    <span className="w-2 h-2 rotate-45 bg-amber-400 shadow-gold-sm" />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Spacer Element */}
+                          {el.type === 'spacer' && (
+                            <div 
+                              style={{ height: `${el.spacerHeight || 24}px` }}
+                              className="w-full group/sp relative flex items-center justify-center hover:bg-amber-400/10 rounded-lg transition-colors border border-dashed border-transparent hover:border-amber-400/50"
+                            >
+                              <span className="opacity-0 group-hover/sp:opacity-100 text-[9px] font-mono font-bold text-amber-400 bg-black/90 px-2 py-0.5 rounded-full pointer-events-none transition-opacity">
+                                ↕ Spacer ({el.spacerHeight || 24}px)
+                              </span>
+                            </div>
+                          )}
+
+                          {/* PNG Overlay Element */}
+                          {el.type === 'png_overlay' && (
+                            <div 
+                              className={`w-full flex ${
+                                el.align === 'left' ? 'justify-start' : el.align === 'right' ? 'justify-end' : 'justify-center'
+                              } py-1`}
+                              style={{ opacity: (el.pngOpacity ?? 90) / 100 }}
+                            >
+                              <img 
+                                src={el.pngUrl || el.content} 
+                                alt="PNG Element" 
+                                className="object-contain max-h-44 filter drop-shadow-md"
+                                style={{ transform: `scale(${(el.pngScale ?? 100) / 100})` }}
+                              />
+                            </div>
+                          )}
+
+                          {/* Cultural Ornament */}
                           {el.type === 'ornament' && (
                             <div className={`text-xl ${
                               el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
@@ -2478,6 +3257,8 @@ export default function EditorPage() {
                               {el.ornamentType === 'divider' && <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto my-1" />}
                             </div>
                           )}
+
+                          {/* Photo */}
                           {el.type === 'photo' && (
                             <div className={`flex ${
                               el.align === 'left' ? 'justify-start' : el.align === 'right' ? 'justify-end' : 'justify-center'
@@ -2487,7 +3268,72 @@ export default function EditorPage() {
                           )}
 
                           {/* Floating Quick Action Mini Bar */}
-                          <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3.5 right-2 flex items-center gap-1 bg-stone-900/95 border border-gold-400/70 rounded-lg px-1.5 py-0.5 text-[10px] shadow-xl z-20">
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-4 right-1 flex items-center gap-1 bg-stone-900/95 border border-gold-400/80 rounded-xl px-2 py-1 text-[10px] shadow-2xl z-30 backdrop-blur-md">
+                            {/* Move Up */}
+                            <button 
+                              type="button"
+                              disabled={elIdx === 0}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                moveCustomElement(activePageIndex, el.id, 'up');
+                              }}
+                              className="p-1 hover:text-amber-300 disabled:opacity-30 disabled:cursor-not-allowed text-stone-300"
+                              title="Geser Ke Atas"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+
+                            {/* Move Down */}
+                            <button 
+                              type="button"
+                              disabled={elIdx === (activePage.customElements?.length || 0) - 1}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                moveCustomElement(activePageIndex, el.id, 'down');
+                              }}
+                              className="p-1 hover:text-amber-300 disabled:opacity-30 disabled:cursor-not-allowed text-stone-300"
+                              title="Geser Ke Bawah"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+
+                            <div className="w-px h-3 bg-white/20 mx-0.5" />
+
+                            {/* Font size adjustments if text */}
+                            {(el.type === 'heading' || el.type === 'subheading' || el.type === 'paragraph' || el.type === 'quote') && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const currentSize = el.fontSize || (el.type === 'heading' ? 24 : el.type === 'subheading' ? 14 : 12);
+                                    updateCustomElement(activePageIndex, el.id, { fontSize: Math.max(10, currentSize - 2) });
+                                  }}
+                                  className="px-1 py-0.5 hover:text-amber-300 font-bold text-stone-300 text-[10px]"
+                                  title="Kecilkan Font (A-)"
+                                >
+                                  A-
+                                </button>
+                                <span className="text-[9px] text-amber-400 font-mono font-bold">
+                                  {el.fontSize || (el.type === 'heading' ? 24 : el.type === 'subheading' ? 14 : 12)}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    const currentSize = el.fontSize || (el.type === 'heading' ? 24 : el.type === 'subheading' ? 14 : 12);
+                                    updateCustomElement(activePageIndex, el.id, { fontSize: Math.min(56, currentSize + 2) });
+                                  }}
+                                  className="px-1 py-0.5 hover:text-amber-300 font-bold text-stone-300 text-[10px]"
+                                  title="Besarkan Font (A+)"
+                                >
+                                  A+
+                                </button>
+                                <div className="w-px h-3 bg-white/20 mx-0.5" />
+                              </>
+                            )}
+
+                            {/* Alignment */}
                             <button 
                               type="button"
                               onClick={(e) => {
@@ -2521,7 +3367,10 @@ export default function EditorPage() {
                             >
                               <AlignRight className="w-3 h-3" />
                             </button>
+
                             <div className="w-px h-3 bg-white/20 mx-0.5" />
+
+                            {/* Delete */}
                             <button 
                               type="button"
                               onClick={(e) => {
@@ -2547,7 +3396,7 @@ export default function EditorPage() {
           </div>
 
           {/* =========================================================================
-              CANVA BOTTOM FILMSTRIP (PAGES THUMBNAILS BAR)
+              STUDIO PRO BOTTOM FILMSTRIP (PAGES THUMBNAILS BAR)
               ========================================================================= */}
           <div className={`h-20 border-t flex items-center px-4 overflow-x-auto gap-3 flex-shrink-0 z-20 transition-colors ${
             isLight ? 'bg-white/95 border-[#E5DAC6]' : 'bg-[#031110] border-gold-subtle'

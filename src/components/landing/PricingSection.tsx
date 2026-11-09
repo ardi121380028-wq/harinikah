@@ -163,7 +163,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
             <div>
               <span className={`text-xs font-bold uppercase tracking-wider ${isLight ? 'text-amber-800' : 'text-gold-300'}`}>Digital Premium</span>
               <h4 className={`text-xl font-bold mt-1 ${isLight ? 'text-stone-900' : 'text-white'}`}>Paket Premium</h4>
-              <p className={`text-xs mt-1 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>Fitur lengkap, bebas personalisasi Canva</p>
+              <p className={`text-xs mt-1 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>Fitur lengkap, bebas personalisasi di Studio Editor</p>
 
               <div className="mt-6 mb-6">
                 <div className="flex items-center gap-2 mb-1">
@@ -197,7 +197,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>Akses Canva Editor Multi-Halaman</span>
+                  <span>Akses Studio Editor Multi-Halaman</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Check className="w-4 h-4 text-amber-500 flex-shrink-0" />

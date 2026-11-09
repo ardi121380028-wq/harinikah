@@ -54,7 +54,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultMo
               Selamat Datang di HariNikah!
             </h3>
             <p className={`text-xs leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-              Akunmu berhasil dibuat. Kamu sekarang diarahkan ke {mode === 'diy' ? 'Canva Editor Multi-Page' : 'Formulir Terima Beres'}.
+              Akunmu berhasil dibuat. Kamu sekarang diarahkan ke {mode === 'diy' ? 'Studio Editor Multi-Page' : 'Formulir Terima Beres'}.
             </p>
             <div className={`p-3 rounded-2xl border text-xs font-semibold ${isLight ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-gold-950/80 border-gold-subtle text-gold-300'
               }`}>
@@ -122,8 +122,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, defaultMo
                         : 'border-white/10 bg-black/30 text-stone-400 hover:bg-white/5'
                       }`}
                   >
-                    <p className="text-xs font-bold">Mode Canva (DIY)</p>
-                    <p className={`text-[10px] mt-0.5 ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>Bikin sendiri per-halaman</p>
+                    <p className="text-xs font-bold">Mode Mandiri (DIY)</p>
+                    <p className={`text-[10px] mt-0.5 ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>Bikin sendiri per-halaman di Studio</p>
                   </button>
 
                   <button
