@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { PageData, BackgroundTheme, PageType, CulturalTemplate, ThemeMode } from '../types';
+import type { PageData, BackgroundTheme, PageType, CulturalTemplate, ThemeMode, CustomElement } from '../types';
 import { INITIAL_PAGES, TEMPLATE_PRESETS } from '../constants/initialData';
 
 interface InvitationContextType {
@@ -10,6 +10,9 @@ interface InvitationContextType {
   setActivePageIndex: (idx: number) => void;
   updatePageData: (pageIndex: number, key: string, value: any) => void;
   updatePageTheme: (pageIndex: number, theme: BackgroundTheme) => void;
+  addCustomElement: (pageIndex: number, element: Omit<CustomElement, 'id'>) => void;
+  updateCustomElement: (pageIndex: number, elementId: string, updates: Partial<CustomElement>) => void;
+  deleteCustomElement: (pageIndex: number, elementId: string) => void;
   addPage: (title: string, type: PageType, bgTheme?: BackgroundTheme) => void;
   duplicatePage: (pageIndex: number) => void;
   deletePage: (pageIndex: number) => void;
@@ -120,6 +123,61 @@ export const InvitationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
       copy[pageIndex] = {
         ...copy[pageIndex],
         bgTheme: theme
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
+      } catch (err) {}
+      return copy;
+    });
+  };
+
+  // Add a custom element to a page
+  const addCustomElement = (pageIndex: number, element: Omit<CustomElement, 'id'>) => {
+    setPages(prev => {
+      const copy = [...prev];
+      if (!copy[pageIndex]) return prev;
+      const newEl: CustomElement = {
+        ...element,
+        id: 'el_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
+      };
+      const existing = copy[pageIndex].customElements || [];
+      copy[pageIndex] = {
+        ...copy[pageIndex],
+        customElements: [...existing, newEl]
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
+      } catch (err) {}
+      return copy;
+    });
+  };
+
+  // Update a custom element
+  const updateCustomElement = (pageIndex: number, elementId: string, updates: Partial<CustomElement>) => {
+    setPages(prev => {
+      const copy = [...prev];
+      if (!copy[pageIndex] || !copy[pageIndex].customElements) return prev;
+      copy[pageIndex] = {
+        ...copy[pageIndex],
+        customElements: copy[pageIndex].customElements.map(el =>
+          el.id === elementId ? { ...el, ...updates } : el
+        )
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
+      } catch (err) {}
+      return copy;
+    });
+  };
+
+  // Delete a custom element
+  const deleteCustomElement = (pageIndex: number, elementId: string) => {
+    setPages(prev => {
+      const copy = [...prev];
+      if (!copy[pageIndex] || !copy[pageIndex].customElements) return prev;
+      copy[pageIndex] = {
+        ...copy[pageIndex],
+        customElements: copy[pageIndex].customElements.filter(el => el.id !== elementId)
       };
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ pages: copy, slug, title, currentTemplate }));
@@ -259,6 +317,9 @@ export const InvitationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
         setActivePageIndex,
         updatePageData,
         updatePageTheme,
+        addCustomElement,
+        updateCustomElement,
+        deleteCustomElement,
         addPage,
         duplicatePage,
         deletePage,

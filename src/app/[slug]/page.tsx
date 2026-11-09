@@ -120,14 +120,27 @@ export default function GuestInvitationPage() {
     let currentTpl: CulturalTemplate = themeParam || 'modern';
 
     try {
-      const saved = localStorage.getItem('harinikah_invitation_draft');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.currentTemplate && !themeParam) {
-          currentTpl = parsed.currentTemplate;
+      // Check published invitation first, then draft
+      const liveKey = `harinikah_live_${params?.slug}`;
+      const savedLive = localStorage.getItem(liveKey);
+      if (savedLive) {
+        const parsedLive = JSON.parse(savedLive);
+        if (parsedLive.currentTemplate && !themeParam) {
+          currentTpl = parsedLive.currentTemplate;
         }
-        if (parsed.pages) {
-          setInvitationData(parsed);
+        if (parsedLive.pages) {
+          setInvitationData(parsedLive);
+        }
+      } else {
+        const saved = localStorage.getItem('harinikah_invitation_draft');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.currentTemplate && !themeParam) {
+            currentTpl = parsed.currentTemplate;
+          }
+          if (parsed.pages) {
+            setInvitationData(parsed);
+          }
         }
       }
     } catch (e) {
@@ -229,6 +242,66 @@ export default function GuestInvitationPage() {
   const eventsData = pages[2]?.data || {};
   const giftData = pages[4]?.data || {};
 
+  // Render any custom elements added by user via the Canva Elements tool
+  const renderSectionCustomElements = (pageIdx: number) => {
+    const elements = pages[pageIdx]?.customElements;
+    if (!elements || elements.length === 0) return null;
+    return (
+      <div className="w-full my-4 space-y-3">
+        {elements.map((el: any) => (
+          <div key={el.id} className="p-1">
+            {el.type === 'heading' && (
+              <h2 className={`font-serif font-bold text-2xl text-gold-bright leading-snug ${
+                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+              }`}>
+                {el.content}
+              </h2>
+            )}
+            {el.type === 'subheading' && (
+              <p className={`text-xs uppercase tracking-wider font-bold text-gold-300 ${
+                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+              }`}>
+                {el.content}
+              </p>
+            )}
+            {el.type === 'paragraph' && (
+              <p className={`text-xs text-stone-200 leading-relaxed max-w-md mx-auto ${
+                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+              }`}>
+                {el.content}
+              </p>
+            )}
+            {el.type === 'quote' && (
+              <blockquote className={`italic text-xs text-gold-200/90 max-w-sm mx-auto px-4 py-2 border-l-2 border-gold-400/60 bg-black/20 rounded-r-xl ${
+                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+              }`}>
+                "{el.content}"
+              </blockquote>
+            )}
+            {el.type === 'ornament' && (
+              <div className={`text-2xl ${
+                el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+              }`}>
+                {el.ornamentType === 'leaf' && '🌿 ✨ 🌿'}
+                {el.ornamentType === 'ring' && '💍'}
+                {el.ornamentType === 'sparkle' && '✨ ⚜️ ✨'}
+                {el.ornamentType === 'dove' && '🕊️'}
+                {el.ornamentType === 'divider' && <div className="w-28 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto my-2" />}
+              </div>
+            )}
+            {el.type === 'photo' && (
+              <div className={`flex ${
+                el.align === 'left' ? 'justify-start' : el.align === 'right' ? 'justify-end' : 'justify-center'
+              }`}>
+                <img src={el.content} alt="Custom" className="max-w-[280px] max-h-[200px] rounded-2xl object-cover border-2 border-gold-400/60 shadow-xl" />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   // Cultural theme styling variables
   const isJawa = activeTemplate === 'jawa';
   const isMinang = activeTemplate === 'minang';
@@ -313,86 +386,137 @@ export default function GuestInvitationPage() {
   return (
     <div className={`min-h-screen ${themeClasses.bgMain} ${isGuestLight ? 'text-stone-900' : 'text-stone-100'} font-sans selection:bg-[#dfb051] selection:text-[#0c2b29] relative overflow-x-hidden transition-colors duration-300`}>
       
-      {/* 1. ENVELOPE OPENING FULLSCREEN COVER MODAL */}
+      {/* 1. ENVELOPE OPENING FULLSCREEN COVER MODAL (Matching Image 1 Phone Bezel) */}
       <AnimatePresence>
         {!isOpened && (
           <motion.div
             initial={{ opacity: 1 }}
             exit={{ opacity: 0, y: -90, transition: { duration: 0.85, ease: 'easeInOut' } }}
-            className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${themeClasses.bgMain}`}
+            className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 ${themeClasses.bgMain} overflow-y-auto`}
           >
             {/* Textured Cultural Overlay */}
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
+            <div className="absolute inset-0 bg-black/75 backdrop-blur-md" />
 
-            {/* Cultural Envelope Card */}
+            {/* Smartphone Device Frame Matching Image 1 Exactly */}
             <motion.div
-              initial={{ scale: 0.88, opacity: 0, y: 25 }}
+              initial={{ scale: 0.92, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className={`relative z-10 max-w-sm w-full ${themeClasses.cardBg} border rounded-[36px] p-6 sm:p-8 text-center shadow-2xl backdrop-blur-xl`}
+              transition={{ duration: 0.5 }}
+              className={`relative z-10 w-full max-w-[340px] sm:max-w-[360px] min-h-[660px] max-h-[92vh] rounded-[48px] p-5 text-center shadow-2xl border-2 border-stone-800/80 flex flex-col justify-between overflow-hidden my-auto ${
+                isBotanical
+                  ? 'bg-gradient-to-b from-[#253629] via-[#354838] to-[#1C261F] text-stone-100 ring-2 ring-[#7A937D]/30'
+                  : isJawa
+                  ? 'bg-gradient-to-b from-[#2a170d] via-[#1c0e07] to-[#120803] text-stone-100 ring-2 ring-[#c6923c]/30'
+                  : isMinang
+                  ? 'bg-gradient-to-b from-[#3a080e] via-[#220508] to-[#150204] text-stone-100 ring-2 ring-[#e0b042]/30'
+                  : 'bg-gradient-to-b from-[#0a2f2b] via-[#051817] to-[#020b0a] text-stone-100 ring-2 ring-gold-400/30'
+              }`}
             >
-              {/* Cultural Wax Seal Badge */}
-              <div className="w-20 h-20 mx-auto -mt-16 mb-4 rounded-full bg-gradient-to-b from-amber-300 via-gold-400 to-amber-600 p-1 shadow-2xl flex items-center justify-center">
-                <div className="w-full h-full rounded-full bg-[#150a06] flex items-center justify-center border border-gold-300">
-                  {isJawa ? (
-                    <GununganWayang className="w-10 h-10 object-contain text-gold-300" />
-                  ) : isMinang ? (
-                    <SuntiangMinang className="w-10 h-8 object-contain text-gold-300" />
-                  ) : (
-                    <img src="/assets/favicon-h.png" alt="HariNikah Seal" className="w-12 h-12 rounded-full object-contain" />
-                  )}
-                </div>
+              {/* Dynamic Island Notch Top */}
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-3.5 bg-black rounded-full z-20 flex items-center justify-center gap-1.5 opacity-90">
+                <div className="w-1.5 h-1.5 rounded-full bg-stone-800" />
+                <div className="w-2 h-2 rounded-full bg-stone-900 border border-stone-800" />
               </div>
 
-              {/* Subheading with Cultural Title */}
-              <p className={`text-[10px] uppercase font-bold tracking-[0.25em] ${themeClasses.goldAccent} mb-1`}>
-                {coverData.subheading || 'THE WEDDING CELEBRATION OF'}
-              </p>
+              {/* 4 Corner Ornaments */}
+              <div className="absolute top-2 left-2 pointer-events-none">
+                <BotanicalCornerOrnament position="top-left" className="w-12 h-12 opacity-80" />
+              </div>
+              <div className="absolute top-2 right-2 pointer-events-none">
+                <BotanicalCornerOrnament position="top-right" className="w-12 h-12 opacity-80" />
+              </div>
+              <div className="absolute bottom-2 left-2 pointer-events-none">
+                <BotanicalCornerOrnament position="bottom-left" className="w-12 h-12 opacity-80" />
+              </div>
+              <div className="absolute bottom-2 right-2 pointer-events-none">
+                <BotanicalCornerOrnament position="bottom-right" className="w-12 h-12 opacity-80" />
+              </div>
 
-              {/* ONLY H1 USES SERIF */}
-              <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gold-bright tracking-tight leading-snug my-2">
-                {coverData.groomName || 'Dimas'} <br />
-                <span className="font-sans font-light text-2xl text-amber-200">&</span> <br />
-                {coverData.brideName || 'Clarissa'}
-              </h1>
-
-              {/* Divider Ornament */}
-              <div className="my-3">
-                {isJawa ? (
-                  <BatikParangDivider className="mx-auto" />
+              {/* Top Badge (Green Leaf circle with leaf icon in Image 1) */}
+              <div className="pt-5 flex flex-col items-center">
+                {isBotanical ? (
+                  <>
+                    <div className="w-14 h-14 rounded-full border-2 border-[#8DA390] bg-[#3B4E3F] p-1 flex items-center justify-center shadow-lg text-2xl">
+                      🌿
+                    </div>
+                    <span className="text-[9px] uppercase tracking-[0.25em] text-[#A2B5A5] font-extrabold mt-1">
+                      Green Leaf
+                    </span>
+                  </>
+                ) : isJawa ? (
+                  <GununganWayang className="w-12 h-16 object-contain text-gold-300 drop-shadow-md" />
                 ) : isMinang ? (
-                  <MinangUkiranDivider className="mx-auto" />
+                  <SuntiangMinang className="w-16 h-12 object-contain text-gold-300 drop-shadow-md" />
                 ) : (
-                  <div className="w-16 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
+                  <div className="w-14 h-14 rounded-full border border-gold-400 p-1 flex items-center justify-center bg-black/40">
+                    <img src="/assets/favicon-h.png" alt="HariNikah Seal" className="w-full h-full object-contain rounded-full" />
+                  </div>
                 )}
               </div>
 
-              <p className="text-xs text-stone-300 font-medium">
-                {coverData.dateText || 'Sabtu, 18 Juli 2026'}
-              </p>
+              {/* Center Content with BotanicalArchFrame (Matching Image 1) */}
+              <div className="my-auto py-2 space-y-2">
+                <p className="text-[9px] uppercase font-bold tracking-[0.22em] text-[#C9A050]">
+                  {coverData.subheading || (isBotanical ? 'THE WEDDING CELEBRATION OF' : 'THE WEDDING CELEBRATION OF')}
+                </p>
 
-              {/* Guest Name Card */}
-              <div className="my-5 p-4 rounded-2xl bg-black/40 border border-white/10 shadow-inner">
-                <p className="text-[10px] text-stone-400 uppercase tracking-wider font-semibold">Kepada Yth. Tamu Undangan:</p>
-                <p className={`text-base font-bold ${themeClasses.goldAccent} mt-1`}>{guestName}</p>
-                <p className="text-[10px] text-stone-400 italic mt-1">Mohon maaf bila ada kesalahan penulisan nama/gelar</p>
+                {isBotanical ? (
+                  <BotanicalArchFrame className="py-6 px-4 my-2">
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-wide">
+                      {coverData.groomName || 'Rian'}
+                    </h1>
+                    <span className="text-xl font-serif italic text-amber-200 block my-0.5">&</span>
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-wide">
+                      {coverData.brideName || 'Irna'}
+                    </h1>
+                  </BotanicalArchFrame>
+                ) : (
+                  <div className="p-4 rounded-3xl bg-black/40 border border-white/10 my-2">
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gold-bright tracking-tight leading-snug">
+                      {coverData.groomName || 'Dimas'} <br />
+                      <span className="font-sans font-light text-2xl text-amber-200">&</span> <br />
+                      {coverData.brideName || 'Clarissa'}
+                    </h1>
+                  </div>
+                )}
+
+                {/* Leaf divider with 🌿 */}
+                <div className="flex items-center justify-center gap-2 text-xs text-[#8DA390] py-0.5">
+                  <span>🌿</span>
+                  <div className="w-12 h-px bg-[#8DA390]/50" />
+                  <span>🌿</span>
+                </div>
+
+                <p className="text-xs font-semibold text-stone-200">
+                  {coverData.dateText || 'Minggu, 27 April 2025'}
+                </p>
+                <p className="text-[10px] text-stone-300 max-w-[240px] mx-auto leading-relaxed">
+                  {coverData.venueCity || 'Pine Hill Garden Pavilion, Bandar Lampung'}
+                </p>
               </div>
 
-              {/* Open Envelope Button with Pulse Animation */}
-              <motion.button
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                onClick={handleOpenEnvelope}
-                className={`w-full py-3.5 rounded-full bg-gradient-to-r ${themeClasses.btnGrad} text-black font-extrabold text-xs uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 group transition-all`}
-              >
-                <Heart className="w-4 h-4 fill-black group-hover:scale-125 transition-transform" />
-                <span>{coverData.buttonText || 'Buka Undangan'}</span>
-              </motion.button>
+              {/* Guest Box & Open Button (Matching Image 1) */}
+              <div className="space-y-2.5 pb-2 z-10">
+                <div className="bg-black/60 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 text-center shadow-inner">
+                  <p className="text-[8px] text-stone-400 uppercase tracking-widest font-semibold">
+                    Kepada Yth. Tamu Undangan:
+                  </p>
+                  <p className={`text-xs font-bold ${themeClasses.goldAccent} mt-0.5`}>
+                    {guestName}
+                  </p>
+                </div>
 
-              <div className="mt-4 flex items-center justify-center gap-1.5 text-[9px] text-stone-400">
-                <Sparkles className="w-3 h-3 text-gold-400" />
-                <span>{isJawa ? 'Alunan Gamelan Kasunanan' : isMinang ? 'Alunan Saluang Ranah Minang' : 'Alunan Musik Orkestra'}</span>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleOpenEnvelope}
+                  className={`w-full py-3 rounded-full bg-gradient-to-r ${themeClasses.btnGrad} text-stone-950 font-black text-xs uppercase tracking-wider shadow-xl flex items-center justify-center gap-1.5 cursor-pointer`}
+                >
+                  <Heart className="w-3.5 h-3.5 fill-current" />
+                  <span>{coverData.buttonText || 'Buka Undangan'}</span>
+                </motion.button>
               </div>
+
             </motion.div>
           </motion.div>
         )}
@@ -515,6 +639,9 @@ export default function GuestInvitationPage() {
                   "{coupleData.introQuote || 'Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan...'}"
                 </p>
               </div>
+
+              {/* Custom Elements from Canva Editor (Page 0) */}
+              {renderSectionCustomElements(0)}
             </div>
           </section>
 
@@ -578,6 +705,9 @@ export default function GuestInvitationPage() {
                 </p>
               </div>
             </div>
+
+            {/* Custom Elements from Canva Editor (Page 1) */}
+            {renderSectionCustomElements(1)}
           </section>
 
           {/* SECTION 3: COUNTDOWN TIMER */}
@@ -695,6 +825,9 @@ export default function GuestInvitationPage() {
                   <span>Apple / Outlook (.ics)</span>
                 </button>
               </div>
+
+              {/* Custom Elements from Canva Editor (Page 2 - Acara) */}
+              {renderSectionCustomElements(2)}
             </div>
           </section>
 
@@ -746,6 +879,9 @@ export default function GuestInvitationPage() {
                 </div>
               ))}
             </div>
+
+            {/* Custom Elements from Canva Editor (Page 3 - Story/Galeri) */}
+            {renderSectionCustomElements(3)}
           </section>
 
           {/* SECTION 6: AMPLOP DIGITAL */}
@@ -812,6 +948,9 @@ export default function GuestInvitationPage() {
               <QrCode className="w-4 h-4 text-gold-400" />
               <span>Bayar Cepat via QRIS (Semua E-Wallet)</span>
             </button>
+
+            {/* Custom Elements from Canva Editor (Page 4 - Amplop) */}
+            {renderSectionCustomElements(4)}
           </section>
 
           {/* SECTION 7: RSVP & BUKU TAMU */}
@@ -909,7 +1048,20 @@ export default function GuestInvitationPage() {
                 ))}
               </div>
             </div>
+
+            {/* Custom Elements from Canva Editor (Page 5 - RSVP) */}
+            {renderSectionCustomElements(5)}
           </section>
+
+          {/* RENDER ANY EXTRA PAGES ADDED BY USER IN EDITOR */}
+          {pages.slice(6).map((extraPage: any, extraIdx: number) => (
+            <section key={extraPage.id || extraIdx} className={`px-6 py-16 space-y-6 border-b ${themeClasses.sectionBorder} text-center`}>
+              <h2 className="text-2xl font-bold font-serif text-gold-bright">
+                {extraPage.title}
+              </h2>
+              {renderSectionCustomElements(6 + extraIdx)}
+            </section>
+          ))}
 
           {/* FOOTER & WATERMARK (Matching Screenshot 4) */}
           <footer className="px-6 py-12 text-center bg-black/50 text-xs text-stone-400 space-y-5">

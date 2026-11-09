@@ -8,7 +8,7 @@ export const ShowroomSection: React.FC = () => {
   const { themeMode } = useInvitation();
   const isLight = themeMode === 'light';
 
-  const [city, setCity] = useState<'jakarta' | 'bandung'>('jakarta');
+  const [city, setCity] = useState<'pahoman' | 'raden_intan'>('pahoman');
   const [submitted, setSubmitted] = useState(false);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -112,10 +112,10 @@ export const ShowroomSection: React.FC = () => {
                 <MapPin className={`w-5 h-5 flex-shrink-0 mt-1 ${isLight ? 'text-amber-700' : 'text-gold-400'}`} />
                 <div>
                   <h4 className={`text-xs font-bold ${isLight ? 'text-stone-800' : 'text-white'}`}>
-                    Showroom Jakarta Selatan
+                    Galeri Showroom Pahoman — Bandar Lampung
                   </h4>
                   <p className={`text-xs mt-0.5 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-                    Jl. Senopati No. 45, Kebayoran Baru, Jakarta Selatan (Buka Setiap Hari: 10.00 - 19.00 WIB)
+                    Jl. Gatot Subroto No. 88, Pahoman, Teluk Betung, Kota Bandar Lampung (Buka Setiap Hari: 09.00 - 18.00 WIB)
                   </p>
                 </div>
               </div>
@@ -128,10 +128,10 @@ export const ShowroomSection: React.FC = () => {
                 <MapPin className={`w-5 h-5 flex-shrink-0 mt-1 ${isLight ? 'text-amber-700' : 'text-gold-400'}`} />
                 <div>
                   <h4 className={`text-xs font-bold ${isLight ? 'text-stone-800' : 'text-white'}`}>
-                    Showroom Bandung
+                    Studio Konsultasi Raden Intan — Bandar Lampung
                   </h4>
                   <p className={`text-xs mt-0.5 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-                    Jl. R.E. Martadinata (Riau) No. 112, Bandung (Buka Selasa - Minggu: 10.00 - 18.00 WIB)
+                    Jl. Raden Intan No. 45, Enggal, Kota Bandar Lampung (Buka Selasa - Minggu: 10.00 - 19.00 WIB)
                   </p>
                 </div>
               </div>
@@ -185,29 +185,29 @@ export const ShowroomSection: React.FC = () => {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button"
-                      onClick={() => setCity('jakarta')}
+                      onClick={() => setCity('pahoman')}
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
-                        city === 'jakarta'
+                        city === 'pahoman'
                           ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black border-gold-400 shadow-gold-sm'
                           : isLight
                           ? 'bg-[#F9F6F0] text-stone-700 border-amber-200'
                           : 'bg-black/30 text-stone-300 border-white/10'
                       }`}
                     >
-                      Jakarta Selatan
+                      Pahoman (Teluk Betung)
                     </button>
                     <button
                       type="button"
-                      onClick={() => setCity('bandung')}
+                      onClick={() => setCity('raden_intan')}
                       className={`py-2 px-3 rounded-xl text-xs font-bold border transition-all ${
-                        city === 'bandung'
+                        city === 'raden_intan'
                           ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black border-gold-400 shadow-gold-sm'
                           : isLight
                           ? 'bg-[#F9F6F0] text-stone-700 border-amber-200'
                           : 'bg-black/30 text-stone-300 border-white/10'
                       }`}
                     >
-                      Bandung (Riau)
+                      Raden Intan (Enggal)
                     </button>
                   </div>
                 </div>

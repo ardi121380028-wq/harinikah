@@ -16,7 +16,7 @@ export const MODERN_EMERALD_PAGES: PageData[] = [
       groomName: 'Dimas',
       brideName: 'Clarissa',
       dateText: 'Sabtu, 18 Juli 2026',
-      venueCity: 'The Glass House Ballroom, Senopati, Jakarta',
+      venueCity: 'Grand Mercure Ballroom, Bandar Lampung',
       buttonText: 'Buka Undangan'
     }
   },
@@ -49,11 +49,11 @@ export const MODERN_EMERALD_PAGES: PageData[] = [
       akadTitle: 'Akad Nikah',
       akadDate: 'Sabtu, 18 Juli 2026',
       akadTime: '08.00 - 10.00 WIB',
-      akadPlace: 'Masjid Agung Al-Azhar, Jakarta Selatan',
+      akadPlace: 'Masjid Agung Al-Furqon, Bandar Lampung',
       resepsiTitle: 'Resepsi Pernikahan',
       resepsiDate: 'Sabtu, 18 Juli 2026',
       resepsiTime: '11.00 - 14.00 WIB',
-      resepsiPlace: 'The Glass House Ballroom, Senopati',
+      resepsiPlace: 'Grand Ballroom Grand Mercure, Jl. Raden Intan, Bandar Lampung',
       mapsUrl: 'https://maps.google.com'
     }
   },
@@ -88,7 +88,7 @@ export const MODERN_EMERALD_PAGES: PageData[] = [
       accNumber2: '1370 0098 7654',
       accHolder2: 'CLARISSA PUTRI',
       qrisActive: true,
-      giftAddress: 'Jl. Senopati No. 45, Kebayoran Baru, Jakarta Selatan (Penerima: Dimas & Clarissa)'
+      giftAddress: 'Jl. Gatot Subroto No. 88, Pahoman, Bandar Lampung (Penerima: Dimas & Clarissa)'
     }
   },
   {
@@ -329,7 +329,7 @@ export const BOTANICAL_SAGE_PAGES: PageData[] = [
       groomName: 'Rian',
       brideName: 'Irna',
       dateText: 'Minggu, 27 April 2025',
-      venueCity: 'Pine Hill Garden Pavilion, Lembang, Bandung',
+      venueCity: 'Pine Hill Garden Pavilion, Bandar Lampung',
       buttonText: 'Buka Undangan'
     }
   },
@@ -362,11 +362,11 @@ export const BOTANICAL_SAGE_PAGES: PageData[] = [
       akadTitle: 'Akad Nikah',
       akadDate: 'Minggu, 27 April 2025',
       akadTime: '08.00 - 10.00 WIB',
-      akadPlace: 'Pine Hill Outdoor Garden, Lembang',
+      akadPlace: 'Masjid Agung Al-Furqon, Bandar Lampung',
       resepsiTitle: 'Resepsi Pernikahan',
       resepsiDate: 'Minggu, 27 April 2025',
       resepsiTime: '11.00 - 14.30 WIB',
-      resepsiPlace: 'Pine Hill Glasshouse Pavilion, Lembang, Bandung',
+      resepsiPlace: 'Pine Hill Glasshouse Pavilion, Bandar Lampung',
       mapsUrl: 'https://maps.google.com'
     }
   },
@@ -402,7 +402,7 @@ export const BOTANICAL_SAGE_PAGES: PageData[] = [
       accNumber2: '1370 0098 7654',
       accHolder2: 'IRNA AGUSTIANI',
       qrisActive: true,
-      giftAddress: 'Jl. Maribaya No. 88, Lembang, Bandung Barat (Penerima: Irna & Rian)'
+      giftAddress: 'Jl. Gatot Subroto No. 88, Pahoman, Bandar Lampung (Penerima: Irna & Rian)'
     }
   },
   {
@@ -658,6 +658,6 @@ export const FAQ_DATA: FAQItem[] = [
   },
   {
     q: "Apakah HariNikah juga menyediakan cetak fisik berbalut beludru dan foil emas?",
-    a: "Benar sekali. Kami menyediakan paket bundling fisik hardcover berbalut beludru impor (emerald, sogan, marawa crimson), foil emas panas (hotprint), serta wax seal cap lilin asli dengan showroom di Jakarta dan Bandung."
+    a: "Benar sekali. Kami menyediakan paket bundling fisik hardcover berbalut beludru impor (emerald, sogan, marawa crimson), foil emas panas (hotprint), serta wax seal cap lilin asli dengan studio showroom di Bandar Lampung serta pengiriman ke seluruh Indonesia."
   }
 ];

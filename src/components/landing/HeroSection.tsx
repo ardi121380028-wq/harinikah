@@ -125,7 +125,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
               <div className={`flex items-center gap-2 text-xs font-medium ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
                 <CheckCircle2 className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                <span>Showroom Jkt & Bdg</span>
+                <span>Showroom Bandar Lampung</span>
               </div>
             </div>
 

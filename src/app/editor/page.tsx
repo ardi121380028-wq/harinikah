@@ -43,7 +43,13 @@ import {
   PanelLeftOpen,
   Crown,
   Sun,
-  Moon
+  Moon,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Upload,
+  Image as ImageIcon,
+  PlusCircle
 } from 'lucide-react';
 import { TEMPLATE_PRESETS } from '../../constants/initialData';
 import { 
@@ -91,12 +97,15 @@ export default function EditorPage() {
     exportJSON,
     exportHTML,
     publishInvitation,
+    addCustomElement,
+    updateCustomElement,
+    deleteCustomElement,
   } = useInvitation();
 
   const isLight = themeMode === 'light';
 
   // Navigation & View States
-  const [activeTab, setActiveTab] = useState<'wizard' | 'templates' | 'pages' | 'text' | 'couple' | 'events' | 'theme' | 'gift' | 'music'>('templates');
+  const [activeTab, setActiveTab] = useState<'wizard' | 'templates' | 'pages' | 'text' | 'elements' | 'couple' | 'events' | 'theme' | 'gift' | 'music'>('templates');
   const [viewMode, setViewMode] = useState<'cover' | 'content'>('cover');
   const [deviceMode, setDeviceMode] = useState<'mobile' | 'desktop'>('mobile');
   const [zoomLevel, setZoomLevel] = useState<number>(100);
@@ -104,8 +113,64 @@ export default function EditorPage() {
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [rightPanelTab, setRightPanelTab] = useState<'sections' | 'layers'>('sections');
   
+  // File input refs for local photo uploads
+  const groomFileInputRef = useRef<HTMLInputElement>(null);
+  const brideFileInputRef = useRef<HTMLInputElement>(null);
+  const customPhotoInputRef = useRef<HTMLInputElement>(null);
+
   // Element Click-to-Edit State
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+
+  // Curated Preset Wedding Portraits
+  const GROOM_PRESETS = [
+    { label: 'Jas Hitam Formal', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80' },
+    { label: 'Tuxedo Elegan', url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80' },
+    { label: 'Adat Sogan Keraton', url: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80' },
+    { label: 'Outdoor Natural', url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80' },
+  ];
+
+  const BRIDE_PRESETS = [
+    { label: 'Gaun Anggun Ivory', url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=500&q=80' },
+    { label: 'Hijab Pengantin', url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=500&q=80' },
+    { label: 'Mahkota Suntiang', url: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=500&q=80' },
+    { label: 'Botanical Floral', url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=500&q=80' },
+  ];
+
+  // Direct Image File Upload Handler
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, pageIdx: number, field: string) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      alert('Ukuran file maksimal 8MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        updatePageData(pageIdx, field, result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleCustomPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        addCustomElement(activePageIndex, {
+          type: 'photo',
+          content: result,
+          align: 'center',
+          size: 'base'
+        });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Modals
   const [showPublishModal, setShowPublishModal] = useState<boolean>(false);
@@ -435,7 +500,7 @@ export default function EditorPage() {
 
           {/* Guest Preview Button */}
           <a
-            href={`/${slug}?to=${encodeURIComponent(guestName)}`}
+            href={`/${slug}?to=${encodeURIComponent(guestName)}&theme=${currentTemplate}`}
             target="_blank"
             rel="noreferrer"
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold transition-colors ${
@@ -486,6 +551,7 @@ export default function EditorPage() {
           {[
             { id: 'templates', label: 'Template', icon: <Crown className="w-4 h-4 text-gold-400" /> },
             { id: 'pages', label: 'Halaman', icon: <Layers className="w-4 h-4" /> },
+            { id: 'elements', label: 'Elemen', icon: <PlusCircle className="w-4 h-4 text-amber-400" /> },
             { id: 'text', label: 'Teks', icon: <Type className="w-4 h-4" /> },
             { id: 'couple', label: 'Mempelai', icon: <Heart className="w-4 h-4" /> },
             { id: 'events', label: 'Acara', icon: <Calendar className="w-4 h-4" /> },
@@ -715,14 +781,335 @@ export default function EditorPage() {
               </div>
             )}
 
-            {/* TAB: TEKS & JUDUL */}
+            {/* TAB: TAMBAH OBJEK / ELEMEN (CANVA STYLE) */}
+            {activeTab === 'elements' && (
+              <div className="space-y-4 text-xs">
+                <div className={`pb-2 border-b-2 ${
+                  isLight ? 'border-amber-200' : 'border-gold-subtle'
+                }`}>
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${
+                    isLight ? 'text-amber-800' : 'text-gold-400'
+                  }`}>
+                    FITUR ELEMEN CANVA
+                  </span>
+                  <h3 className={`text-xs font-black uppercase tracking-wider mt-0.5 ${
+                    isLight ? 'text-amber-950' : 'text-gold-300'
+                  }`}>
+                    Tambah Objek ke Hal {activePageIndex + 1}
+                  </h3>
+                  <p className={`text-[11px] mt-1 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
+                    Tambahkan teks kustom, doa, ornamen adat, atau foto langsung ke halaman yang sedang aktif.
+                  </p>
+                </div>
+
+                {/* Submenu 1: Teks Baru */}
+                <div className={`p-3 rounded-2xl border space-y-2 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                    isLight ? 'text-amber-950' : 'text-gold-300'
+                  }`}>
+                    📝 Tambah Teks Baru
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'heading',
+                        content: 'Judul Baru',
+                        align: 'center',
+                        size: 'xl'
+                      })}
+                      className={`p-2 rounded-xl border text-left font-serif font-bold text-xs transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-gold-200 hover:bg-white/10'
+                      }`}
+                    >
+                      + Judul Utama
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'subheading',
+                        content: 'Subjudul atau Salam Pembuka',
+                        align: 'center',
+                        size: 'base'
+                      })}
+                      className={`p-2 rounded-xl border text-left font-sans font-semibold text-[11px] transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-gold-200 hover:bg-white/10'
+                      }`}
+                    >
+                      + Subjudul
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'paragraph',
+                        content: 'Tuliskan pesan, petunjuk parkir, atau doa restu di sini.',
+                        align: 'center',
+                        size: 'sm'
+                      })}
+                      className={`p-2 rounded-xl border text-left font-sans text-[10px] transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-stone-200 hover:bg-white/10'
+                      }`}
+                    >
+                      + Paragraf / Doa
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'quote',
+                        content: 'Dan di antara tanda-tanda kebesaran-Nya ialah Dia menciptakan pasangan-pasangan untukmu.',
+                        align: 'center',
+                        size: 'sm'
+                      })}
+                      className={`p-2 rounded-xl border text-left font-serif italic text-[10px] transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-amber-900 hover:bg-amber-100/50' : 'bg-white/5 border-gold-400/40 text-gold-300 hover:bg-white/10'
+                      }`}
+                    >
+                      + Kutipan Romantis
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submenu 2: Ornamen & Stiker Budaya */}
+                <div className={`p-3 rounded-2xl border space-y-2 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                    isLight ? 'text-amber-950' : 'text-gold-300'
+                  }`}>
+                    ✨ Stiker & Ornamen Mewah
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'ornament',
+                        content: '🌿',
+                        ornamentType: 'leaf',
+                        align: 'center'
+                      })}
+                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
+                      }`}
+                    >
+                      <span>🌿</span> Daun Botanical
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'ornament',
+                        content: '💍',
+                        ornamentType: 'ring',
+                        align: 'center'
+                      })}
+                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
+                      }`}
+                    >
+                      <span>💍</span> Cincin Nikah
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'ornament',
+                        content: '✨',
+                        ornamentType: 'sparkle',
+                        align: 'center'
+                      })}
+                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
+                      }`}
+                    >
+                      <span>✨</span> Kilau Emas
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'ornament',
+                        content: '🕊️',
+                        ornamentType: 'dove',
+                        align: 'center'
+                      })}
+                      className={`p-2 rounded-xl border flex items-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
+                      }`}
+                    >
+                      <span>🕊️</span> Merpati Putih
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => addCustomElement(activePageIndex, {
+                        type: 'ornament',
+                        content: 'divider',
+                        ornamentType: 'divider',
+                        align: 'center'
+                      })}
+                      className={`col-span-2 p-2 rounded-xl border flex items-center justify-center gap-1.5 text-[11px] font-medium transition-all hover:scale-102 ${
+                        isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-white/5 border-gold-400/40 text-stone-200'
+                      }`}
+                    >
+                      <span>⚜️ Garis Pembatas Emas Mewah</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submenu 3: Sisipkan Foto Baru */}
+                <div className={`p-3 rounded-2xl border space-y-2 ${
+                  isLight ? 'bg-amber-50/60 border-amber-200' : 'bg-black/40 border-gold-subtle'
+                }`}>
+                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                    isLight ? 'text-amber-950' : 'text-gold-300'
+                  }`}>
+                    📷 Sisipkan Foto Baru
+                  </span>
+                  <input
+                    ref={customPhotoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleCustomPhotoUpload}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => customPhotoInputRef.current?.click()}
+                    className="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-400 via-gold-300 to-amber-500 text-black font-extrabold text-xs shadow-gold-sm hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Upload Foto dari HP / Komputer</span>
+                  </button>
+                </div>
+
+                {/* Submenu 4: Daftar Objek di Halaman Aktif */}
+                <div className="space-y-2 pt-2 border-t border-white/10">
+                  <span className={`font-black block text-[11px] uppercase tracking-wider ${
+                    isLight ? 'text-stone-700' : 'text-stone-300'
+                  }`}>
+                    Daftar Objek di Hal {activePageIndex + 1} ({activePage.customElements?.length || 0})
+                  </span>
+
+                  {(!activePage.customElements || activePage.customElements.length === 0) ? (
+                    <p className={`text-[11px] italic py-2 text-center ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>
+                      Belum ada objek kustom di halaman ini. Klik tombol di atas untuk menambahkan.
+                    </p>
+                  ) : (
+                    <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                      {activePage.customElements.map((el, idx) => (
+                        <div
+                          key={el.id}
+                          className={`p-2.5 rounded-xl border space-y-2 transition-all ${
+                            isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-black/50 border-gold-subtle'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className={`text-[10px] font-bold uppercase tracking-wider ${isLight ? 'text-amber-900' : 'text-gold-400'}`}>
+                              #{idx + 1} {el.type}
+                            </span>
+                            <div className="flex items-center gap-1">
+                              {/* Alignment controls */}
+                              <button
+                                type="button"
+                                onClick={() => updateCustomElement(activePageIndex, el.id, { align: 'left' })}
+                                className={`p-1 rounded ${el.align === 'left' ? 'bg-amber-400 text-black' : 'text-stone-400 hover:text-white'}`}
+                                title="Rata Kiri"
+                              >
+                                <AlignLeft className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateCustomElement(activePageIndex, el.id, { align: 'center' })}
+                                className={`p-1 rounded ${el.align === 'center' || !el.align ? 'bg-amber-400 text-black' : 'text-stone-400 hover:text-white'}`}
+                                title="Rata Tengah"
+                              >
+                                <AlignCenter className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateCustomElement(activePageIndex, el.id, { align: 'right' })}
+                                className={`p-1 rounded ${el.align === 'right' ? 'bg-amber-400 text-black' : 'text-stone-400 hover:text-white'}`}
+                                title="Rata Kanan"
+                              >
+                                <AlignRight className="w-3 h-3" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => deleteCustomElement(activePageIndex, el.id)}
+                                className="p-1 text-rose-400 hover:text-rose-300 ml-1"
+                                title="Hapus Objek"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {el.type !== 'ornament' && el.type !== 'photo' && (
+                            <textarea
+                              rows={2}
+                              value={el.content}
+                              onChange={(e) => updateCustomElement(activePageIndex, el.id, { content: e.target.value })}
+                              className={`w-full rounded-lg px-2.5 py-1 text-xs ${
+                                isLight
+                                  ? 'bg-[#FAF8F5] border border-amber-300 text-stone-900'
+                                  : 'bg-[#041514] border border-gold-subtle text-stone-100'
+                              }`}
+                            />
+                          )}
+
+                          {el.type === 'photo' && (
+                            <div className="flex items-center gap-2">
+                              <img src={el.content} alt="Thumbnail" className="w-10 h-10 object-cover rounded-lg border border-gold-400/50" />
+                              <span className="text-[10px] text-stone-400">Foto Kustom Berhasil Disisipkan</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* TAB: TEKS & JUDUL DENGAN KONTROL RATA KIRI/TENGAH/KANAN */}
             {activeTab === 'text' && (
               <div className="space-y-4 text-xs">
-                <h3 className={`text-xs font-black uppercase tracking-wider pb-2 border-b-2 ${
-                  isLight ? 'text-amber-950 border-amber-200' : 'text-gold-300 border-gold-subtle'
-                }`}>
-                  Sunting Teks Sampul Depan
-                </h3>
+                <div className={`pb-2 border-b-2 ${isLight ? 'border-amber-200' : 'border-gold-subtle'}`}>
+                  <h3 className={`text-xs font-black uppercase tracking-wider ${
+                    isLight ? 'text-amber-950' : 'text-gold-300'
+                  }`}>
+                    Sunting Teks Sampul Depan
+                  </h3>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-stone-200 dark:border-white/10">
+                    <span className={`text-[11px] font-bold ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
+                      Rata Teks Sampul:
+                    </span>
+                    <div className="flex items-center gap-1 bg-stone-100 dark:bg-black/50 p-1 rounded-xl border border-stone-300 dark:border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(0, 'textAlign', 'left')}
+                        className={`p-1.5 rounded-lg transition-colors ${pages[0]?.data?.textAlign === 'left' ? 'bg-amber-400 text-black shadow-sm font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kiri"
+                      >
+                        <AlignLeft className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(0, 'textAlign', 'center')}
+                        className={`p-1.5 rounded-lg transition-colors ${pages[0]?.data?.textAlign === 'center' || !pages[0]?.data?.textAlign ? 'bg-amber-400 text-black shadow-sm font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Tengah"
+                      >
+                        <AlignCenter className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(0, 'textAlign', 'right')}
+                        className={`p-1.5 rounded-lg transition-colors ${pages[0]?.data?.textAlign === 'right' ? 'bg-amber-400 text-black shadow-sm font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kanan"
+                      >
+                        <AlignRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="space-y-3">
                   <div>
@@ -791,7 +1178,7 @@ export default function EditorPage() {
                   </div>
                   <div>
                     <label className={`text-xs font-bold block mb-1 ${isLight ? 'text-stone-800' : 'text-stone-400'}`}>
-                      Gedung & Kota Acara:
+                      Gedung & Kota Acara (Bandar Lampung):
                     </label>
                     <input
                       id="input-venueCity"
@@ -809,19 +1196,56 @@ export default function EditorPage() {
               </div>
             )}
 
-            {/* TAB: PROFIL MEMPELAI */}
+            {/* TAB: PROFIL MEMPELAI DENGAN UPLOAD FOTO & PRESET GALLERY & ALIGNMENT */}
             {activeTab === 'couple' && (
               <div className="space-y-4 text-xs">
-                <h3 className={`text-xs font-black uppercase tracking-wider pb-2 border-b-2 ${
+                <div className={`pb-2 border-b-2 ${
                   isLight ? 'text-amber-950 border-amber-200' : 'text-gold-300 border-gold-subtle'
                 }`}>
-                  Data Lengkap Mempelai
-                </h3>
+                  <h3 className="text-xs font-black uppercase tracking-wider">
+                    Data Lengkap & Foto Mempelai
+                  </h3>
+                  <p className={`text-[11px] mt-0.5 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
+                    Upload foto langsung dari galeri HP / laptop, atau pilih preset foto pengantin elegan di bawah.
+                  </p>
+                </div>
 
-                <div>
-                  <label className={`text-xs font-bold block mb-1 ${isLight ? 'text-stone-800' : 'text-stone-400'}`}>
-                    Kutipan / Ayat Suci:
-                  </label>
+                {/* Ayat Suci / Kutipan Doa */}
+                <div className={`p-3 rounded-2xl border space-y-2 ${
+                  isLight ? 'bg-amber-50/50 border-amber-200' : 'bg-black/30 border-gold-subtle'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <label className={`text-xs font-bold block ${isLight ? 'text-stone-800' : 'text-stone-300'}`}>
+                      Kutipan / Doa Pernikahan:
+                    </label>
+                    {/* Quote Alignment */}
+                    <div className="flex items-center gap-1 bg-stone-100 dark:bg-black/50 p-1 rounded-xl border border-stone-300 dark:border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'quoteAlign', 'left')}
+                        className={`p-1 rounded ${pages[1]?.data?.quoteAlign === 'left' ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kiri"
+                      >
+                        <AlignLeft className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'quoteAlign', 'center')}
+                        className={`p-1 rounded ${pages[1]?.data?.quoteAlign === 'center' || !pages[1]?.data?.quoteAlign ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Tengah"
+                      >
+                        <AlignCenter className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'quoteAlign', 'right')}
+                        className={`p-1 rounded ${pages[1]?.data?.quoteAlign === 'right' ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kanan"
+                      >
+                        <AlignRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
                   <textarea
                     id="input-introQuote"
                     rows={2}
@@ -835,13 +1259,97 @@ export default function EditorPage() {
                   />
                 </div>
 
-                {/* Groom */}
-                <div className={`p-3.5 rounded-2xl border-2 space-y-2.5 transition-colors ${
+                {/* MEMPELAI PRIA */}
+                <div className={`p-3.5 rounded-2xl border-2 space-y-3 transition-colors ${
                   isLight ? 'bg-[#FAF8F5] border-amber-200/90 text-stone-900 shadow-sm' : 'bg-black/40 border-gold-subtle/70 text-stone-100'
                 }`}>
-                  <span className={`font-black block text-xs ${isLight ? 'text-amber-950' : 'text-gold-300'}`}>
-                    Mempelai Pria
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-xs ${isLight ? 'text-amber-950' : 'text-gold-300'}`}>
+                      Mempelai Pria
+                    </span>
+                    {/* Groom Text Alignment */}
+                    <div className="flex items-center gap-1 bg-stone-100 dark:bg-black/50 p-1 rounded-xl border border-stone-300 dark:border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'groomAlign', 'left')}
+                        className={`p-1 rounded ${pages[1]?.data?.groomAlign === 'left' ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kiri"
+                      >
+                        <AlignLeft className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'groomAlign', 'center')}
+                        className={`p-1 rounded ${pages[1]?.data?.groomAlign === 'center' || !pages[1]?.data?.groomAlign ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Tengah"
+                      >
+                        <AlignCenter className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'groomAlign', 'right')}
+                        className={`p-1 rounded ${pages[1]?.data?.groomAlign === 'right' ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kanan"
+                      >
+                        <AlignRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* FOTO MEMPELAI PRIA: PREVIEW & UPLOADER */}
+                  <div className="flex items-center gap-3 p-2 rounded-xl bg-black/20 dark:bg-black/40 border border-gold-subtle/40">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-400/80 flex-shrink-0 shadow-md">
+                      <img
+                        src={pages[1]?.data?.groomPhoto || GROOM_PRESETS[0].url}
+                        alt="Groom"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <input
+                        ref={groomFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 1, 'groomPhoto')}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => groomFileInputRef.current?.click()}
+                        className="w-full py-1.5 px-2.5 rounded-lg bg-gradient-to-r from-amber-400 to-gold-400 text-black font-bold text-[11px] shadow-sm hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <Upload className="w-3 h-3" />
+                        <span>Upload Foto Pria (HP / Laptop)</span>
+                      </button>
+                      <span className="text-[9px] text-stone-400 block text-center">
+                        Format JPG/PNG maks 8MB
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Preset Selector Pria */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-stone-400 block font-semibold">
+                      Atau Pilih Preset Foto Pengantin Pria:
+                    </span>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {GROOM_PRESETS.map((p, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => updatePageData(1, 'groomPhoto', p.url)}
+                          className={`group relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all aspect-square ${
+                            pages[1]?.data?.groomPhoto === p.url
+                              ? 'border-amber-400 ring-2 ring-amber-400/50 scale-105'
+                              : 'border-white/10 hover:border-gold-400/60'
+                          }`}
+                          title={p.label}
+                        >
+                          <img src={p.url} alt={p.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <input
                     id="input-groomFullName"
                     type="text"
@@ -866,27 +1374,99 @@ export default function EditorPage() {
                         : 'bg-[#041514] border border-gold-subtle text-stone-100'
                     }`}
                   />
-                  <input
-                    id="input-groomPhoto"
-                    type="text"
-                    placeholder="URL Foto Pria"
-                    value={pages[1]?.data?.groomPhoto || ''}
-                    onChange={(e) => updatePageData(1, 'groomPhoto', e.target.value)}
-                    className={`w-full rounded-xl px-3 py-1.5 text-[11px] transition-colors ${
-                      isLight
-                        ? 'bg-white border-2 border-amber-200 text-stone-900 placeholder:text-stone-400 focus:border-amber-600'
-                        : 'bg-[#041514] border border-gold-subtle text-stone-100'
-                    }`}
-                  />
                 </div>
 
-                {/* Bride */}
-                <div className={`p-3.5 rounded-2xl border-2 space-y-2.5 transition-colors ${
+                {/* MEMPELAI WANITA */}
+                <div className={`p-3.5 rounded-2xl border-2 space-y-3 transition-colors ${
                   isLight ? 'bg-[#FAF8F5] border-amber-200/90 text-stone-900 shadow-sm' : 'bg-black/40 border-gold-subtle/70 text-stone-100'
                 }`}>
-                  <span className={`font-black block text-xs ${isLight ? 'text-amber-950' : 'text-gold-300'}`}>
-                    Mempelai Wanita
-                  </span>
+                  <div className="flex items-center justify-between">
+                    <span className={`font-black block text-xs ${isLight ? 'text-amber-950' : 'text-gold-300'}`}>
+                      Mempelai Wanita
+                    </span>
+                    {/* Bride Text Alignment */}
+                    <div className="flex items-center gap-1 bg-stone-100 dark:bg-black/50 p-1 rounded-xl border border-stone-300 dark:border-white/10">
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'brideAlign', 'left')}
+                        className={`p-1 rounded ${pages[1]?.data?.brideAlign === 'left' ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kiri"
+                      >
+                        <AlignLeft className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'brideAlign', 'center')}
+                        className={`p-1 rounded ${pages[1]?.data?.brideAlign === 'center' || !pages[1]?.data?.brideAlign ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Tengah"
+                      >
+                        <AlignCenter className="w-3 h-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updatePageData(1, 'brideAlign', 'right')}
+                        className={`p-1 rounded ${pages[1]?.data?.brideAlign === 'right' ? 'bg-amber-400 text-black font-bold' : 'text-stone-400 hover:text-white'}`}
+                        title="Rata Kanan"
+                      >
+                        <AlignRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* FOTO MEMPELAI WANITA: PREVIEW & UPLOADER */}
+                  <div className="flex items-center gap-3 p-2 rounded-xl bg-black/20 dark:bg-black/40 border border-gold-subtle/40">
+                    <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gold-400/80 flex-shrink-0 shadow-md">
+                      <img
+                        src={pages[1]?.data?.bridePhoto || BRIDE_PRESETS[0].url}
+                        alt="Bride"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <input
+                        ref={brideFileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleImageUpload(e, 1, 'bridePhoto')}
+                        className="hidden"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => brideFileInputRef.current?.click()}
+                        className="w-full py-1.5 px-2.5 rounded-lg bg-gradient-to-r from-amber-400 to-gold-400 text-black font-bold text-[11px] shadow-sm hover:scale-102 active:scale-98 transition-all flex items-center justify-center gap-1.5"
+                      >
+                        <Upload className="w-3 h-3" />
+                        <span>Upload Foto Wanita (HP / Laptop)</span>
+                      </button>
+                      <span className="text-[9px] text-stone-400 block text-center">
+                        Format JPG/PNG maks 8MB
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Preset Selector Wanita */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-stone-400 block font-semibold">
+                      Atau Pilih Preset Foto Pengantin Wanita:
+                    </span>
+                    <div className="grid grid-cols-4 gap-1.5">
+                      {BRIDE_PRESETS.map((p, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => updatePageData(1, 'bridePhoto', p.url)}
+                          className={`group relative cursor-pointer rounded-xl overflow-hidden border-2 transition-all aspect-square ${
+                            pages[1]?.data?.bridePhoto === p.url
+                              ? 'border-amber-400 ring-2 ring-amber-400/50 scale-105'
+                              : 'border-white/10 hover:border-gold-400/60'
+                          }`}
+                          title={p.label}
+                        >
+                          <img src={p.url} alt={p.label} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
                   <input
                     id="input-brideFullName"
                     type="text"
@@ -905,18 +1485,6 @@ export default function EditorPage() {
                     placeholder="Nama Orang Tua Wanita"
                     value={pages[1]?.data?.brideParents || ''}
                     onChange={(e) => updatePageData(1, 'brideParents', e.target.value)}
-                    className={`w-full rounded-xl px-3 py-1.5 text-[11px] transition-colors ${
-                      isLight
-                        ? 'bg-white border-2 border-amber-200 text-stone-900 placeholder:text-stone-400 focus:border-amber-600'
-                        : 'bg-[#041514] border border-gold-subtle text-stone-100'
-                    }`}
-                  />
-                  <input
-                    id="input-bridePhoto"
-                    type="text"
-                    placeholder="URL Foto Wanita"
-                    value={pages[1]?.data?.bridePhoto || ''}
-                    onChange={(e) => updatePageData(1, 'bridePhoto', e.target.value)}
                     className={`w-full rounded-xl px-3 py-1.5 text-[11px] transition-colors ${
                       isLight
                         ? 'bg-white border-2 border-amber-200 text-stone-900 placeholder:text-stone-400 focus:border-amber-600'
@@ -1322,6 +1890,43 @@ export default function EditorPage() {
               </span>
             </div>
 
+            {/* Center: Quick Formatting & Text Alignment Bar */}
+            <div className="flex items-center gap-1 bg-black/40 px-2 py-0.5 rounded-xl border border-gold-400/30 shadow-sm">
+              <span className={`text-[10px] font-bold mr-1 hidden sm:inline ${isLight ? 'text-stone-700' : 'text-gold-300'}`}>
+                Rata Teks:
+              </span>
+              <button
+                type="button"
+                onClick={() => updatePageData(activePageIndex, 'textAlign', 'left')}
+                className={`p-1 rounded transition-colors ${
+                  activePage.data?.textAlign === 'left' ? 'bg-amber-400 text-black font-bold shadow-sm' : 'text-stone-400 hover:text-white'
+                }`}
+                title="Rata Kiri Halaman Ini"
+              >
+                <AlignLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => updatePageData(activePageIndex, 'textAlign', 'center')}
+                className={`p-1 rounded transition-colors ${
+                  activePage.data?.textAlign === 'center' || !activePage.data?.textAlign ? 'bg-amber-400 text-black font-bold shadow-sm' : 'text-stone-400 hover:text-white'
+                }`}
+                title="Rata Tengah Halaman Ini"
+              >
+                <AlignCenter className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => updatePageData(activePageIndex, 'textAlign', 'right')}
+                className={`p-1 rounded transition-colors ${
+                  activePage.data?.textAlign === 'right' ? 'bg-amber-400 text-black font-bold shadow-sm' : 'text-stone-400 hover:text-white'
+                }`}
+                title="Rata Kanan Halaman Ini"
+              >
+                <AlignRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
             {/* Right: Zoom Controls & Right Panel Toggle */}
             <div className="flex items-center gap-2 sm:gap-3">
               <div className={`flex items-center gap-1 px-2 py-0.5 rounded-lg border text-xs ${
@@ -1446,7 +2051,9 @@ export default function EditorPage() {
                         )}
                       </div>
 
-                      <div className="space-y-2 w-full my-auto">
+                      <div className={`space-y-2 w-full my-auto ${
+                        activePage.data?.textAlign === 'left' ? 'text-left' : activePage.data?.textAlign === 'right' ? 'text-right' : 'text-center'
+                      }`}>
                         {/* Subheading / Cultural Greeting */}
                         <div 
                           onClick={() => handleSelectElement('subheading', 'text', 0)}
@@ -1578,7 +2185,9 @@ export default function EditorPage() {
                         className={getElementOutline('introQuote')}
                         title="Klik untuk ubah kutipan doa"
                       >
-                        <p className="text-[11px] italic text-gold-200/90 max-w-xs mx-auto leading-relaxed px-2">
+                        <p className={`text-[11px] italic text-gold-200/90 max-w-xs mx-auto leading-relaxed px-2 ${
+                          pages[1]?.data?.quoteAlign === 'left' ? 'text-left' : pages[1]?.data?.quoteAlign === 'right' ? 'text-right' : 'text-center'
+                        }`}>
                           "{pages[1]?.data?.introQuote || 'Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan...'}"
                         </p>
                       </div>
@@ -1586,7 +2195,9 @@ export default function EditorPage() {
                       {/* Groom */}
                       <div 
                         onClick={() => handleSelectElement('groomFullName', 'couple', 1)}
-                        className={`space-y-1 ${getElementOutline('groomFullName')}`}
+                        className={`space-y-1 ${
+                          pages[1]?.data?.groomAlign === 'left' ? 'text-left' : pages[1]?.data?.groomAlign === 'right' ? 'text-right' : 'text-center'
+                        } ${getElementOutline('groomFullName')}`}
                         title="Klik untuk ubah data mempelai pria"
                       >
                         <div className={`mx-auto p-1 border-2 shadow-sm overflow-hidden ${
@@ -1624,7 +2235,9 @@ export default function EditorPage() {
                       {/* Bride */}
                       <div 
                         onClick={() => handleSelectElement('brideFullName', 'couple', 1)}
-                        className={`space-y-1 ${getElementOutline('brideFullName')}`}
+                        className={`space-y-1 ${
+                          pages[1]?.data?.brideAlign === 'left' ? 'text-left' : pages[1]?.data?.brideAlign === 'right' ? 'text-right' : 'text-center'
+                        } ${getElementOutline('brideFullName')}`}
                         title="Klik untuk ubah data mempelai wanita"
                       >
                         <div className={`mx-auto p-1 border-2 shadow-sm overflow-hidden ${
@@ -1790,6 +2403,139 @@ export default function EditorPage() {
                           Kirim Konfirmasi & Doa
                         </button>
                       </div>
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      GENERIC CUSTOM PAGE (IF EXTRA PAGES ADDED)
+                      ==================================================== */}
+                  {activePage.type !== 'cover' && activePage.type !== 'couple' && activePage.type !== 'events' && activePage.type !== 'story' && activePage.type !== 'gift' && activePage.type !== 'rsvp' && (
+                    <div className="my-auto space-y-3 py-6 text-center">
+                      <h2 className="text-xl font-bold font-serif text-gold-bright">
+                        {activePage.title}
+                      </h2>
+                      <p className="text-xs text-stone-300 max-w-xs mx-auto leading-relaxed">
+                        Halaman kustom baru. Tambahkan teks, doa, foto, atau ornamen adat lewat tab Elemen di sebelah kiri.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      RENDER ACTIVE PAGE CUSTOM ELEMENTS (CANVA SYSTEM)
+                      ==================================================== */}
+                  {activePage.customElements && activePage.customElements.length > 0 && (
+                    <div className="w-full my-3 space-y-2 pt-2 border-t border-dashed border-gold-400/30">
+                      {activePage.customElements.map((el) => (
+                        <div 
+                          key={el.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedElementId(el.id);
+                            setActiveTab('elements');
+                          }}
+                          className={`group relative p-2 rounded-xl transition-all cursor-pointer ${
+                            selectedElementId === el.id
+                              ? 'ring-2 ring-amber-400 bg-amber-400/20'
+                              : 'hover:ring-1 hover:ring-amber-400/50 hover:bg-white/5'
+                          }`}
+                        >
+                          {el.type === 'heading' && (
+                            <h2 className={`font-serif font-bold text-xl text-gold-bright leading-snug ${
+                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                            }`}>
+                              {el.content}
+                            </h2>
+                          )}
+                          {el.type === 'subheading' && (
+                            <p className={`text-xs uppercase tracking-wider font-bold text-gold-300 ${
+                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                            }`}>
+                              {el.content}
+                            </p>
+                          )}
+                          {el.type === 'paragraph' && (
+                            <p className={`text-xs text-stone-200 leading-relaxed ${
+                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                            }`}>
+                              {el.content}
+                            </p>
+                          )}
+                          {el.type === 'quote' && (
+                            <blockquote className={`italic text-xs text-gold-200/90 px-3 py-1.5 border-l-2 border-gold-400/60 bg-black/20 rounded-r-lg ${
+                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                            }`}>
+                              "{el.content}"
+                            </blockquote>
+                          )}
+                          {el.type === 'ornament' && (
+                            <div className={`text-xl ${
+                              el.align === 'left' ? 'text-left' : el.align === 'right' ? 'text-right' : 'text-center'
+                            }`}>
+                              {el.ornamentType === 'leaf' && '🌿 ✨ 🌿'}
+                              {el.ornamentType === 'ring' && '💍'}
+                              {el.ornamentType === 'sparkle' && '✨ ⚜️ ✨'}
+                              {el.ornamentType === 'dove' && '🕊️'}
+                              {el.ornamentType === 'divider' && <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto my-1" />}
+                            </div>
+                          )}
+                          {el.type === 'photo' && (
+                            <div className={`flex ${
+                              el.align === 'left' ? 'justify-start' : el.align === 'right' ? 'justify-end' : 'justify-center'
+                            }`}>
+                              <img src={el.content} alt="Element" className="max-w-[200px] max-h-[150px] rounded-2xl object-cover border-2 border-gold-400/60 shadow-lg" />
+                            </div>
+                          )}
+
+                          {/* Floating Quick Action Mini Bar */}
+                          <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute -top-3.5 right-2 flex items-center gap-1 bg-stone-900/95 border border-gold-400/70 rounded-lg px-1.5 py-0.5 text-[10px] shadow-xl z-20">
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateCustomElement(activePageIndex, el.id, { align: 'left' });
+                              }}
+                              className={`p-1 hover:text-gold-300 ${el.align === 'left' ? 'text-amber-400 font-bold' : 'text-stone-400'}`}
+                              title="Rata Kiri"
+                            >
+                              <AlignLeft className="w-3 h-3" />
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateCustomElement(activePageIndex, el.id, { align: 'center' });
+                              }}
+                              className={`p-1 hover:text-gold-300 ${el.align === 'center' || !el.align ? 'text-amber-400 font-bold' : 'text-stone-400'}`}
+                              title="Rata Tengah"
+                            >
+                              <AlignCenter className="w-3 h-3" />
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateCustomElement(activePageIndex, el.id, { align: 'right' });
+                              }}
+                              className={`p-1 hover:text-gold-300 ${el.align === 'right' ? 'text-amber-400 font-bold' : 'text-stone-400'}`}
+                              title="Rata Kanan"
+                            >
+                              <AlignRight className="w-3 h-3" />
+                            </button>
+                            <div className="w-px h-3 bg-white/20 mx-0.5" />
+                            <button 
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteCustomElement(activePageIndex, el.id);
+                              }}
+                              className="p-1 text-rose-400 hover:text-rose-300"
+                              title="Hapus Elemen"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
 

@@ -30,8 +30,8 @@ export const Footer: React.FC = () => {
               Platform undangan pernikahan omnichannel no. 1 di Indonesia. Menyediakan pembuatan undangan digital website interaktif berkonsep multi-halaman layaknya Canva serta produksi undangan cetak fisik mewah berbalut velvet dan foil emas.
             </p>
             <div className={`pt-2 text-xs space-y-1 ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>
-              <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Showroom Jakarta: Senopati, Kebayoran Baru</p>
-              <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Showroom Bandung: Jl. Riau (R.E. Martadinata)</p>
+              <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Galeri Showroom: Jl. Gatot Subroto No. 88, Pahoman, Bandar Lampung</p>
+              <p className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-amber-500" /> Studio Konsultasi: Jl. Raden Intan No. 45, Enggal, Bandar Lampung</p>
             </div>
           </div>
 
