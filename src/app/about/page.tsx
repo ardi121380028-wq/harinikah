@@ -1,30 +1,30 @@
 'use client';
 
 import React from 'react';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  ExternalLink, 
-  Sparkles, 
-  Heart, 
-  ShoppingBag, 
-  Award, 
-  Users, 
-  Sun, 
-  Moon 
+import {
+  ArrowLeft,
+  MapPin,
+  Phone,
+  Mail,
+  ExternalLink,
+  Sparkles,
+  Heart,
+  ShoppingBag,
+  Award,
+  Users,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4" }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round" 
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
     className={className}
   >
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
@@ -38,20 +38,17 @@ export default function AboutPage() {
   const isLight = themeMode === 'light';
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 ${
-      isLight ? 'bg-[#FAF8F5] text-stone-900' : 'bg-[#041514] text-stone-100'
-    }`}>
-      
-      {/* Top Header */}
-      <header className={`border-b sticky top-0 z-40 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between ${
-        isLight ? 'bg-white/90 border-[#E8DEC8]' : 'bg-[#041514]/90 border-gold-subtle'
+    <div className={`min-h-screen font-sans transition-colors duration-300 ${isLight ? 'bg-[#FAF8F5] text-stone-900' : 'bg-[#041514] text-stone-100'
       }`}>
+
+      {/* Top Header */}
+      <header className={`border-b sticky top-0 z-40 backdrop-blur-md px-4 sm:px-8 py-3.5 flex items-center justify-between ${isLight ? 'bg-white/90 border-[#E8DEC8]' : 'bg-[#041514]/90 border-gold-subtle'
+        }`}>
         <div className="flex items-center gap-4">
           <a
             href="/"
-            className={`p-2 rounded-full border transition-colors ${
-              isLight ? 'border-amber-200 text-stone-700 hover:bg-stone-100' : 'border-gold-subtle text-stone-300 hover:bg-white/5'
-            }`}
+            className={`p-2 rounded-full border transition-colors ${isLight ? 'border-amber-200 text-stone-700 hover:bg-stone-100' : 'border-gold-subtle text-stone-300 hover:bg-white/5'
+              }`}
             title="Kembali ke Beranda"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -67,9 +64,8 @@ export default function AboutPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleThemeMode}
-            className={`p-2 rounded-full border text-xs font-medium transition-colors ${
-              isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-white/5 border-gold-subtle text-gold-300'
-            }`}
+            className={`p-2 rounded-full border text-xs font-medium transition-colors ${isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-white/5 border-gold-subtle text-gold-300'
+              }`}
           >
             {isLight ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
           </button>
@@ -99,12 +95,11 @@ export default function AboutPage() {
 
       {/* Values & Studio Details */}
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-        
+
         {/* 3 Pillars */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className={`p-8 rounded-3xl border space-y-3 ${
-            isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-[#071f1e] border-gold-subtle'
-          }`}>
+          <div className={`p-8 rounded-3xl border space-y-3 ${isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-[#071f1e] border-gold-subtle'
+            }`}>
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-500">
               <Sparkles className="w-6 h-6" />
             </div>
@@ -116,9 +111,8 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className={`p-8 rounded-3xl border space-y-3 ${
-            isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-[#071f1e] border-gold-subtle'
-          }`}>
+          <div className={`p-8 rounded-3xl border space-y-3 ${isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-[#071f1e] border-gold-subtle'
+            }`}>
             <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-500">
               <Heart className="w-6 h-6" />
             </div>
@@ -130,9 +124,8 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className={`p-8 rounded-3xl border space-y-3 ${
-            isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-[#071f1e] border-gold-subtle'
-          }`}>
+          <div className={`p-8 rounded-3xl border space-y-3 ${isLight ? 'bg-white border-amber-200 shadow-sm' : 'bg-[#071f1e] border-gold-subtle'
+            }`}>
             <div className="w-12 h-12 rounded-2xl bg-[#EE4D2D]/20 border border-[#EE4D2D]/40 flex items-center justify-center text-[#EE4D2D]">
               <ShoppingBag className="w-6 h-6" />
             </div>
@@ -146,9 +139,8 @@ export default function AboutPage() {
         </div>
 
         {/* Studio Location & Social Media */}
-        <div className={`p-8 sm:p-12 rounded-3xl border relative overflow-hidden ${
-          isLight ? 'bg-gradient-to-br from-white to-[#F5EFE6] border-amber-300/80 shadow-md' : 'bg-[#072422] border-gold-400/40 shadow-velvet-deep'
-        }`}>
+        <div className={`p-8 sm:p-12 rounded-3xl border relative overflow-hidden ${isLight ? 'bg-gradient-to-br from-white to-[#F5EFE6] border-amber-300/80 shadow-md' : 'bg-[#072422] border-gold-400/40 shadow-velvet-deep'
+          }`}>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
               <span className="text-xs font-extrabold uppercase tracking-wider text-amber-500">

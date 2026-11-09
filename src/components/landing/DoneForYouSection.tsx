@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MousePointerClick, Headset } from 'lucide-react';
-import { useInvitation } from '../../context/InvitationContext';
+import { useInvitation } from '@/context/InvitationContext';
 
 interface DoneForYouProps {
   onStartDIY: () => void;
@@ -14,44 +14,38 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
   const isLight = themeMode === 'light';
 
   return (
-    <section className={`py-20 lg:py-28 border-t font-sans transition-colors duration-300 ${
-      isLight ? 'bg-[#FAF8F5] border-[#E8DEC8]' : 'bg-[#041514] border-gold-subtle'
-    }`} id="digital">
+    <section className={`py-20 lg:py-28 border-t font-sans transition-colors duration-300 ${isLight ? 'bg-[#FAF8F5] border-[#E8DEC8]' : 'bg-[#041514] border-gold-subtle'
+      }`} id="digital">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Title */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${
-            isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
-          }`}>
+          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
+            }`}>
             Fleksibilitas Tanpa Batas
           </span>
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 ${
-            isLight ? 'text-stone-900' : 'text-white'
-          }`}>
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 ${isLight ? 'text-stone-900' : 'text-white'
+            }`}>
             Mau Bikin Sendiri atau Terima Beres? <br />
             <span className={isLight ? 'text-gold-light' : 'text-gold-bright'}>Dua-duanya Kami Siapkan!</span>
           </h2>
-          <p className={`text-sm sm:text-base mt-4 leading-relaxed ${
-            isLight ? 'text-stone-600' : 'text-stone-300'
-          }`}>
+          <p className={`text-sm sm:text-base mt-4 leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'
+            }`}>
             Kami mengerti kesibukan calon pengantin. Kamu bisa bebas bereksplorasi mendesain sendiri dengan Canva Editor Pro kami, atau santai rebahan dan serahkan seluruh prosesnya ke desainer ahli HariNikah.
           </p>
         </div>
 
         {/* 2-Column Split: DIY vs Done-For-You */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-          
+
           {/* Option 1: Mode Mandiri (DIY) */}
-          <div className={`rounded-3xl p-8 border shadow-xl flex flex-col justify-between transition-all ${
-            isLight
-              ? 'bg-white border-[#E8DEC8] hover:border-amber-400 shadow-amber-950/5'
-              : 'bg-gradient-to-br from-[#0a2927] to-[#051a19] border-gold-subtle hover:border-gold-400 shadow-velvet-deep'
-          }`}>
+          <div className={`rounded-3xl p-8 border shadow-xl flex flex-col justify-between transition-all ${isLight
+            ? 'bg-white border-[#E8DEC8] hover:border-amber-400 shadow-amber-950/5'
+            : 'bg-gradient-to-br from-[#0a2927] to-[#051a19] border-gold-subtle hover:border-gold-400 shadow-velvet-deep'
+            }`}>
             <div>
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold mb-4 ${
-                isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-gold-950/80 border-gold-subtle text-gold-300'
-              }`}>
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold mb-4 ${isLight ? 'bg-amber-100 border-amber-300 text-amber-900' : 'bg-gold-950/80 border-gold-subtle text-gold-300'
+                }`}>
                 <MousePointerClick className="w-3.5 h-3.5" />
                 Mode Mandiri (Canva Editor)
               </div>
@@ -70,9 +64,8 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
                   { title: "Langsung Bagikan", desc: "Sebar undangan seketika via WhatsApp ke seluruh kontak" }
                 ].map((s, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <div className={`w-6 h-6 rounded-full border text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isLight ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-gold-950 border-gold-subtle text-gold-300'
-                    }`}>
+                    <div className={`w-6 h-6 rounded-full border text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5 ${isLight ? 'bg-amber-100 border-amber-300 text-amber-800' : 'bg-gold-950 border-gold-subtle text-gold-300'
+                      }`}>
                       {idx + 1}
                     </div>
                     <div>
@@ -95,15 +88,13 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
           </div>
 
           {/* Option 2: Mode Terima Beres (DFY) */}
-          <div className={`rounded-3xl p-8 border shadow-xl flex flex-col justify-between transition-all ${
-            isLight
-              ? 'bg-gradient-to-br from-[#FFFDF9] to-[#FAF3E0] border-amber-300 hover:border-amber-500 shadow-amber-950/10'
-              : 'bg-gradient-to-br from-[#123834] to-[#082422] border-2 border-gold-400 shadow-velvet-deep'
-          }`}>
+          <div className={`rounded-3xl p-8 border shadow-xl flex flex-col justify-between transition-all ${isLight
+            ? 'bg-gradient-to-br from-[#FFFDF9] to-[#FAF3E0] border-amber-300 hover:border-amber-500 shadow-amber-950/10'
+            : 'bg-gradient-to-br from-[#123834] to-[#082422] border-2 border-gold-400 shadow-velvet-deep'
+            }`}>
             <div>
-              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold mb-4 ${
-                isLight ? 'bg-amber-200/80 border-amber-400 text-amber-950' : 'bg-gold-400 text-black border-gold-300'
-              }`}>
+              <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold mb-4 ${isLight ? 'bg-amber-200/80 border-amber-400 text-amber-950' : 'bg-gold-400 text-black border-gold-300'
+                }`}>
                 <Headset className="w-3.5 h-3.5" />
                 Layanan VIP Terima Beres
               </div>
@@ -122,9 +113,8 @@ export const DoneForYouSection: React.FC<DoneForYouProps> = ({ onStartDIY, onSta
                   { title: "Review & Revisi Bebas", desc: "Koreksi sepuasnya tanpa batas sampai kamu dan pasangan ACC" }
                 ].map((s, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <div className={`w-6 h-6 rounded-full border text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                      isLight ? 'bg-amber-200 border-amber-400 text-amber-950' : 'bg-gold-400 text-black border-gold-300'
-                    }`}>
+                    <div className={`w-6 h-6 rounded-full border text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5 ${isLight ? 'bg-amber-200 border-amber-400 text-amber-950' : 'bg-gold-400 text-black border-gold-300'
+                      }`}>
                       {idx + 1}
                     </div>
                     <div>

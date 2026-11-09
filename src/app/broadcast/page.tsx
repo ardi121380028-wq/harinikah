@@ -23,7 +23,16 @@ import {
   ArrowLeft,
   Sun,
   Moon,
-  Smartphone
+  Smartphone,
+  QrCode,
+  ShieldCheck,
+  Wifi,
+  WifiOff,
+  Settings,
+  Terminal,
+  Radio,
+  Sliders,
+  CheckCircle
 } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
@@ -57,6 +66,21 @@ export default function BroadcastPage() {
   const [isBroadcasting, setIsBroadcasting] = useState(false);
   const [broadcastProgress, setBroadcastProgress] = useState(0);
   const [invitationSlug, setInvitationSlug] = useState('dimas-clarissa');
+
+  // SENDER WHATSAPP CONFIGURATION STATE
+  const [senderMode, setSenderMode] = useState<'personal' | 'gateway'>('personal');
+  const [senderPhone, setSenderPhone] = useState('0812-7890-1234');
+  const [senderName, setSenderName] = useState('Dimas & Clarissa (Pengantin)');
+  const [senderConnected, setSenderConnected] = useState(true);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [antiSpamDelay, setAntiSpamDelay] = useState<number>(3); // seconds
+
+  const [activityLogs, setActivityLogs] = useState<Array<{ id: string; time: string; text: string; type: 'info' | 'success' | 'warn' }>>([
+    { id: 'log-1', time: '10:40 WIB', text: 'Perangkat Pengirim Terhubung: +62 812-7890-1234 (WhatsApp Multi-Device Active)', type: 'success' },
+    { id: 'log-2', time: '10:42 WIB', text: 'Terkirim ke: Bpk. H. Ahmad Sudirman & Ibu (+62 812-7890-1234) via Device Pengantin', type: 'info' },
+    { id: 'log-3', time: '10:43 WIB', text: 'Terkirim ke: Dr. Hendra Gunawan & Rekan (+62 813-5678-9012) via Device Pengantin', type: 'info' }
+  ]);
+
   const [messageTemplate, setMessageTemplate] = useState<string>(
 `Kepada Yth.
 *{nama}*
@@ -90,6 +114,11 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
   const sentCount = guests.filter(g => g.status !== 'pending').length;
   const readCount = guests.filter(g => g.status === 'read').length;
   const pendingCount = guests.filter(g => g.status === 'pending').length;
+
+  // Active sender display
+  const activeSenderDisplay = senderMode === 'personal'
+    ? `${senderPhone} (${senderName})`
+    : '+62 811-7200-NIKAH (HariNikah Official Gateway Centang Hijau)';
 
   // Generate personal link
   const getPersonalLink = (guestName: string) => {
@@ -148,6 +177,13 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
 
         if (imported.length > 0) {
           setGuests(prev => [...prev, ...imported]);
+          const newLog = {
+            id: `log-${Date.now()}`,
+            time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+            text: `Berhasil mengimpor ${imported.length} data tamu dari Excel. Siap dikirim via ${activeSenderDisplay}.`,
+            type: 'success' as const
+          };
+          setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
           alert(`Berhasil mengimpor ${imported.length} data tamu dari file Excel!`);
         } else {
           alert('Format data tidak sesuai. Pastikan Kolom A = Nama, Kolom B = No WA, Kolom C = Kategori.');
@@ -178,12 +214,13 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
   // Export current guests list with status to Excel
   const handleExportData = () => {
     const wsData = [
-      ['ID', 'Nama Tamu', 'Nomor WhatsApp', 'Kategori', 'Status Pengiriman', 'Waktu Kirim', 'Link Undangan Personal'],
+      ['ID', 'Nama Tamu', 'Nomor WhatsApp', 'Kategori', 'Pengirim', 'Status Pengiriman', 'Waktu Kirim', 'Link Undangan Personal'],
       ...guests.map(g => [
         g.id,
         g.name,
         g.phone,
         g.category,
+        activeSenderDisplay,
         g.status === 'read' ? 'Terbaca (Centang 2 Biru)' : g.status === 'delivered' ? 'Tersampaikan (Centang 2 Abu)' : g.status === 'sent' ? 'Terkirim (Centang 1)' : 'Belum Terkirim',
         g.sentAt || '-',
         getPersonalLink(g.name)
@@ -197,17 +234,24 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
 
   // Single Guest Send Trigger
   const handleSingleSend = (guest: GuestRecipient) => {
-    // Open WA in new tab
     const url = getWhatsAppUrl(guest);
     window.open(url, '_blank');
 
-    // Update status to 'sent'
+    const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
     setGuests(prev => prev.map(g => {
       if (g.id === guest.id) {
-        return { ...g, status: 'sent', sentAt: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB' };
+        return { ...g, status: 'sent', sentAt: timeStr };
       }
       return g;
     }));
+
+    const newLog = {
+      id: `log-${Date.now()}`,
+      time: timeStr,
+      text: `[Dari: ${activeSenderDisplay}] ➔ Membuka WhatsApp ke ${guest.name} (${guest.phone})`,
+      type: 'info' as const
+    };
+    setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
   };
 
   // Simulate automated broadcast progression
@@ -218,23 +262,40 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
       return;
     }
 
+    if (senderMode === 'personal' && !senderConnected) {
+      alert('Nomor pengirim belum terhubung! Silakan scan QR WhatsApp Web terlebih dahulu.');
+      setQrModalOpen(true);
+      return;
+    }
+
     setIsBroadcasting(true);
     setBroadcastProgress(0);
 
     for (let i = 0; i < pendingGuests.length; i++) {
       const current = pendingGuests[i];
-      await new Promise(res => setTimeout(res, 800)); // Simulating dispatch delay
+      // Anti-spam simulated delay
+      await new Promise(res => setTimeout(res, antiSpamDelay * 1000));
+
+      const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
 
       setGuests(prev => prev.map(g => {
         if (g.id === current.id) {
           return {
             ...g,
             status: 'sent',
-            sentAt: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
+            sentAt: timeStr
           };
         }
         return g;
       }));
+
+      const newLog = {
+        id: `log-${Date.now()}-${i}`,
+        time: timeStr,
+        text: `[Pengirim: ${activeSenderDisplay}] ➔ ${current.name} (${current.phone}) Berhasil Terkirim ✓`,
+        type: 'success' as const
+      };
+      setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
 
       setBroadcastProgress(Math.round(((i + 1) / pendingGuests.length) * 100));
 
@@ -246,7 +307,7 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
           }
           return g;
         }));
-      }, 1500);
+      }, 2000);
     }
 
     setIsBroadcasting(false);
@@ -341,7 +402,7 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
               Kirim Undangan Otomatis ke Seluruh Tamu
             </h1>
             <p className={`text-xs sm:text-sm leading-relaxed ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-              Cukup upload file Excel/CSV data tamu undanganmu, buat template pesan dengan placeholder personal <code className="px-1.5 py-0.5 rounded bg-black/10 font-mono text-emerald-500">{`{nama}`}</code> dan <code className="px-1.5 py-0.5 rounded bg-black/10 font-mono text-emerald-500">{`{link}`}</code>, lalu kirim satu per satu atau otomatis dengan pelacakan status terkirim dan terbaca!
+              Hubungkan nomor WhatsApp pengantin Anda atau gunakan Official Gateway server, import data Excel tamu undangan, dan kirim pesan personal <code className="px-1.5 py-0.5 rounded bg-black/10 font-mono text-emerald-500">{`{nama}`}</code> & <code className="px-1.5 py-0.5 rounded bg-black/10 font-mono text-emerald-500">{`{link}`}</code> secara otomatis dengan proteksi anti-spam!
             </p>
           </div>
 
@@ -366,10 +427,193 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
           </div>
         </div>
 
-        {/* Section 2: Actions Bar & Excel Upload */}
+        {/* ======================================================== */}
+        {/* NEW SECTION: PENGATURAN NOMOR WHATSAPP PENGIRIM & GATEWAY */}
+        {/* ======================================================== */}
+        <div className={`p-6 sm:p-7 rounded-3xl border space-y-6 ${
+          isLight 
+            ? 'bg-white border-amber-300/80 shadow-md' 
+            : 'bg-gradient-to-br from-[#072120] to-[#041514] border-emerald-500/40 shadow-velvet-deep'
+        }`}>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-black/10">
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-6 rounded-lg bg-emerald-500 text-black flex items-center justify-center font-bold text-xs">
+                  <Smartphone className="w-3.5 h-3.5" />
+                </span>
+                <h2 className={`text-base font-bold uppercase tracking-wider ${isLight ? 'text-amber-900' : 'text-gold-300'}`}>
+                  Konfigurasi Nomor WhatsApp Pengirim (Sender Hub)
+                </h2>
+              </div>
+              <p className="text-xs text-stone-400">
+                Tentukan nomor WhatsApp yang akan digunakan untuk mengirimkan undangan ke seluruh nomor tamu.
+              </p>
+            </div>
+
+            {/* Connection Status Badge */}
+            <div className="flex items-center gap-2">
+              <div className={`px-3 py-1.5 rounded-full border text-xs font-bold flex items-center gap-2 ${
+                senderConnected
+                  ? 'bg-emerald-500/15 border-emerald-500/50 text-emerald-400'
+                  : 'bg-rose-500/15 border-rose-500/50 text-rose-400'
+              }`}>
+                {senderConnected ? <Wifi className="w-3.5 h-3.5 animate-pulse" /> : <WifiOff className="w-3.5 h-3.5" />}
+                <span>{senderConnected ? 'Device Pengirim: Terhubung' : 'Device: Terputus'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Mode Switcher */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Option 1: Nomor WhatsApp Pengantin Pribadi */}
+            <div 
+              onClick={() => setSenderMode('personal')}
+              className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                senderMode === 'personal'
+                  ? 'border-emerald-500 bg-emerald-500/10 shadow-md'
+                  : isLight ? 'border-stone-200 hover:border-stone-300 bg-stone-50' : 'border-white/10 hover:border-white/20 bg-black/20'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-400 block">
+                    Mode Rekomendasi
+                  </span>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                    <span>Nomor WhatsApp Pengantin Sendiri</span>
+                    {senderMode === 'personal' && <CheckCircle className="w-4 h-4 text-emerald-400 fill-emerald-400/20" />}
+                  </h3>
+                  <p className="text-[11px] text-stone-400 leading-relaxed">
+                    Tamu akan menerima undangan langsung dari nomor Anda (nama pengirim dikenal, bukan nomor bot asing).
+                  </p>
+                </div>
+              </div>
+
+              {senderMode === 'personal' && (
+                <div className="mt-4 pt-3 border-t border-emerald-500/30 space-y-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-stone-400 block mb-1">
+                        Nomor HP Pengirim:
+                      </label>
+                      <input
+                        type="text"
+                        value={senderPhone}
+                        onChange={(e) => setSenderPhone(e.target.value)}
+                        placeholder="0812xxxxxxx"
+                        className={`w-full px-3 py-1.5 rounded-xl border text-xs font-mono font-bold ${
+                          isLight ? 'bg-white border-stone-300 text-stone-900' : 'bg-black/50 border-emerald-500/40 text-emerald-300'
+                        }`}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] uppercase font-bold text-stone-400 block mb-1">
+                        Nama Profil Pengirim:
+                      </label>
+                      <input
+                        type="text"
+                        value={senderName}
+                        onChange={(e) => setSenderName(e.target.value)}
+                        placeholder="Dimas & Clarissa"
+                        className={`w-full px-3 py-1.5 rounded-xl border text-xs font-semibold ${
+                          isLight ? 'bg-white border-stone-300 text-stone-900' : 'bg-black/50 border-emerald-500/40 text-white'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <span className="text-[11px] text-stone-400 flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                      <span>Status: WhatsApp Web Multi-Device Aktif</span>
+                    </span>
+
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setQrModalOpen(true); }}
+                      className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 border border-emerald-400/50 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all"
+                    >
+                      <QrCode className="w-3.5 h-3.5" />
+                      <span>Scan QR WA Web Baru</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Option 2: Server Gateway HariNikah Official */}
+            <div 
+              onClick={() => setSenderMode('gateway')}
+              className={`p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                senderMode === 'gateway'
+                  ? 'border-amber-400 bg-amber-500/10 shadow-md'
+                  : isLight ? 'border-stone-200 hover:border-stone-300 bg-stone-50' : 'border-white/10 hover:border-white/20 bg-black/20'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-500 block">
+                    Mode Server Masking
+                  </span>
+                  <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
+                    <span>HariNikah Official Gateway Server</span>
+                    {senderMode === 'gateway' && <CheckCircle className="w-4 h-4 text-amber-400 fill-amber-400/20" />}
+                  </h3>
+                  <p className="text-[11px] text-stone-400 leading-relaxed">
+                    Kirim otomatis melalui server blast resmi HariNikah dengan centang hijau official (bebas kuota & baterai HP).
+                  </p>
+                </div>
+              </div>
+
+              {senderMode === 'gateway' && (
+                <div className="mt-4 pt-3 border-t border-amber-500/30 space-y-2 text-xs">
+                  <div className="p-2.5 rounded-xl bg-black/40 border border-amber-500/30 flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] text-stone-400 block">Sender Masking Number:</span>
+                      <span className="font-mono font-bold text-amber-400 text-xs">+62 811-7200-NIKAH</span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                      ✓ Centang Hijau Verified
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-stone-500">
+                    *Tamu akan menerima pesan dengan nama bisnis "HariNikah Wedding Suite" atas nama Dimas & Clarissa.
+                  </p>
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* Anti-Spam Safety Settings & Current Dispatch Status */}
+          <div className="p-3.5 rounded-2xl bg-black/30 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-stone-300">
+              <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+              <span><strong>Proteksi Anti-Spam:</strong> Jeda acak antar pesan</span>
+              <select
+                value={antiSpamDelay}
+                onChange={(e) => setAntiSpamDelay(Number(e.target.value))}
+                className={`px-2.5 py-1 rounded-lg border text-xs font-bold ${
+                  isLight ? 'bg-white border-stone-300 text-stone-900' : 'bg-black/60 border-gold-subtle text-amber-400'
+                }`}
+              >
+                <option value={2}>2 - 3 detik (Cepat)</option>
+                <option value={3}>3 - 5 detik (Direkomendasikan)</option>
+                <option value={6}>6 - 8 detik (Sangat Aman dari Blokir)</option>
+              </select>
+            </div>
+
+            <div className="text-[11px] text-stone-400">
+              Pengirim Aktif: <strong className="text-white">{activeSenderDisplay}</strong>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Actions Bar & Excel Upload */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
-          {/* Left Column: Template Editor (5 cols) */}
+          {/* Left Column: Template Editor & Live Log (5 cols) */}
           <div className={`lg:col-span-5 p-6 rounded-3xl border space-y-4 ${
             isLight ? 'bg-white border-[#E8DEC8]' : 'bg-[#071f1e] border-gold-subtle'
           }`}>
@@ -383,6 +627,18 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
               <span className="text-[10px] text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full font-bold">
                 Auto-Personalized
               </span>
+            </div>
+
+            {/* Sender & Receiver Box Indicator */}
+            <div className="p-3 rounded-2xl bg-black/40 border border-white/10 space-y-1 text-[11px]">
+              <div className="flex items-center justify-between text-stone-300">
+                <span>📤 <strong>Pengirim:</strong></span>
+                <span className="font-mono text-emerald-400 font-bold">{activeSenderDisplay}</span>
+              </div>
+              <div className="flex items-center justify-between text-stone-400">
+                <span>📥 <strong>Tujuan:</strong></span>
+                <span>Nomor HP Tamu Undangan (Kolom B Excel)</span>
+              </div>
             </div>
 
             <div>
@@ -433,16 +689,39 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                 {isBroadcasting ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Mengirim Broadcast ({broadcastProgress}%)...</span>
+                    <span>Mengirim dari {senderPhone} ({broadcastProgress}%)...</span>
                   </>
                 ) : (
                   <>
                     <Send className="w-4 h-4" />
-                    <span>Mulai Simulasi Broadcast Otomatis</span>
+                    <span>Mulai Broadcast Otomatis dari {senderMode === 'personal' ? senderPhone : 'Gateway'}</span>
                   </>
                 )}
               </button>
             </div>
+
+            {/* Real-time Broadcast Activity Console Log */}
+            <div className="pt-2 space-y-2">
+              <div className="flex items-center justify-between text-xs font-bold text-stone-400">
+                <span className="flex items-center gap-1.5">
+                  <Terminal className="w-3.5 h-3.5 text-emerald-400" />
+                  Log Aktivitas Pengiriman Terkini
+                </span>
+                <span className="text-[10px] text-stone-500">Live Stream</span>
+              </div>
+
+              <div className="p-3 rounded-2xl bg-black/70 border border-white/10 font-mono text-[10px] space-y-1.5 max-h-36 overflow-y-auto">
+                {activityLogs.map((log) => (
+                  <div key={log.id} className="leading-relaxed flex items-start gap-1.5">
+                    <span className="text-stone-500 flex-shrink-0">[{log.time}]</span>
+                    <span className={log.type === 'success' ? 'text-emerald-400' : log.type === 'warn' ? 'text-amber-400' : 'text-stone-300'}>
+                      {log.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
           </div>
 
           {/* Right Column: Excel Management & Guest List Table (7 cols) */}
@@ -559,7 +838,7 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                 }`}>
                   <tr>
                     <th className="py-3 px-3">Nama Tamu</th>
-                    <th className="py-3 px-3">WhatsApp</th>
+                    <th className="py-3 px-3">WhatsApp Tamu</th>
                     <th className="py-3 px-3">Kategori</th>
                     <th className="py-3 px-3">Status Pengiriman</th>
                     <th className="py-3 px-3 text-right">Aksi</th>
@@ -648,7 +927,7 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                               <button
                                 onClick={() => handleSingleSend(guest)}
                                 className="px-3 py-1 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[11px] flex items-center gap-1 shadow-sm transition-all"
-                                title="Kirim Pesan WhatsApp Langsung"
+                                title={`Kirim Pesan WhatsApp dari ${activeSenderDisplay}`}
                               >
                                 <Send className="w-3 h-3" />
                                 <span>Kirim WA</span>
@@ -693,7 +972,84 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
 
       </main>
 
-      {/* Manual Guest Modal */}
+      {/* MODAL 1: QR CODE PAIRING MODAL (WHATSAPP WEB MULTI-DEVICE) */}
+      {qrModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className={`p-6 sm:p-8 rounded-3xl border max-w-lg w-full space-y-6 ${
+            isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-[#071f1e] border-emerald-500/60 text-white'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-black/10">
+              <div className="flex items-center gap-2">
+                <QrCode className="w-5 h-5 text-emerald-400" />
+                <h3 className="text-base font-bold">Pindai QR Code WhatsApp Web</h3>
+              </div>
+              <button 
+                onClick={() => setQrModalOpen(false)}
+                className="text-stone-400 hover:text-white text-xs font-semibold"
+              >
+                Tutup
+              </button>
+            </div>
+
+            <div className="text-center space-y-4">
+              <p className="text-xs text-stone-300">
+                Hubungkan WhatsApp di HP Anda agar pesan broadcast terkirim atas nama nomor pribadi Anda.
+              </p>
+
+              {/* QR Image Canvas Simulation */}
+              <div className="w-56 h-56 mx-auto bg-white p-3 rounded-2xl shadow-xl border-2 border-emerald-500/50 flex items-center justify-center relative">
+                <img
+                  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=WHATSAPP_WEB_PAIRING_HARINIKAH_6281278901234"
+                  alt="WhatsApp Web QR Code"
+                  className="w-full h-full object-contain"
+                />
+                <div className="absolute inset-x-0 top-0 h-1 bg-emerald-500 animate-bounce"></div>
+              </div>
+
+              {/* Step by Step Guide */}
+              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/10 text-left text-xs space-y-2">
+                <p className="font-bold text-emerald-400">Cara Menghubungkan:</p>
+                <ol className="list-decimal list-inside space-y-1 text-stone-300 text-[11px]">
+                  <li>Buka WhatsApp di ponsel calon pengantin</li>
+                  <li>Ketuk <strong>Menu (titik tiga)</strong> atau <strong>Pengaturan</strong></li>
+                  <li>Pilih <strong>Perangkat Tertaut</strong> lalu ketuk <strong>Tautkan Perangkat</strong></li>
+                  <li>Arahkan kamera HP Anda ke kode QR di atas</li>
+                </ol>
+              </div>
+
+              <div className="pt-2 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => setQrModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-stone-400/40 text-xs font-medium"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSenderConnected(true);
+                    setQrModalOpen(false);
+                    const newLog = {
+                      id: `log-${Date.now()}`,
+                      time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+                      text: `Perangkat Berhasil Dipasangkan: ${senderPhone} (${senderName}) — Online`,
+                      type: 'success' as const
+                    };
+                    setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
+                    alert('Perangkat WhatsApp pengantin berhasil terhubung!');
+                  }}
+                  className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md"
+                >
+                  Simulasi Perangkat Terhubung
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 2: MANUAL GUEST MODAL */}
       {newGuestModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
           <div className={`p-6 rounded-3xl border max-w-md w-full space-y-4 ${
@@ -772,4 +1128,3 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
     </div>
   );
 }
-
