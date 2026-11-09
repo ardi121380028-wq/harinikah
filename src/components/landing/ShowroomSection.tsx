@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { MapPin, Coffee, ShieldCheck, CheckCircle2, Send } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 export const ShowroomSection: React.FC = () => {
   const { themeMode } = useInvitation();

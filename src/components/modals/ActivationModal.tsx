@@ -18,7 +18,7 @@ import {
   ChevronRight,
   ArrowRight
 } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface ActivationModalProps {
   isOpen: boolean;

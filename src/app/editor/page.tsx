@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 import { 
   Layers, 
   Type, 
@@ -45,7 +45,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-import { TEMPLATE_PRESETS } from '@/constants/initialData';
+import { TEMPLATE_PRESETS } from '../../constants/initialData';
 import { 
   GununganWayang, 
   SuntiangMinang, 
@@ -59,12 +59,12 @@ import {
   RonceMelatiDivider,
   BotanicalFoilDivider,
   CardFrameBorder
-} from '@/components/cultural/CulturalOrnaments';
-import { weddingAudio } from '@/utils/audioEngine';
-import { OnboardingWizardModal } from '@/components/modals/OnboardingWizardModal';
-import { DiscountGiftModal } from '@/components/modals/DiscountGiftModal';
-import { ActivationModal } from '@/components/modals/ActivationModal';
-import type { CulturalTemplate } from '@/types';
+} from '../../components/cultural/CulturalOrnaments';
+import { weddingAudio } from '../../utils/audioEngine';
+import { OnboardingWizardModal } from '../../components/modals/OnboardingWizardModal';
+import { DiscountGiftModal } from '../../components/modals/DiscountGiftModal';
+import { ActivationModal } from '../../components/modals/ActivationModal';
+import type { CulturalTemplate } from '../../types';
 
 export default function EditorPage() {
   const router = useRouter();

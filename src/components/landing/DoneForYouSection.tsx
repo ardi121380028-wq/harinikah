@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { MousePointerClick, Headset } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface DoneForYouProps {
   onStartDIY: () => void;

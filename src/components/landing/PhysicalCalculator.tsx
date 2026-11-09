@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Box, CheckCircle, Sparkles } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface PhysicalCalculatorProps {
   onOpenSampleModal: () => void;

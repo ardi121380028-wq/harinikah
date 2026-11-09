@@ -10,7 +10,7 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface NavbarProps {
   onOpenAuth: () => void;

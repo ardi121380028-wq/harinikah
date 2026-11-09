@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Eye, Heart, Check } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface CatalogSectionProps {
   onSelectTheme: (themeName: string) => void;

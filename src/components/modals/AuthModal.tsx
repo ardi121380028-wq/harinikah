@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, Sparkles, ArrowRight } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface AuthModalProps {
   isOpen: boolean;

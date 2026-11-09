@@ -21,10 +21,10 @@ import {
   Sun,
   Moon
 } from 'lucide-react';
-import { INITIAL_PAGES, TEMPLATE_PRESETS } from '@/constants/initialData';
-import { GununganWayang, SuntiangMinang, BatikParangDivider, MinangUkiranDivider } from '@/components/cultural/CulturalOrnaments';
-import { weddingAudio } from '@/utils/audioEngine';
-import type { CulturalTemplate } from '@/types';
+import { INITIAL_PAGES, TEMPLATE_PRESETS } from '../../constants/initialData';
+import { GununganWayang, SuntiangMinang, BatikParangDivider, MinangUkiranDivider } from '../../components/cultural/CulturalOrnaments';
+import { weddingAudio } from '../../utils/audioEngine';
+import type { CulturalTemplate } from '../../types';
 
 interface WishItem {
   id: string;

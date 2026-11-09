@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 export const FAQSection: React.FC = () => {
   const { themeMode } = useInvitation();

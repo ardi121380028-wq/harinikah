@@ -2,32 +2,32 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../context/InvitationContext';
 
 // Layout Components
-import { Navbar } from '@/components/layout/Navbar';
-import { Footer } from '@/components/layout/Footer';
-import { FloatingWhatsApp } from '@/components/layout/FloatingWhatsApp';
+import { Navbar } from '../components/layout/Navbar';
+import { Footer } from '../components/layout/Footer';
+import { FloatingWhatsApp } from '../components/layout/FloatingWhatsApp';
 
 // Landing Page Sections
-import { HeroSection } from '@/components/landing/HeroSection';
-import { TrustBar } from '@/components/landing/TrustBar';
-import { DualProductSection } from '@/components/landing/DualProductSection';
-import { DoneForYouSection } from '@/components/landing/DoneForYouSection';
-import { BundlingSection } from '@/components/landing/BundlingSection';
-import { CatalogSection } from '@/components/landing/CatalogSection';
-import { PhysicalCalculator } from '@/components/landing/PhysicalCalculator';
-import { ShowroomSection } from '@/components/landing/ShowroomSection';
-import { PricingSection } from '@/components/landing/PricingSection';
-import { TestimonialsSection } from '@/components/landing/TestimonialsSection';
-import { FAQSection } from '@/components/landing/FAQSection';
+import { HeroSection } from '../components/landing/HeroSection';
+import { TrustBar } from '../components/landing/TrustBar';
+import { DualProductSection } from '../components/landing/DualProductSection';
+import { DoneForYouSection } from '../components/landing/DoneForYouSection';
+import { BundlingSection } from '../components/landing/BundlingSection';
+import { CatalogSection } from '../components/landing/CatalogSection';
+import { PhysicalCalculator } from '../components/landing/PhysicalCalculator';
+import { ShowroomSection } from '../components/landing/ShowroomSection';
+import { PricingSection } from '../components/landing/PricingSection';
+import { TestimonialsSection } from '../components/landing/TestimonialsSection';
+import { FAQSection } from '../components/landing/FAQSection';
 
 // Modals
-import { SampleModal } from '@/components/modals/SampleModal';
-import { AuthModal } from '@/components/modals/AuthModal';
-import { OnboardingWizardModal } from '@/components/modals/OnboardingWizardModal';
-import { DiscountGiftModal } from '@/components/modals/DiscountGiftModal';
-import { ActivationModal } from '@/components/modals/ActivationModal';
+import { SampleModal } from '../components/modals/SampleModal';
+import { AuthModal } from '../components/modals/AuthModal';
+import { OnboardingWizardModal } from '../components/modals/OnboardingWizardModal';
+import { DiscountGiftModal } from '../components/modals/DiscountGiftModal';
+import { ActivationModal } from '../components/modals/ActivationModal';
 
 export default function HomePage() {
   const router = useRouter();

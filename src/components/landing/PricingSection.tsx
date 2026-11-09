@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Check, Sparkles, Clock, Flame } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface PricingSectionProps {
   onSelectTier: (tierName: string) => void;

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Phone, Mail, MapPin } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 export const Footer: React.FC = () => {
   const { themeMode } = useInvitation();

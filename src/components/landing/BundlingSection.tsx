@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Sparkles, Gift, Check, HeartHandshake } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface BundlingSectionProps {
   onOpenSampleModal: () => void;

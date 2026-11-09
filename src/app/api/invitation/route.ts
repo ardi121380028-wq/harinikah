@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { INITIAL_PAGES } from '@/constants/initialData';
+import { INITIAL_PAGES } from '../../../constants/initialData';
 
 // Simple in-memory / state store for published invitations during session
 const invitationsStore: Record<string, any> = {

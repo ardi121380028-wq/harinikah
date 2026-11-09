@@ -16,7 +16,7 @@ import {
   CheckCircle2,
   Sparkles
 } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface OnboardingWizardModalProps {
   isOpen: boolean;

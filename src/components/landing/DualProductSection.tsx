@@ -8,7 +8,7 @@ import {
   ArrowRight,
   ShieldCheck
 } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 interface DualProductSectionProps {
   onStartDigital: () => void;

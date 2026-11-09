@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Star } from 'lucide-react';
-import { useInvitation } from '@/context/InvitationContext';
+import { useInvitation } from '../../context/InvitationContext';
 
 export const TestimonialsSection: React.FC = () => {
   const { themeMode } = useInvitation();
