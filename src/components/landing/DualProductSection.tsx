@@ -185,7 +185,7 @@ export const DualProductSection: React.FC<DualProductSectionProps> = ({
                 href="https://shopee.co.id/harinikah_official"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-semibold text-xs uppercase tracking-wider transition-all bg-[#EE4D2D] hover:bg-[#D73211] text-white shadow-md hover:scale-102"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-bold text-xs uppercase tracking-wider transition-all bg-gradient-to-r from-[#EE4D2D] to-[#FF5722] hover:from-[#FF5733] hover:to-[#EE4D2D] text-white shadow-lg shadow-[#EE4D2D]/35 hover:scale-105 active:scale-95 border border-[#FF7D61]/50"
               >
                 <ShieldCheck className="w-4 h-4 text-white" />
                 Beli di Shopee Official

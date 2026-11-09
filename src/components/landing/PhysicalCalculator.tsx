@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Box, CheckCircle, Sparkles, ShoppingBag, ExternalLink } from 'lucide-react';
-import { useInvitation } from '../../context/InvitationContext';
+import { useInvitation } from '@/context/InvitationContext';
 
 interface PhysicalCalculatorProps {
   onOpenSampleModal: () => void;
@@ -45,51 +45,44 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
   const qualifiesForFreeDigital = quantity >= 200;
 
   return (
-    <section className={`py-20 lg:py-28 border-t transition-colors duration-300 ${
-      isLight ? 'bg-[#FAF8F5] border-amber-200' : 'bg-[#051817] border-gold-subtle'
-    }`}>
+    <section className={`py-20 lg:py-28 border-t transition-colors duration-300 ${isLight ? 'bg-[#FAF8F5] border-amber-200' : 'bg-[#051817] border-gold-subtle'
+      }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="text-center max-w-3xl mx-auto mb-14">
-          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${
-            isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
-          }`}>
+          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
+            }`}>
             Kalkulator Cetak Fisik
           </span>
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 ${
-            isLight ? 'text-stone-900' : 'text-white'
-          }`}>
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 ${isLight ? 'text-stone-900' : 'text-white'
+            }`}>
             Simulasi Biaya Cetak Undangan Fisik
           </h2>
-          <p className={`text-sm sm:text-base mt-3 ${
-            isLight ? 'text-stone-600' : 'text-stone-300'
-          }`}>
+          <p className={`text-sm sm:text-base mt-3 ${isLight ? 'text-stone-600' : 'text-stone-300'
+            }`}>
             Transparan, tanpa biaya tersembunyi. Sesuaikan jumlah eksemplar, jenis kertas, dan sentuhan finishing sesuai anggaran pernikahanmu.
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-5xl mx-auto">
-          
+
           {/* Controls Form */}
-          <div className={`lg:col-span-7 rounded-3xl p-6 sm:p-8 border space-y-6 transition-all ${
-            isLight
-              ? 'bg-white border-amber-200 shadow-xl shadow-amber-950/5'
-              : 'bg-[#061e1d] border-gold-subtle'
-          }`}>
-            
+          <div className={`lg:col-span-7 rounded-3xl p-6 sm:p-8 border space-y-6 transition-all ${isLight
+            ? 'bg-white border-amber-200 shadow-xl shadow-amber-950/5'
+            : 'bg-[#061e1d] border-gold-subtle'
+            }`}>
+
             {/* Quantity Selector */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className={`text-xs font-bold uppercase tracking-wider ${
-                  isLight ? 'text-stone-700' : 'text-stone-300'
-                }`}>
+                <label className={`text-xs font-bold uppercase tracking-wider ${isLight ? 'text-stone-700' : 'text-stone-300'
+                  }`}>
                   Jumlah Eksemplar (Pcs):
                 </label>
-                <span className={`text-sm font-extrabold px-3 py-1 rounded-full border ${
-                  isLight
-                    ? 'text-amber-800 bg-amber-50 border-amber-200'
-                    : 'text-gold-300 bg-[#041514] border-gold-subtle'
-                }`}>
+                <span className={`text-sm font-extrabold px-3 py-1 rounded-full border ${isLight
+                  ? 'text-amber-800 bg-amber-50 border-amber-200'
+                  : 'text-gold-300 bg-[#041514] border-gold-subtle'
+                  }`}>
                   {quantity} Pcs
                 </span>
               </div>
@@ -99,13 +92,12 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
                     key={qty}
                     type="button"
                     onClick={() => setQuantity(qty)}
-                    className={`py-2 text-xs font-bold rounded-xl border transition-all ${
-                      quantity === qty
-                        ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black border-gold-400 shadow-gold-sm'
-                        : isLight
+                    className={`py-2 text-xs font-bold rounded-xl border transition-all ${quantity === qty
+                      ? 'bg-gradient-to-r from-amber-500 to-gold-400 text-black border-gold-400 shadow-gold-sm'
+                      : isLight
                         ? 'bg-[#F9F6F0] text-stone-700 border-amber-200 hover:bg-[#F2ECE0]'
                         : 'bg-white/5 text-stone-300 border-white/10 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     {qty} pcs
                   </button>
@@ -115,9 +107,8 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
 
             {/* Paper / Material Type */}
             <div>
-              <label className={`text-xs font-bold uppercase tracking-wider block mb-2 ${
-                isLight ? 'text-stone-700' : 'text-stone-300'
-              }`}>
+              <label className={`text-xs font-bold uppercase tracking-wider block mb-2 ${isLight ? 'text-stone-700' : 'text-stone-300'
+                }`}>
                 Pilih Jenis Undangan:
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -130,22 +121,20 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
                     key={item.id}
                     type="button"
                     onClick={() => setPaperType(item.id as any)}
-                    className={`p-3 text-left rounded-xl border transition-all ${
-                      paperType === item.id
-                        ? isLight
-                          ? 'bg-amber-100 border-amber-400 text-amber-950 font-bold shadow-sm'
-                          : 'bg-gold-950 border-gold-400 text-gold-200 shadow-gold-sm'
-                        : isLight
+                    className={`p-3 text-left rounded-xl border transition-all ${paperType === item.id
+                      ? isLight
+                        ? 'bg-amber-100 border-amber-400 text-amber-950 font-bold shadow-sm'
+                        : 'bg-gold-950 border-gold-400 text-gold-200 shadow-gold-sm'
+                      : isLight
                         ? 'bg-[#F9F6F0] text-stone-700 border-amber-200 hover:bg-[#F2ECE0]'
                         : 'bg-white/5 text-stone-300 border-white/10 hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     <p className="text-xs font-bold">{item.name}</p>
-                    <p className={`text-[10px] mt-0.5 ${
-                      paperType === item.id
-                        ? isLight ? 'text-amber-800' : 'text-gold-300'
-                        : isLight ? 'text-stone-500' : 'text-stone-400'
-                    }`}>
+                    <p className={`text-[10px] mt-0.5 ${paperType === item.id
+                      ? isLight ? 'text-amber-800' : 'text-gold-300'
+                      : isLight ? 'text-stone-500' : 'text-stone-400'
+                      }`}>
                       {item.desc}
                     </p>
                   </button>
@@ -155,17 +144,15 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
 
             {/* Finishing Addons */}
             <div>
-              <label className={`text-xs font-bold uppercase tracking-wider block mb-2 ${
-                isLight ? 'text-stone-700' : 'text-stone-300'
-              }`}>
+              <label className={`text-xs font-bold uppercase tracking-wider block mb-2 ${isLight ? 'text-stone-700' : 'text-stone-300'
+                }`}>
                 Finishing Mewah (Tambahan):
               </label>
               <div className="space-y-2">
-                <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${
-                  isLight
-                    ? 'bg-[#FDFBF7] border-amber-200 hover:border-amber-400'
-                    : 'bg-black/40 border-gold-subtle hover:border-gold-400'
-                }`}>
+                <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${isLight
+                  ? 'bg-[#FDFBF7] border-amber-200 hover:border-amber-400'
+                  : 'bg-black/40 border-gold-subtle hover:border-gold-400'
+                  }`}>
                   <div className="flex items-center gap-2.5">
                     <input
                       type="checkbox"
@@ -181,11 +168,10 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
                   <span className={`text-xs font-semibold ${isLight ? 'text-amber-800' : 'text-gold-300'}`}>+Rp 1.200/pcs</span>
                 </label>
 
-                <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${
-                  isLight
-                    ? 'bg-[#FDFBF7] border-amber-200 hover:border-amber-400'
-                    : 'bg-black/40 border-gold-subtle hover:border-gold-400'
-                }`}>
+                <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${isLight
+                  ? 'bg-[#FDFBF7] border-amber-200 hover:border-amber-400'
+                  : 'bg-black/40 border-gold-subtle hover:border-gold-400'
+                  }`}>
                   <div className="flex items-center gap-2.5">
                     <input
                       type="checkbox"
@@ -201,11 +187,10 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
                   <span className={`text-xs font-semibold ${isLight ? 'text-amber-800' : 'text-gold-300'}`}>+Rp 1.800/pcs</span>
                 </label>
 
-                <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${
-                  isLight
-                    ? 'bg-[#FDFBF7] border-amber-200 hover:border-amber-400'
-                    : 'bg-black/40 border-gold-subtle hover:border-gold-400'
-                }`}>
+                <label className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-colors ${isLight
+                  ? 'bg-[#FDFBF7] border-amber-200 hover:border-amber-400'
+                  : 'bg-black/40 border-gold-subtle hover:border-gold-400'
+                  }`}>
                   <div className="flex items-center gap-2.5">
                     <input
                       type="checkbox"
@@ -226,42 +211,36 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
           </div>
 
           {/* Realtime Result Card */}
-          <div className={`lg:col-span-5 rounded-3xl p-6 sm:p-8 border-2 space-y-6 transition-all ${
-            isLight
-              ? 'bg-gradient-to-br from-white via-[#FAF5EC] to-white text-stone-900 border-amber-400 shadow-2xl shadow-amber-950/10'
-              : 'bg-gradient-to-br from-[#0c2e2b] to-[#041514] text-white shadow-velvet-deep border-gold-400'
-          }`}>
+          <div className={`lg:col-span-5 rounded-3xl p-6 sm:p-8 border-2 space-y-6 transition-all ${isLight
+            ? 'bg-gradient-to-br from-white via-[#FAF5EC] to-white text-stone-900 border-amber-400 shadow-2xl shadow-amber-950/10'
+            : 'bg-gradient-to-br from-[#0c2e2b] to-[#041514] text-white shadow-velvet-deep border-gold-400'
+            }`}>
             <div>
-              <span className={`text-[10px] uppercase font-bold tracking-widest ${
-                isLight ? 'text-amber-800' : 'text-gold-400'
-              }`}>
+              <span className={`text-[10px] uppercase font-bold tracking-widest ${isLight ? 'text-amber-800' : 'text-gold-400'
+                }`}>
                 Estimasi Biaya Cetak
               </span>
               <div className="mt-2 flex items-baseline gap-2">
-                <span className={`text-3xl sm:text-4xl font-bold ${
-                  isLight ? 'text-amber-850 text-gold-light' : 'text-gold-bright'
-                }`}>
+                <span className={`text-3xl sm:text-4xl font-bold ${isLight ? 'text-amber-850 text-gold-light' : 'text-gold-bright'
+                  }`}>
                   Rp {perPiece.toLocaleString('id-ID')}
                 </span>
                 <span className={`text-xs ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>/ pcs</span>
               </div>
               <p className={`text-xs mt-1 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
-                Total perkiraan untuk {quantity} pcs: <strong className={`font-bold ${
-                  isLight ? 'text-amber-900' : 'text-gold-200'
-                }`}>Rp {total.toLocaleString('id-ID')}</strong>
+                Total perkiraan untuk {quantity} pcs: <strong className={`font-bold ${isLight ? 'text-amber-900' : 'text-gold-200'
+                  }`}>Rp {total.toLocaleString('id-ID')}</strong>
               </p>
             </div>
 
             {/* Bonus Banner */}
             {qualifiesForFreeDigital ? (
-              <div className={`p-3.5 rounded-2xl border flex items-start gap-3 ${
-                isLight
-                  ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
-                  : 'bg-emerald-950/80 border-emerald-500/50'
-              }`}>
-                <Sparkles className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                  isLight ? 'text-emerald-600' : 'text-emerald-400'
-                }`} />
+              <div className={`p-3.5 rounded-2xl border flex items-start gap-3 ${isLight
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                : 'bg-emerald-950/80 border-emerald-500/50'
+                }`}>
+                <Sparkles className={`w-5 h-5 flex-shrink-0 mt-0.5 ${isLight ? 'text-emerald-600' : 'text-emerald-400'
+                  }`} />
                 <div>
                   <p className={`text-xs font-bold ${isLight ? 'text-emerald-900' : 'text-emerald-300'}`}>
                     SELAMAT! Kamu Dapat Bonus Bundling:
@@ -272,19 +251,17 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
                 </div>
               </div>
             ) : (
-              <div className={`p-3.5 rounded-2xl border text-xs ${
-                isLight
-                  ? 'bg-amber-50 border-amber-200 text-amber-900'
-                  : 'bg-white/5 border-white/10 text-stone-300'
-              }`}>
+              <div className={`p-3.5 rounded-2xl border text-xs ${isLight
+                ? 'bg-amber-50 border-amber-200 text-amber-900'
+                : 'bg-white/5 border-white/10 text-stone-300'
+                }`}>
                 💡 <em>Tambah {200 - quantity} pcs lagi untuk dapatkan bonus GRATIS Undangan Web Digital Premium!</em>
               </div>
             )}
 
             {/* Included in Service */}
-            <div className={`space-y-2 text-xs pt-2 border-t ${
-              isLight ? 'text-stone-700 border-amber-200' : 'text-stone-300 border-gold-subtle'
-            }`}>
+            <div className={`space-y-2 text-xs pt-2 border-t ${isLight ? 'text-stone-700 border-amber-200' : 'text-stone-300 border-gold-subtle'
+              }`}>
               <div className="flex items-center gap-2">
                 <CheckCircle className={`w-4 h-4 ${isLight ? 'text-amber-600' : 'text-gold-400'}`} />
                 <span>Gratis Plastik OPP & Label Nama Tamu</span>
@@ -305,7 +282,7 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
                 href="https://shopee.co.id/harinikah_official"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3.5 px-6 rounded-2xl bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-102 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#EE4D2D] via-[#F05537] to-[#D73211] hover:from-[#FF5733] hover:to-[#EE4D2D] text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-[#EE4D2D]/35 hover:scale-102 transition-all flex items-center justify-center gap-2 border border-[#FF7D61]/50"
               >
                 <ShoppingBag className="w-4 h-4" />
                 <span>Pesan Undangan Fisik via Shopee Official</span>

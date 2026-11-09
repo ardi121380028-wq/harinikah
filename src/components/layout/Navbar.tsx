@@ -113,9 +113,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 href="https://shopee.co.id/harinikah_official" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="hover:text-[#EE4D2D] transition-colors flex items-center gap-1 text-[#EE4D2D]"
+                className="px-3 py-1 rounded-full bg-gradient-to-r from-[#EE4D2D] to-[#F05537] hover:brightness-110 text-white text-[11px] font-bold shadow-sm shadow-[#EE4D2D]/35 transition-all hover:scale-105 flex items-center gap-1.5"
               >
-                <span>Shopee Official</span>
+                <span>Shopee Store 🛍️</span>
               </a>
               <a href="#katalog" className="hover:text-amber-600 transition-colors">
                 Katalog

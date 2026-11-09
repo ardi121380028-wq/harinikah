@@ -120,3 +120,4 @@ export const STUDIO_LOCATION = {
   address: 'Jl. Gatot Subroto No. 88, Pahoman, Enggal, Bandar Lampung, Lampung 35213',
   googleMapsUrl: 'https://maps.google.com/?q=Bandar+Lampung',
 };
+

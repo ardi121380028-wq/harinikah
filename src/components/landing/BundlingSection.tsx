@@ -90,7 +90,7 @@ export const BundlingSection: React.FC<BundlingSectionProps> = ({ onOpenSampleMo
                   href="https://shopee.co.id/harinikah_official"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border font-bold text-xs tracking-wider transition-colors bg-[#EE4D2D] hover:bg-[#D73211] text-white border-[#EE4D2D]"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border font-bold text-xs tracking-wider transition-all bg-gradient-to-r from-[#EE4D2D] via-[#F05537] to-[#D73211] hover:from-[#FF5733] hover:to-[#EE4D2D] text-white shadow-lg shadow-[#EE4D2D]/35 hover:scale-105 active:scale-95 border border-[#FF7D61]/50"
                 >
                   <HeartHandshake className="w-4 h-4 text-white" />
                   Order via Shopee Official

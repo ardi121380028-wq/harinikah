@@ -425,3 +425,4 @@ Mohon verifikasi dan aktifkan akun editor saya. Terima kasih!`;
     </div>
   );
 }
+

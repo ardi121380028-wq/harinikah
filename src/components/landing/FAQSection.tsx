@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-import { useInvitation } from '../../context/InvitationContext';
+import { useInvitation } from '@/context/InvitationContext';
 
 export const FAQSection: React.FC = () => {
   const { themeMode } = useInvitation();
@@ -38,25 +38,21 @@ export const FAQSection: React.FC = () => {
   ];
 
   return (
-    <section className={`py-20 lg:py-28 border-t transition-colors duration-300 ${
-      isLight ? 'bg-[#FAF8F5] border-[#E8DEC8]' : 'bg-[#041514] border-gold-subtle'
-    }`} id="faq">
+    <section className={`py-20 lg:py-28 border-t transition-colors duration-300 ${isLight ? 'bg-[#FAF8F5] border-[#E8DEC8]' : 'bg-[#041514] border-gold-subtle'
+      }`} id="faq">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="text-center mb-16">
-          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${
-            isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
-          }`}>
+          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
+            }`}>
             Pusat Bantuan
           </span>
-          <h2 className={`text-3xl sm:text-4xl font-bold mt-4 ${
-            isLight ? 'text-stone-900' : 'text-white'
-          }`}>
+          <h2 className={`text-3xl sm:text-4xl font-bold mt-4 ${isLight ? 'text-stone-900' : 'text-white'
+            }`}>
             Pertanyaan yang Sering Diajukan (FAQ)
           </h2>
-          <p className={`text-sm sm:text-base mt-3 ${
-            isLight ? 'text-stone-600' : 'text-stone-300'
-          }`}>
+          <p className={`text-sm sm:text-base mt-3 ${isLight ? 'text-stone-600' : 'text-stone-300'
+            }`}>
             Punya pertanyaan lain? Tim konsultan kami siap membantumu 24/7 via WhatsApp.
           </p>
         </div>
@@ -65,34 +61,29 @@ export const FAQSection: React.FC = () => {
           {faqs.map((faq, idx) => (
             <div
               key={idx}
-              className={`border rounded-2xl overflow-hidden transition-all shadow-sm ${
-                isLight ? 'border-[#E8DEC8] bg-white' : 'border-gold-subtle bg-[#061e1d]'
-              }`}
+              className={`border rounded-2xl overflow-hidden transition-all shadow-sm ${isLight ? 'border-[#E8DEC8] bg-white' : 'border-gold-subtle bg-[#061e1d]'
+                }`}
             >
               <button
                 onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-                className={`w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 transition-colors ${
-                  isLight ? 'hover:bg-amber-50/50' : 'hover:bg-white/5'
-                }`}
+                className={`w-full p-5 sm:p-6 text-left flex items-center justify-between gap-4 transition-colors ${isLight ? 'hover:bg-amber-50/50' : 'hover:bg-white/5'
+                  }`}
               >
-                <span className={`text-xs sm:text-sm font-semibold ${
-                  isLight ? 'text-stone-900' : 'text-white'
-                }`}>
+                <span className={`text-xs sm:text-sm font-semibold ${isLight ? 'text-stone-900' : 'text-white'
+                  }`}>
                   {faq.q}
                 </span>
                 <ChevronDown
-                  className={`w-5 h-5 transition-transform flex-shrink-0 ${
-                    openIdx === idx ? 'rotate-180 text-amber-600' : isLight ? 'text-stone-500' : 'text-gold-400'
-                  }`}
+                  className={`w-5 h-5 transition-transform flex-shrink-0 ${openIdx === idx ? 'rotate-180 text-amber-600' : isLight ? 'text-stone-500' : 'text-gold-400'
+                    }`}
                 />
               </button>
 
               {openIdx === idx && (
-                <div className={`p-5 sm:p-6 border-t text-xs sm:text-sm leading-relaxed ${
-                  isLight
-                    ? 'bg-[#FBF8F2] border-stone-200 text-stone-700'
-                    : 'bg-[#031110] border-gold-subtle/50 text-stone-300'
-                }`}>
+                <div className={`p-5 sm:p-6 border-t text-xs sm:text-sm leading-relaxed ${isLight
+                  ? 'bg-[#FBF8F2] border-stone-200 text-stone-700'
+                  : 'bg-[#031110] border-gold-subtle/50 text-stone-300'
+                  }`}>
                   {faq.a}
                 </div>
               )}

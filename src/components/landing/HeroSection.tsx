@@ -105,14 +105,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 href="https://shopee.co.id/harinikah_official"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-semibold rounded-full border transition-all ${
-                  isLight
-                    ? 'bg-[#FFF5F1] border-[#FFD4C9] text-[#EE4D2D] hover:bg-[#FFE8E0] shadow-sm'
-                    : 'bg-[#EE4D2D]/15 border-[#EE4D2D]/40 text-[#EE4D2D] hover:bg-[#EE4D2D]/25'
-                }`}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-xs font-bold text-white bg-gradient-to-r from-[#EE4D2D] via-[#F05537] to-[#D73211] hover:from-[#FF5733] hover:to-[#EE4D2D] rounded-full shadow-lg shadow-[#EE4D2D]/40 hover:shadow-xl hover:shadow-[#EE4D2D]/55 hover:scale-105 active:scale-95 transition-all border border-[#FF8369]/60"
               >
-                <ShoppingBag className="w-4 h-4 text-[#EE4D2D]" />
-                <span>Beli di Shopee Official Store</span>
+                <ShoppingBag className="w-4 h-4 text-white fill-white/20" />
+                <span className="tracking-wide">Beli di Shopee Official Store</span>
               </a>
             </div>
 
