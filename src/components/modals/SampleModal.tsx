@@ -80,7 +80,24 @@ export const SampleModal: React.FC<SampleModalProps> = ({ isOpen, onClose }) => 
               Rasakan langsung tekstur mewah bahan Velvet Teal, Cotton Paper 260gr, sampel foil emas timbul, amplop kalkir, dan wax seal asli sebelum cetak massal.
             </p>
 
-            <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
+            {/* Official Shopee CTA Banner */}
+            <div className="mt-4 p-3.5 rounded-2xl bg-[#FFF5F1] border border-[#FFD4C9] text-stone-900 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm">
+              <div className="text-left">
+                <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#EE4D2D] block">Toko Resmi Terverifikasi</span>
+                <p className="text-xs font-bold text-stone-800">Beli Langsung di Shopee Official Store</p>
+                <p className="text-[10px] text-stone-500">Gratis ongkir se-Indonesia & jaminan garansi Shopee Garansi 100%</p>
+              </div>
+              <a
+                href="https://shopee.co.id/harinikah_official"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-4 py-2 rounded-xl bg-[#EE4D2D] hover:bg-[#D73211] text-white text-xs font-bold whitespace-nowrap shadow transition-transform hover:scale-105 text-center"
+              >
+                Buka Shopee 🛍️
+              </a>
+            </div>
+
+            <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
               <div>
                 <label className={`text-xs font-bold block mb-1 ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
                   Nama Calon Pengantin:

@@ -11,7 +11,7 @@ export const TestimonialsSection: React.FC = () => {
   const reviews = [
     {
       couple: "Rian & Amanda",
-      location: "Jakarta",
+      location: "Bandar Lampung",
       date: "Oktober 2026",
       avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80",
       type: "Paket Bundling (Fisik + Digital)",
@@ -27,11 +27,11 @@ export const TestimonialsSection: React.FC = () => {
     },
     {
       couple: "Farhan & Tania",
-      location: "Bandung",
+      location: "Palembang",
       date: "November 2026",
       avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=200&q=80",
-      type: "Undangan Fisik (Hardcover Velvet)",
-      review: "Sempat mampir ke Showroom HariNikah di Bandung, pelayanannya ramah banget, dikasih sample kertas dan kopi. Hasil cetakan 500 pcs datang tepat waktu tanpa ada yang cacat. Benar-benar vendor terbaik!"
+      type: "Undangan Fisik (Shopee Official)",
+      review: "Pesan 500 pcs undangan hardcover velvet lewat Shopee Official HariNikah dari Bandar Lampung. Proses revisi via WA sangat komunikatif dan cepat. Hasil cetakan datang dengan packing kayu yang super aman tanpa cacat sedikitpun. Vendor terbaik!"
     }
   ];
 

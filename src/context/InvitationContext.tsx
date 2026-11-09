@@ -258,7 +258,7 @@ export const InvitationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const groom = pages[0]?.data?.groomName || 'Dimas';
     const bride = pages[0]?.data?.brideName || 'Clarissa';
     const date = pages[0]?.data?.dateText || 'Sabtu, 18 Juli 2026';
-    const venue = pages[0]?.data?.venueCity || 'Jakarta';
+    const venue = pages[0]?.data?.venueCity || 'Bandar Lampung';
 
     const htmlContent = `<!DOCTYPE html>
 <html lang="id">

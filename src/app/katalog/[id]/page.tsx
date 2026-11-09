@@ -104,7 +104,7 @@ export default function TemplateDetailPage() {
       name: 'Bram & Nabila',
       rating: 5,
       date: '1 bulan lalu',
-      comment: 'Fitur amplop digital dan petunjuk arah Google Maps-nya sangat membantu tamu. Tidak ada yang nyasar saat datang ke Pine Hill Bandung.',
+      comment: 'Fitur amplop digital dan petunjuk arah Google Maps-nya sangat membantu tamu. Tidak ada yang nyasar saat datang ke Pine Hill Garden Bandar Lampung.',
       verified: true
     },
     {
@@ -366,14 +366,14 @@ export default function TemplateDetailPage() {
                         <span className="text-[8px] text-amber-300 font-bold uppercase tracking-wider block">Akad Nikah</span>
                         <p className="text-xs font-bold text-white mt-0.5">Minggu, 27 April 2025</p>
                         <p className="text-[9px] text-stone-300">Pukul 08.00 - 10.00 WIB</p>
-                        <p className="text-[9px] text-stone-400 mt-1">Pine Hill Garden Pavilion, Bandung</p>
+                        <p className="text-[9px] text-stone-400 mt-1">Pine Hill Garden Pavilion, Bandar Lampung</p>
                       </div>
 
                       <div className="bg-[#2D3B31]/80 border border-white/10 rounded-2xl p-3 text-left">
                         <span className="text-[8px] text-amber-300 font-bold uppercase tracking-wider block">Resepsi Pernikahan</span>
                         <p className="text-xs font-bold text-white mt-0.5">Minggu, 27 April 2025</p>
                         <p className="text-[9px] text-stone-300">Pukul 11.00 - 14.00 WIB</p>
-                        <p className="text-[9px] text-stone-400 mt-1">Pine Hill Garden Ballroom, Bandung</p>
+                        <p className="text-[9px] text-stone-400 mt-1">Pine Hill Garden Ballroom, Bandar Lampung</p>
                       </div>
                     </div>
 

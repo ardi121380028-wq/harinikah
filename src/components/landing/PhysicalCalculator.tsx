@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, CheckCircle, Sparkles } from 'lucide-react';
+import { Box, CheckCircle, Sparkles, ShoppingBag, ExternalLink } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
 interface PhysicalCalculatorProps {
@@ -299,15 +299,18 @@ export const PhysicalCalculator: React.FC<PhysicalCalculatorProps> = ({ onOpenSa
               </div>
             </div>
 
-            {/* Order Sample Button */}
+            {/* Order via Shopee Button */}
             <div className="pt-2 space-y-3">
-              <button
-                onClick={onOpenSampleModal}
-                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-gold-400 text-black font-bold text-xs uppercase tracking-wider shadow-gold-sm hover:scale-102 transition-all flex items-center justify-center gap-2"
+              <a
+                href="https://shopee.co.id/harinikah_official"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3.5 px-6 rounded-2xl bg-[#EE4D2D] hover:bg-[#D73211] text-white font-bold text-xs uppercase tracking-wider shadow-lg hover:scale-102 transition-all flex items-center justify-center gap-2"
               >
-                <Box className="w-4 h-4" />
-                Pesan Sample Box ke Rumah
-              </button>
+                <ShoppingBag className="w-4 h-4" />
+                <span>Pesan Undangan Fisik via Shopee Official</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
 
           </div>

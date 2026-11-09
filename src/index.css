@@ -23,18 +23,21 @@
 .text-gold-gradient {
   background: linear-gradient(135deg, #fff2ce 0%, #dfb051 50%, #c48b26 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gold-bright {
   background: linear-gradient(135deg, #ffffff 0%, #f7df99 45%, #dfb051 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .text-gold-light {
   background: linear-gradient(135deg, #9e7422 0%, #d4af37 50%, #8a641b 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

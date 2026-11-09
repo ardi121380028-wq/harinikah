@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Check, Sparkles, Clock, Flame } from 'lucide-react';
+import { Check, Sparkles, Clock, Flame, ShoppingBag } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
 interface PricingSectionProps {
@@ -166,10 +166,19 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
               <p className={`text-xs mt-1 ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>Fitur lengkap, bebas personalisasi Canva</p>
 
               <div className="mt-6 mb-6">
-                <span className="text-stone-400 text-xs line-through block">Rp 250.000</span>
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-3xl font-bold ${isLight ? 'text-amber-900' : 'text-gold-bright'}`}>Rp 110.000</span>
-                  <span className="text-[10px] text-emerald-600 font-bold bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">Hemat 56%</span>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-stone-400 text-xs line-through">Rp 250.000</span>
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-300 font-extrabold bg-emerald-100 dark:bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-400/50">
+                    Hemat 56%
+                  </span>
+                </div>
+                <div className="flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className={`text-2xl sm:text-3xl font-extrabold whitespace-nowrap ${isLight ? 'text-amber-950' : 'text-gold-bright'}`}>
+                    Rp 110.000
+                  </span>
+                  <span className={`text-xs font-semibold ${isLight ? 'text-stone-600' : 'text-stone-300'}`}>
+                    / selamanya
+                  </span>
                 </div>
               </div>
 
@@ -204,7 +213,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
             <div className={`mt-8 pt-4 border-t ${isLight ? 'border-amber-200' : 'border-gold-subtle'}`}>
               <button
                 onClick={() => onSelectTier('Premium')}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-gold-400 text-black font-bold text-xs uppercase tracking-wider shadow-sm transition-all hover:scale-102"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-gold-400 text-black font-extrabold text-xs uppercase tracking-wider shadow-sm transition-all hover:scale-102"
               >
                 Pilih Paket Premium
               </button>
@@ -222,8 +231,10 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
 
               <div className="mt-6 mb-6">
                 <span className="text-stone-400 text-xs line-through block">Rp 350.000</span>
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-3xl font-bold ${isLight ? 'text-stone-900' : 'text-white'}`}>Rp 180.000</span>
+                <div className="flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className={`text-2xl sm:text-3xl font-extrabold whitespace-nowrap ${isLight ? 'text-stone-900' : 'text-white'}`}>
+                    Rp 180.000
+                  </span>
                   <span className={`text-xs font-medium ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>/ all-in</span>
                 </div>
               </div>
@@ -266,56 +277,67 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
             </div>
           </div>
 
-          {/* Card 4: Cetak Fisik & Bundling */}
+          {/* Card 4: Official Shopee Store (Fokus Penjualan E-Commerce) */}
           <div className={`rounded-3xl p-6 sm:p-7 border-2 flex flex-col justify-between transition-all shadow-md ${
             isLight
-              ? 'bg-white border-[#E8DEC8] hover:border-amber-400'
-              : 'bg-gradient-to-br from-[#0c2e2b] to-[#041514] border-gold-400/60'
+              ? 'bg-gradient-to-b from-[#FFF5F1] to-[#FFF9F6] border-[#EE4D2D]/40 hover:border-[#EE4D2D]'
+              : 'bg-gradient-to-br from-[#1e110c] via-[#041514] to-[#0a1f1d] border-[#EE4D2D]/60 hover:border-[#EE4D2D]'
           }`}>
             <div>
-              <span className={`text-xs font-bold uppercase tracking-wider ${isLight ? 'text-amber-800' : 'text-gold-400'}`}>Cetak Fisik & Bundling</span>
-              <h4 className={`text-xl font-bold mt-1 ${isLight ? 'text-stone-900' : 'text-white'}`}>Undangan Cetak</h4>
-              <p className={`text-xs mt-1 ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>Velvet, Kalkir & Foil Emas</p>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-[#EE4D2D] flex items-center gap-1">
+                  <ShoppingBag className="w-3.5 h-3.5" />
+                  Shopee Official Store
+                </span>
+                <span className="text-[10px] bg-[#EE4D2D] text-white px-2 py-0.5 rounded font-extrabold">STAR+</span>
+              </div>
+              <h4 className={`text-xl font-bold mt-1 ${isLight ? 'text-stone-900' : 'text-white'}`}>Undangan & Fisik</h4>
+              <p className={`text-xs mt-1 ${isLight ? 'text-stone-600' : 'text-stone-400'}`}>Order via Shopee dengan promo Bebas Ongkir & Garansi</p>
 
               <div className="mt-6 mb-6">
                 <span className="text-stone-400 text-xs block">Mulai dari</span>
-                <div className="flex items-baseline gap-1">
-                  <span className={`text-3xl font-bold ${isLight ? 'text-amber-800' : 'text-gold-bright'}`}>Rp 4.500</span>
+                <div className="flex items-baseline gap-1.5 whitespace-nowrap">
+                  <span className={`text-2xl sm:text-3xl font-extrabold whitespace-nowrap ${isLight ? 'text-[#EE4D2D]' : 'text-amber-400'}`}>
+                    Rp 4.500
+                  </span>
                   <span className={`text-xs font-medium ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>/ pcs</span>
                 </div>
               </div>
 
               <div className={`space-y-3 text-xs ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
-                <div className="flex items-center gap-2 font-bold text-amber-700">
+                <div className="flex items-center gap-2 font-bold text-amber-600 dark:text-amber-400">
                   <Sparkles className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>GRATIS Undangan Web Digital (≥200 pcs)</span>
+                  <span>GRATIS Undangan Web Digital (order min. 200 pcs)</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>Hardcover Board 30 / Softcover</span>
+                  <Check className="w-4 h-4 text-[#EE4D2D] flex-shrink-0" />
+                  <span>Garansi Shopee Garansi 100% Uang Kembali</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>Hotprint Gold Foil & Wax Seal</span>
+                  <Check className="w-4 h-4 text-[#EE4D2D] flex-shrink-0" />
+                  <span>Gratis Ongkir XTRA & Voucher Toko</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>Bisa pesan Sample Box ke rumah</span>
+                  <Check className="w-4 h-4 text-[#EE4D2D] flex-shrink-0" />
+                  <span>Hardcover Board 30 / Softcover Mewah</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span>Konsultasi tatap muka di Showroom</span>
+                  <Check className="w-4 h-4 text-[#EE4D2D] flex-shrink-0" />
+                  <span>Hotprint Gold Foil & Wax Seal Cap Lilin</span>
                 </div>
               </div>
             </div>
 
-            <div className={`mt-8 pt-4 border-t ${isLight ? 'border-stone-200' : 'border-gold-subtle'}`}>
-              <button
-                onClick={onOpenSampleModal}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-gold-400 hover:from-amber-500 hover:to-gold-500 text-black font-bold text-xs uppercase tracking-wider shadow transition-colors"
+            <div className={`mt-8 pt-4 border-t ${isLight ? 'border-amber-200' : 'border-gold-subtle'}`}>
+              <a
+                href="https://shopee.co.id/harinikah_official"
+                target="_blank"
+                rel="noreferrer"
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#EE4D2D] to-[#FF6B4A] hover:brightness-110 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all hover:scale-102"
               >
-                Pesan Sample Box Fisik
-              </button>
+                <ShoppingBag className="w-4 h-4" />
+                <span>Beli di Shopee Official</span>
+              </a>
             </div>
           </div>
 
@@ -329,7 +351,7 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier, on
             Metode Pembayaran Otomatis & Terverifikasi Instan
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs font-semibold">
-            {['QRIS (GoPay, OVO, ShopeePay, Dana)', 'Virtual Account BCA', 'Virtual Account Mandiri', 'Virtual Account BRI / BNI', 'Transfer Manual WhatsApp'].map((gw, i) => (
+            {['Official Shopee Store Checkout', 'QRIS Semua E-Wallet (ShopeePay, GoPay, OVO, Dana)', 'Virtual Account BCA / Mandiri / BRI / BNI', 'Konfirmasi & Aktivasi Kilat 1-Klik'].map((gw, i) => (
               <span key={i} className={`px-3 py-1.5 rounded-lg border shadow-sm ${
                 isLight ? 'bg-white border-[#E8DEC8] text-stone-700' : 'bg-[#031110] border-gold-subtle text-stone-300'
               }`}>

@@ -18,7 +18,6 @@ import { FeaturesAccordionSection } from '../components/landing/FeaturesAccordio
 import { BundlingSection } from '../components/landing/BundlingSection';
 import { CatalogSection } from '../components/landing/CatalogSection';
 import { PhysicalCalculator } from '../components/landing/PhysicalCalculator';
-import { ShowroomSection } from '../components/landing/ShowroomSection';
 import { PricingSection } from '../components/landing/PricingSection';
 import { TestimonialsSection } from '../components/landing/TestimonialsSection';
 import { FAQSection } from '../components/landing/FAQSection';
@@ -109,8 +108,6 @@ export default function HomePage() {
         <PhysicalCalculator
           onOpenSampleModal={() => setSampleModalOpen(true)}
         />
-
-        <ShowroomSection />
 
         <PricingSection
           onSelectTier={handleSelectTier}

@@ -62,7 +62,7 @@ export const BundlingSection: React.FC<BundlingSectionProps> = ({ onOpenSampleMo
                   "GRATIS Sistem QR Code Check-in Resepsi",
                   "GRATIS 1 Set Buku Tamu Fisik Eksklusif",
                   "Bebas Revisi Desain Fisik & Digital",
-                  "Konsultasi Tatap Muka di Showroom Kami"
+                  "Garansi Transaksi Aman via Shopee Official Store"
                 ].map((perk, idx) => (
                   <div key={idx} className={`flex items-center gap-2.5 text-xs sm:text-sm font-semibold ${
                     isLight ? 'text-stone-800' : 'text-stone-200'
@@ -79,23 +79,21 @@ export const BundlingSection: React.FC<BundlingSectionProps> = ({ onOpenSampleMo
 
               {/* Action Buttons */}
               <div className="pt-4 flex flex-col sm:flex-row items-center gap-4">
-                <button
-                  onClick={onOpenSampleModal}
+                <a
+                  href="/checkout"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-amber-500 to-gold-400 text-black font-bold text-xs uppercase tracking-wider shadow-gold-glow hover:scale-105 transition-all"
                 >
                   <Gift className="w-4 h-4 fill-current" />
                   Klaim Promo Bundling Harmoni
-                </button>
+                </a>
                 <a
-                  href="#showroom"
-                  className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border font-bold text-xs tracking-wider transition-colors ${
-                    isLight
-                      ? 'bg-white border-amber-300 text-stone-800 hover:bg-amber-50'
-                      : 'bg-white/10 hover:bg-white/15 text-stone-200 border-gold-subtle'
-                  }`}
+                  href="https://shopee.co.id/harinikah_official"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full border font-bold text-xs tracking-wider transition-colors bg-[#EE4D2D] hover:bg-[#D73211] text-white border-[#EE4D2D]"
                 >
-                  <HeartHandshake className="w-4 h-4 text-amber-500" />
-                  Konsultasi Showroom Offline
+                  <HeartHandshake className="w-4 h-4 text-white" />
+                  Order via Shopee Official
                 </a>
               </div>
             </div>

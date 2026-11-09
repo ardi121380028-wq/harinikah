@@ -69,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="hidden lg:flex items-center gap-3 text-[10px] text-stone-500">
-            <span>Showroom: Jakarta & Bandung</span>
+            <span>Studio Desain: Bandar Lampung</span>
             <span>•</span>
             <span className={isLight ? 'text-amber-700' : 'text-gold-300'}>WA: 0812-3456-7890</span>
           </div>
@@ -105,21 +105,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a href="#digital" className="hover:text-amber-600 transition-colors">
                 Undangan Web
               </a>
-              <a href="#fisik" className="hover:text-amber-600 transition-colors">
-                Undangan Fisik
+              <a href="/broadcast" className="hover:text-emerald-500 transition-colors flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span className={isLight ? 'text-emerald-700' : 'text-emerald-300'}>Broadcast WA</span>
               </a>
-              <a href="#bundling" className="hover:text-amber-600 transition-colors flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-gold-400 animate-pulse"></span>
-                <span className={isLight ? 'text-amber-800' : 'text-gold-200'}>Bundling</span>
+              <a 
+                href="https://shopee.co.id/harinikah_official" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="hover:text-[#EE4D2D] transition-colors flex items-center gap-1 text-[#EE4D2D]"
+              >
+                <span>Shopee Official</span>
               </a>
               <a href="#katalog" className="hover:text-amber-600 transition-colors">
                 Katalog
               </a>
-              <a href="#showroom" className="hover:text-amber-600 transition-colors">
-                Showroom
-              </a>
               <a href="#harga" className="hover:text-amber-600 transition-colors">
                 Harga
+              </a>
+              <a href="/about" className="hover:text-amber-600 transition-colors">
+                Tentang Kami
               </a>
             </div>
 
@@ -140,14 +145,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="text-[11px] font-semibold">{isLight ? 'Mode Gelap' : 'Mode Terang'}</span>
               </button>
 
-              <button
-                onClick={onOpenSampleModal}
+              <a
+                href="/profile"
                 className={`text-xs font-medium transition-colors whitespace-nowrap ${
                   isLight ? 'text-stone-700 hover:text-amber-700' : 'text-stone-300 hover:text-gold-300'
                 }`}
               >
-                Sample Box
-              </button>
+                Akun Saya
+              </a>
 
               <button
                 onClick={onOpenAuth}
@@ -218,29 +223,36 @@ export const Navbar: React.FC<NavbarProps> = ({
           <a href="#digital" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">
             Undangan Digital Interaktif
           </a>
-          <a href="#fisik" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">
-            Undangan Cetak Fisik Mewah
+          <a href="/broadcast" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5 text-emerald-600 font-semibold">
+            Broadcast WhatsApp (Kirim Tamu)
           </a>
-          <a href="#bundling" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5 text-amber-700 font-semibold">
-            Paket Bundling Nusantara
+          <a 
+            href="https://shopee.co.id/harinikah_official" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            onClick={() => setMobileMenuOpen(false)} 
+            className="block py-2 px-3 rounded-lg hover:bg-black/5 text-[#EE4D2D] font-semibold"
+          >
+            Shopee Official Store 🛍️
           </a>
           <a href="#katalog" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">
             Katalog Desain
           </a>
-          <a href="#showroom" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">
-            Showroom Jakarta & Bandung
-          </a>
           <a href="#harga" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">
             Pilihan Harga & Paket
           </a>
+          <a href="/about" onClick={() => setMobileMenuOpen(false)} className="block py-2 px-3 rounded-lg hover:bg-black/5">
+            Tentang HariNikah
+          </a>
 
           <div className="pt-2 border-t border-black/10 flex items-center justify-between">
-            <button
-              onClick={() => { setMobileMenuOpen(false); onOpenSampleModal(); }}
+            <a
+              href="/profile"
+              onClick={() => setMobileMenuOpen(false)}
               className="py-2 text-amber-700 font-bold"
             >
-              Pesan Sample Box
-            </button>
+              Akun Saya (Profil)
+            </a>
             <button
               onClick={() => { setMobileMenuOpen(false); onOpenAuth(); }}
               className="py-2 font-semibold"

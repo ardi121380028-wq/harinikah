@@ -28,8 +28,8 @@ export const FAQSection: React.FC = () => {
       a: "Proses desain proofing memakan waktu 1–2 hari kerja. Setelah kamu menyetujui (ACC) cetak, proses produksi cetak massal, hotprint foil emas, dan finishing membutuhkan waktu 7–12 hari kerja tergantung jumlah dan antrean. Kami mengirimkan dengan packing kayu aman ke seluruh Indonesia."
     },
     {
-      q: "Apakah saya bisa melihat dan memegang contoh kertas fisiknya dulu?",
-      a: "Bisa banget! Kamu bisa memesan 'Sample Kit Box' yang akan kami kirimkan langsung ke rumahmu, atau kamu bisa datang langsung ke Showroom Offline HariNikah di Jakarta Selatan atau Bandung untuk berkonsultasi gratis."
+      q: "Bagaimana cara memesan undangan fisik dan memastikan kualitas cetaknya?",
+      a: "Kamu bisa memesan langsung melalui Shopee Official Store kami (shopee.co.id/harinikah_official). Di sana tersedia jaminan garansi Shopee, ulasan foto/video dari ribuan pengantin, serta proteksi pengiriman. Seluruh pesanan diproduksi dan dikirim dengan kemasan aman langsung dari Studio HariNikah di Bandar Lampung."
     },
     {
       q: "Bagaimana cara kerja link WhatsApp personal untuk setiap tamu?",

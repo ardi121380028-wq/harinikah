@@ -2128,7 +2128,7 @@ export default function EditorPage() {
                           title="Klik untuk ubah lokasi gedung & kota"
                         >
                           <p className="text-[10px] text-stone-300 max-w-[240px] mx-auto leading-relaxed">
-                            {activePage.data?.venueCity || 'The Glass House Ballroom, Jakarta'}
+                            {activePage.data?.venueCity || 'Grand Mercure Ballroom, Bandar Lampung'}
                           </p>
                         </div>
                       </div>
@@ -2286,7 +2286,7 @@ export default function EditorPage() {
                         <p className="text-[10px] text-stone-300">{pages[2]?.data?.akadTime || '08.00 - 10.00 WIB'}</p>
                         <p className="text-[10px] text-stone-400 flex items-start gap-1">
                           <MapPin className="w-3 h-3 text-gold-400 flex-shrink-0 mt-0.5" />
-                          <span>{pages[2]?.data?.akadPlace || 'Masjid Agung Al-Azhar, Jakarta Selatan'}</span>
+                          <span>{pages[2]?.data?.akadPlace || 'Masjid Agung Al-Furqon, Bandar Lampung'}</span>
                         </p>
                       </div>
 
@@ -2306,7 +2306,7 @@ export default function EditorPage() {
                         <p className="text-[10px] text-stone-300">{pages[2]?.data?.resepsiTime || '11.00 - 14.00 WIB'}</p>
                         <p className="text-[10px] text-stone-400 flex items-start gap-1">
                           <MapPin className="w-3 h-3 text-gold-400 flex-shrink-0 mt-0.5" />
-                          <span>{pages[2]?.data?.resepsiPlace || 'The Glass House Ballroom, Senopati'}</span>
+                          <span>{pages[2]?.data?.resepsiPlace || 'Grand Mercure Ballroom, Bandar Lampung'}</span>
                         </p>
                       </div>
                     </div>

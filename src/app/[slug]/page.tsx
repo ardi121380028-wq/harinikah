@@ -313,8 +313,8 @@ export default function GuestInvitationPage() {
     const groom = coverData.groomName || 'Dimas';
     const bride = coverData.brideName || 'Clarissa';
     const title = encodeURIComponent(`The Wedding of ${groom} & ${bride}`);
-    const details = encodeURIComponent(`Undangan Pernikahan ${groom} & ${bride}.\nAcara: ${eventsData.akadTitle || 'Akad Nikah'} & ${eventsData.resepsiTitle || 'Resepsi'}\nLokasi: ${eventsData.resepsiPlace || 'The Glass House Ballroom'}`);
-    const location = encodeURIComponent(eventsData.resepsiPlace || 'The Glass House Ballroom, Jakarta');
+    const details = encodeURIComponent(`Undangan Pernikahan ${groom} & ${bride}.\nAcara: ${eventsData.akadTitle || 'Akad Nikah'} & ${eventsData.resepsiTitle || 'Resepsi'}\nLokasi: ${eventsData.resepsiPlace || 'Grand Mercure Ballroom, Bandar Lampung'}`);
+    const location = encodeURIComponent(eventsData.resepsiPlace || 'Grand Mercure Ballroom, Bandar Lampung');
     const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=20260718T020000Z/20260718T070000Z`;
     window.open(calUrl, '_blank');
   };
@@ -322,7 +322,7 @@ export default function GuestInvitationPage() {
   const handleDownloadIcs = () => {
     const groom = coverData.groomName || 'Dimas';
     const bride = coverData.brideName || 'Clarissa';
-    const location = eventsData.resepsiPlace || 'The Glass House Ballroom, Jakarta';
+    const location = eventsData.resepsiPlace || 'Grand Mercure Ballroom, Bandar Lampung';
     const icsContent = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -630,7 +630,7 @@ export default function GuestInvitationPage() {
                 {coverData.dateText || 'Sabtu, 18 Juli 2026'}
               </p>
               <p className="text-xs text-stone-300 max-w-sm mx-auto">
-                {coverData.venueCity || 'The Glass House Ballroom, Jakarta'}
+                {coverData.venueCity || 'Grand Mercure Ballroom, Bandar Lampung'}
               </p>
 
               {/* Cultural Quote Card */}
@@ -758,7 +758,7 @@ export default function GuestInvitationPage() {
               </p>
               <p className="text-xs text-stone-300 flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-gold-400 flex-shrink-0 mt-0.5" />
-                <span>{eventsData.akadPlace || 'Masjid Agung Al-Azhar, Jakarta Selatan'}</span>
+                <span>{eventsData.akadPlace || 'Masjid Agung Al-Furqon, Bandar Lampung'}</span>
               </p>
               <a
                 href={eventsData.mapsUrl || "https://maps.google.com"}
@@ -786,7 +786,7 @@ export default function GuestInvitationPage() {
               </p>
               <p className="text-xs text-stone-300 flex items-start gap-2">
                 <MapPin className="w-3.5 h-3.5 text-gold-400 flex-shrink-0 mt-0.5" />
-                <span>{eventsData.resepsiPlace || 'The Glass House Ballroom, Senopati'}</span>
+                <span>{eventsData.resepsiPlace || 'Grand Mercure Ballroom, Bandar Lampung'}</span>
               </p>
               <a
                 href={eventsData.mapsUrl || "https://maps.google.com"}

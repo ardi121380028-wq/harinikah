@@ -12,7 +12,8 @@ import {
   Smartphone,
   Play,
   Pause, 
-  ArrowRight
+  ArrowRight,
+  ShoppingBag
 } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
@@ -100,17 +101,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <button
-                onClick={onOpenSampleModal}
+              <a
+                href="https://shopee.co.id/harinikah_official"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-xs font-semibold rounded-full border transition-all ${
                   isLight
-                    ? 'bg-white border-amber-300 text-stone-800 hover:bg-amber-50 shadow-sm'
-                    : 'bg-[#061e1d]/80 border-gold-subtle text-stone-200 hover:bg-gold-950 hover:border-gold-400'
+                    ? 'bg-[#FFF5F1] border-[#FFD4C9] text-[#EE4D2D] hover:bg-[#FFE8E0] shadow-sm'
+                    : 'bg-[#EE4D2D]/15 border-[#EE4D2D]/40 text-[#EE4D2D] hover:bg-[#EE4D2D]/25'
                 }`}
               >
-                <Box className="w-4 h-4 text-gold-400" />
-                <span>Pesan Sample Box Fisik</span>
-              </button>
+                <ShoppingBag className="w-4 h-4 text-[#EE4D2D]" />
+                <span>Beli di Shopee Official Store</span>
+              </a>
             </div>
 
             {/* Three Pillar Checklist */}
@@ -125,7 +128,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
               <div className={`flex items-center gap-2 text-xs font-medium ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
                 <CheckCircle2 className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                <span>Showroom Bandar Lampung</span>
+                <span>Studio Bandar Lampung</span>
               </div>
             </div>
 
@@ -289,8 +292,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                         <div className="flex items-start gap-2">
                           <MapPin className="w-3.5 h-3.5 text-amber-500 mt-0.5 flex-shrink-0" />
                           <div>
-                            <p className={`text-xs font-semibold ${isLight ? 'text-stone-900' : 'text-white'}`}>The Glass House Ballroom</p>
-                            <p className={`text-[9px] ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>Jl. Senopati No. 45, Jakarta Selatan</p>
+                            <p className={`text-xs font-semibold ${isLight ? 'text-stone-900' : 'text-white'}`}>Grand Mercure Ballroom</p>
+                            <p className={`text-[9px] ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>Jl. Raden Intan No. 88, Bandar Lampung</p>
                           </div>
                         </div>
                       </div>

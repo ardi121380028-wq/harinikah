@@ -154,8 +154,8 @@ export const DualProductSection: React.FC<DualProductSectionProps> = ({
                   "Finishing mewah: Hotprint Gold/Rose Gold, Emboss, & Deboss",
                   "Aksen eksklusif: Amplop Vellum/Kalkir, Pita Satin, Wax Seal",
                   "Bebas revisi desain berkali-kali hingga Anda puas dan ACC",
-                  "Layanan sampel fisik dikirim ke rumah sebelum cetak massal",
-                  "Bisa datang langsung ke Showroom Offline di Jakarta & Bandung"
+                  "Pengiriman bergaransi langsung dari Studio Bandar Lampung ke seluruh Nusantara",
+                  "Transaksi 100% aman bergaransi resmi via Shopee Official Store"
                 ].map((item, idx) => (
                   <div key={idx} className={`flex items-start gap-3 text-xs sm:text-sm ${
                     isLight ? 'text-stone-700' : 'text-stone-200'
@@ -181,17 +181,15 @@ export const DualProductSection: React.FC<DualProductSectionProps> = ({
                   <span className={`text-xs font-medium ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>/ pcs</span>
                 </div>
               </div>
-              <button
-                onClick={onOpenSampleModal}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-semibold text-xs uppercase tracking-wider transition-all ${
-                  isLight
-                    ? 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
-                    : 'bg-white/10 hover:bg-white/15 text-gold-300 border border-gold-subtle'
-                }`}
+              <a
+                href="https://shopee.co.id/harinikah_official"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-semibold text-xs uppercase tracking-wider transition-all bg-[#EE4D2D] hover:bg-[#D73211] text-white shadow-md hover:scale-102"
               >
-                <ShieldCheck className="w-4 h-4 text-amber-500" />
-                Pesan Sample Box
-              </button>
+                <ShieldCheck className="w-4 h-4 text-white" />
+                Beli di Shopee Official
+              </a>
             </div>
           </div>
 

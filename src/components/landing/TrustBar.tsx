@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Users, Award, Truck, MapPin } from 'lucide-react';
+import { Users, Award, Truck, ShoppingBag } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
 export const TrustBar: React.FC = () => {
@@ -25,9 +25,9 @@ export const TrustBar: React.FC = () => {
       label: "Kirim Cetak se-Indonesia & Luar Negeri"
     },
     {
-      icon: <MapPin className={`w-5 h-5 ${isLight ? 'text-amber-700' : 'text-gold-400'}`} />,
-      value: "Showroom Fisik",
-      label: "Konsultasi Offline di Jakarta & Bandung"
+      icon: <ShoppingBag className="w-5 h-5 text-[#EE4D2D]" />,
+      value: "Shopee Official",
+      label: "Toko Resmi & Garansi Pengiriman Bandar Lampung"
     }
   ];
 

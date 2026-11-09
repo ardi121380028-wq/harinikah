@@ -121,7 +121,7 @@ export const JAWA_KERATON_PAGES: PageData[] = [
       groomName: 'Raden Mas Dimas',
       brideName: 'Raden Ajeng Clarissa',
       dateText: 'Setu Pahing, 18 Juli 2026',
-      venueCity: 'Pendopo Agung Sasana Kriya, TMII, Jakarta',
+      venueCity: 'Grand Mercure Ballroom, Bandar Lampung',
       buttonText: 'Bikak Serat Undangan'
     }
   },
@@ -154,11 +154,11 @@ export const JAWA_KERATON_PAGES: PageData[] = [
       akadTitle: 'Upacara Siraman & Midodareni',
       akadDate: 'Jum’at Legi, 17 Juli 2026',
       akadTime: '15.30 - 21.00 WIB',
-      akadPlace: 'Ndalem Joglo Heritage, Ragunan, Jakarta Selatan',
+      akadPlace: 'Masjid Agung Al-Furqon, Lungsir, Bandar Lampung',
       resepsiTitle: 'Upacara Panggih & Resepsi Pahargyan',
       resepsiDate: 'Setu Pahing, 18 Juli 2026',
       resepsiTime: '10.30 - 14.30 WIB (Panggih jam 11.00)',
-      resepsiPlace: 'Pendopo Agung Sasana Kriya, TMII',
+      resepsiPlace: 'Grand Mercure Ballroom, Bandar Lampung',
       mapsUrl: 'https://maps.google.com'
     }
   },
@@ -193,7 +193,7 @@ export const JAWA_KERATON_PAGES: PageData[] = [
       accNumber2: '1370 0098 7654',
       accHolder2: 'R.A. CLARISSA PUTRI',
       qrisActive: true,
-      giftAddress: 'Ndalem Joglo Heritage, Jl. Durian No. 12, Jagakarsa, Jakarta Selatan'
+      giftAddress: 'Jl. Gatot Subroto No. 88, Pahoman, Bandar Lampung'
     }
   },
   {
@@ -225,7 +225,7 @@ export const MINANG_BARALEK_PAGES: PageData[] = [
       groomName: 'Dimas Marah Sutan',
       brideName: 'Clarissa Rangkayo',
       dateText: 'Sabtu, 18 Juli 2026',
-      venueCity: 'Balairung Rumah Gadang Bundo Kanduang, Jakarta',
+      venueCity: 'Balairung Bagas Raya, Bandar Lampung',
       buttonText: 'Buka Siriah Jo Pinang'
     }
   },
@@ -258,11 +258,11 @@ export const MINANG_BARALEK_PAGES: PageData[] = [
       akadTitle: 'Malam Bainai & Manjapuik Marapulai',
       akadDate: 'Jum’at Malam, 17 Juli 2026',
       akadTime: '19.30 - 22.00 WIB',
-      akadPlace: 'Rumah Gadang Koto Nan Gadang, Rawamangun, Jakarta Timur',
+      akadPlace: 'Masjid Raya Airan, Bandar Lampung',
       resepsiTitle: 'Ijab Kabul & Baralek Gadang',
       resepsiDate: 'Sabtu, 18 Juli 2026',
       resepsiTime: '10.30 - 15.00 WIB (Akad: 08.00 WIB)',
-      resepsiPlace: 'Balai Samudera Ballroom, Kelapa Gading, Jakarta Utara',
+      resepsiPlace: 'Balairung Bagas Raya, Way Halim, Bandar Lampung',
       mapsUrl: 'https://maps.google.com'
     }
   },
@@ -297,7 +297,7 @@ export const MINANG_BARALEK_PAGES: PageData[] = [
       accNumber2: '1370 0098 7654',
       accHolder2: 'CLARISSA PUTRI RANGKAYO',
       qrisActive: true,
-      giftAddress: 'Rumah Gadang Pusako, Jl. Balai Pustaka No. 88, Rawamangun, Jakarta Timur'
+      giftAddress: 'Jl. Raden Intan No. 45, Enggal, Bandar Lampung'
     }
   },
   {
@@ -619,7 +619,7 @@ export const CATALOG_THEMES: CatalogItem[] = [
 export const TESTIMONIALS_DATA: TestimonialItem[] = [
   {
     couple: "Dimas & Clarissa",
-    location: "Jakarta Selatan",
+    location: "Bandar Lampung",
     date: "Menikah Juli 2026",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
     type: "Paket Bundling Nusantara",
@@ -635,7 +635,7 @@ export const TESTIMONIALS_DATA: TestimonialItem[] = [
   },
   {
     couple: "Reza & Fadilla",
-    location: "Padang / Bandung",
+    location: "Bandar Lampung",
     date: "Menikah April 2026",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
     type: "Template Minang Baralek",
@@ -658,6 +658,6 @@ export const FAQ_DATA: FAQItem[] = [
   },
   {
     q: "Apakah HariNikah juga menyediakan cetak fisik berbalut beludru dan foil emas?",
-    a: "Benar sekali. Kami menyediakan paket bundling fisik hardcover berbalut beludru impor (emerald, sogan, marawa crimson), foil emas panas (hotprint), serta wax seal cap lilin asli dengan studio showroom di Bandar Lampung serta pengiriman ke seluruh Indonesia."
+    a: "Benar sekali. Kami memproduksi undangan fisik hardcover berbalut beludru impor (emerald, sogan, marawa crimson), foil emas panas (hotprint), serta wax seal cap lilin asli dari Studio HariNikah di Bandar Lampung, dengan pemesanan resmi melalui Shopee Official Store bergaransi se-Indonesia."
   }
 ];
