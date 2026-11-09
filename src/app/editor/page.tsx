@@ -58,7 +58,9 @@ import {
   KawungMotifDivider,
   RonceMelatiDivider,
   BotanicalFoilDivider,
-  CardFrameBorder
+  CardFrameBorder,
+  BotanicalCornerOrnament,
+  BotanicalArchFrame
 } from '../../components/cultural/CulturalOrnaments';
 import { weddingAudio } from '../../utils/audioEngine';
 import { OnboardingWizardModal } from '../../components/modals/OnboardingWizardModal';
@@ -124,6 +126,17 @@ export default function EditorPage() {
   const activePage = pages[activePageIndex] || pages[0];
 
   useEffect(() => {
+    try {
+      const search = window.location.search;
+      if (search) {
+        const urlParams = new URLSearchParams(search);
+        const tplParam = urlParams.get('theme') as CulturalTemplate | null;
+        if (tplParam && TEMPLATE_PRESETS[tplParam]) {
+          applyTemplate(tplParam);
+        }
+      }
+    } catch (e) {}
+
     return () => {
       weddingAudio.stop();
     };
@@ -202,6 +215,7 @@ export default function EditorPage() {
 
   const isJawa = currentTemplate === 'jawa';
   const isMinang = currentTemplate === 'minang';
+  const isBotanical = currentTemplate === 'botanical';
 
   // Helper styles for selected element border
   const getElementOutline = (fieldId: string) => {
@@ -341,6 +355,18 @@ export default function EditorPage() {
             >
               <span>👑</span>
               <span className="hidden xl:inline">Adat Minang</span>
+            </button>
+
+            <button
+              onClick={() => handleTemplateSwitch('botanical')}
+              className={`px-2.5 py-1 rounded-full font-semibold transition-all flex items-center gap-1 ${
+                currentTemplate === 'botanical'
+                  ? 'bg-gradient-to-r from-[#8DA390] to-[#5C7560] text-white shadow-md'
+                  : isLight ? 'text-stone-600 hover:text-stone-900' : 'text-stone-300 hover:text-white'
+              }`}
+            >
+              <span>🌿</span>
+              <span className="hidden xl:inline">Green Leaf</span>
             </button>
           </div>
 
@@ -610,6 +636,38 @@ export default function EditorPage() {
                         : isLight ? 'text-stone-600' : 'text-stone-400'
                     }`}>
                       Merah Marun Marawa, Mahkota Suntiang Minang bertingkat emas, siluet Rumah Gadang, ukiran Itiak Pulang Patang, pepatah adat, dan melodi Saluang romantis.
+                    </p>
+                  </div>
+
+                  {/* Preset 4: Green Leaf Botanical Sage */}
+                  <div
+                    onClick={() => handleTemplateSwitch('botanical')}
+                    className={`p-3.5 rounded-2xl border-2 cursor-pointer transition-all ${
+                      currentTemplate === 'botanical'
+                        ? isLight
+                          ? 'border-[#4A5D4E] bg-[#EDF0EC] shadow-md ring-2 ring-[#4A5D4E]/30'
+                          : 'border-[#8DA390] bg-[#1C261F] shadow-2xl'
+                        : isLight
+                        ? 'border-stone-200 bg-white hover:border-[#4A5D4E] shadow-sm'
+                        : 'border-white/10 bg-white/5 hover:border-[#8DA390]/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`text-xs font-bold flex items-center gap-1.5 ${
+                        currentTemplate === 'botanical'
+                          ? isLight ? 'text-[#2D3B31] font-black' : 'text-[#A2B5A5]'
+                          : isLight ? 'text-stone-900' : 'text-stone-200'
+                      }`}>
+                        <span>🌿</span> Green Leaf Botanical Sage
+                      </span>
+                      {currentTemplate === 'botanical' && <Check className={`w-4 h-4 ${isLight ? 'text-[#4A5D4E]' : 'text-emerald-400'}`} />}
+                    </div>
+                    <p className={`text-[11px] mt-1 leading-relaxed ${
+                      currentTemplate === 'botanical'
+                        ? isLight ? 'text-[#3E5042]' : 'text-stone-300'
+                        : isLight ? 'text-stone-600' : 'text-stone-400'
+                    }`}>
+                      Kesegaran daun sage, bingkai Victorian Arch Scalloped, foliage bunga watercolor, frame oval pengantin, dan pemutar musik piringan hitam vinyl.
                     </p>
                   </div>
                 </div>
@@ -1371,6 +1429,13 @@ export default function EditorPage() {
                               className="w-20 h-7 text-gold-400 -mt-1 opacity-90 group-hover:scale-105 transition-transform" 
                             />
                           </>
+                        ) : isBotanical ? (
+                          <>
+                            <div className="w-14 h-14 rounded-full border-2 border-[#8DA390] p-1 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform bg-[#364939] text-2xl">
+                              🌿
+                            </div>
+                            <span className="text-[9px] tracking-[0.25em] text-[#8DA390] font-bold uppercase mt-1">Green Leaf</span>
+                          </>
                         ) : (
                           <>
                             <div className="w-14 h-14 rounded-full border-2 border-gold-400 p-1 flex items-center justify-center shadow-gold-md group-hover:scale-105 transition-transform bg-gradient-to-b from-amber-400/20 to-transparent">
@@ -1389,9 +1454,9 @@ export default function EditorPage() {
                           title="Klik untuk ubah sub judul pembuka"
                         >
                           <p className={`text-[10px] uppercase font-bold tracking-[0.22em] ${
-                            isJawa ? 'text-[#e6ba64]' : isMinang ? 'text-[#f5d77f]' : 'text-gold-300'
+                            isJawa ? 'text-[#e6ba64]' : isMinang ? 'text-[#f5d77f]' : isBotanical ? 'text-[#8DA390]' : 'text-gold-300'
                           }`}>
-                            {activePage.data?.subheading || (isJawa ? 'PAHARGYAN DHAUPIPUN TEMANTEN' : isMinang ? 'BARALEK GADANG PERNIKAHAN MINANGKABAU' : 'THE WEDDING CELEBRATION OF')}
+                            {activePage.data?.subheading || (isJawa ? 'PAHARGYAN DHAUPIPUN TEMANTEN' : isMinang ? 'BARALEK GADANG PERNIKAHAN MINANGKABAU' : isBotanical ? 'THE WEDDING OF' : 'THE WEDDING CELEBRATION OF')}
                           </p>
                         </div>
 
@@ -1401,11 +1466,21 @@ export default function EditorPage() {
                           className={getElementOutline('groomName')}
                           title="Klik untuk ubah nama mempelai"
                         >
-                          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFF4BE] via-[#DFB051] to-[#F5D77F] tracking-tight leading-tight drop-shadow-md">
-                            {activePage.data?.groomName || (isJawa ? 'Raden Mas Dimas' : isMinang ? 'Dimas Marah Sutan' : 'Dimas')} <br />
-                            <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
-                            {activePage.data?.brideName || (isJawa ? 'Raden Ajeng Clarissa' : isMinang ? 'Clarissa Rangkayo' : 'Clarissa')}
-                          </h1>
+                          {isBotanical ? (
+                            <BotanicalArchFrame className="py-5 px-3">
+                              <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight leading-tight">
+                                {activePage.data?.groomName || 'Rian'} <br />
+                                <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
+                                {activePage.data?.brideName || 'Irna'}
+                              </h1>
+                            </BotanicalArchFrame>
+                          ) : (
+                            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFF4BE] via-[#DFB051] to-[#F5D77F] tracking-tight leading-tight drop-shadow-md">
+                              {activePage.data?.groomName || (isJawa ? 'Raden Mas Dimas' : isMinang ? 'Dimas Marah Sutan' : 'Dimas')} <br />
+                              <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
+                              {activePage.data?.brideName || (isJawa ? 'Raden Ajeng Clarissa' : isMinang ? 'Clarissa Rangkayo' : 'Clarissa')}
+                            </h1>
+                          )}
                         </div>
 
                         {/* Cultural Divider */}
@@ -1417,6 +1492,12 @@ export default function EditorPage() {
                             </>
                           ) : isMinang ? (
                             <MinangUkiranDivider isLight={isLight} className="mx-auto" />
+                          ) : isBotanical ? (
+                            <div className="flex items-center justify-center gap-2 text-sm text-[#8DA390] my-1">
+                              <span>🌿</span>
+                              <div className="w-16 h-px bg-[#8DA390]/50" />
+                              <span>🌿</span>
+                            </div>
                           ) : (
                             <BotanicalFoilDivider isLight={isLight} className="mx-auto" />
                           )}
@@ -1508,15 +1589,19 @@ export default function EditorPage() {
                         className={`space-y-1 ${getElementOutline('groomFullName')}`}
                         title="Klik untuk ubah data mempelai pria"
                       >
-                        <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-gold-400 shadow-gold-sm overflow-hidden bg-gradient-to-b from-amber-300/20 to-transparent">
+                        <div className={`mx-auto p-1 border-2 shadow-sm overflow-hidden ${
+                          isBotanical
+                            ? 'w-20 h-28 rounded-[50%] border-[#8DA390] bg-[#F4F7F4]'
+                            : 'w-20 h-20 rounded-full border-gold-400 bg-gradient-to-b from-amber-300/20 to-transparent'
+                        }`}>
                           <img 
                             src={pages[1]?.data?.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'} 
                             alt="Groom" 
-                            className="w-full h-full object-cover rounded-full" 
+                            className={`w-full h-full object-cover ${isBotanical ? 'rounded-[50%]' : 'rounded-full'}`} 
                           />
                         </div>
                         <h3 className="text-sm font-bold text-gold-bright mt-1">
-                          {pages[1]?.data?.groomFullName || (isJawa ? 'Raden Mas Dimas Setiadi, S.T.' : isMinang ? 'Dimas Marah Sutan, S.T.' : 'Dimas Setiadi, S.T.')}
+                          {pages[1]?.data?.groomFullName || (isJawa ? 'Raden Mas Dimas Setiadi, S.T.' : isMinang ? 'Dimas Marah Sutan, S.T.' : isBotanical ? 'Rian Firmansyah, S.T.' : 'Dimas Setiadi, S.T.')}
                         </h3>
                         <p className="text-[10px] text-stone-300 max-w-xs mx-auto leading-relaxed">
                           {pages[1]?.data?.groomParents || 'Putra Pertama dari Bpk. Ir. Bambang & Ibu Hj. Sri Wahyuni'}
@@ -1529,6 +1614,8 @@ export default function EditorPage() {
                           <BatikParangDivider className="mx-auto w-36" />
                         ) : isMinang ? (
                           <MinangUkiranDivider className="mx-auto w-36" />
+                        ) : isBotanical ? (
+                          <div className="font-bold text-base text-[#8DA390]">&</div>
                         ) : (
                           <div className="font-bold text-base text-gold-300">&</div>
                         )}
@@ -1540,15 +1627,19 @@ export default function EditorPage() {
                         className={`space-y-1 ${getElementOutline('brideFullName')}`}
                         title="Klik untuk ubah data mempelai wanita"
                       >
-                        <div className="w-20 h-20 mx-auto rounded-full p-1 border-2 border-gold-400 shadow-gold-sm overflow-hidden bg-gradient-to-b from-amber-300/20 to-transparent">
+                        <div className={`mx-auto p-1 border-2 shadow-sm overflow-hidden ${
+                          isBotanical
+                            ? 'w-20 h-28 rounded-[50%] border-[#8DA390] bg-[#F4F7F4]'
+                            : 'w-20 h-20 rounded-full border-gold-400 bg-gradient-to-b from-amber-300/20 to-transparent'
+                        }`}>
                           <img 
                             src={pages[1]?.data?.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
                             alt="Bride" 
-                            className="w-full h-full object-cover rounded-full" 
+                            className={`w-full h-full object-cover ${isBotanical ? 'rounded-[50%]' : 'rounded-full'}`} 
                           />
                         </div>
                         <h3 className="text-sm font-bold text-gold-bright mt-1">
-                          {pages[1]?.data?.brideFullName || (isJawa ? 'Raden Ajeng Clarissa Putri, M.Ds.' : isMinang ? 'Clarissa Rangkayo, M.Ds.' : 'Clarissa Putri, M.Ds.')}
+                          {pages[1]?.data?.brideFullName || (isJawa ? 'Raden Ajeng Clarissa Putri, M.Ds.' : isMinang ? 'Clarissa Rangkayo, M.Ds.' : isBotanical ? 'Irna Agustiani, S.Pd.' : 'Clarissa Putri, M.Ds.')}
                         </h3>
                         <p className="text-[10px] text-stone-300 max-w-xs mx-auto leading-relaxed">
                           {pages[1]?.data?.brideParents || 'Putri Kedua dari Bpk. Dr. Hendra & Ibu Hj. Maya Kusuma'}

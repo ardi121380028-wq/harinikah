@@ -457,13 +457,123 @@ export const BotanicalFoilDivider: React.FC<{ className?: string; isLight?: bool
   </div>
 );
 
+// ============================================================================
+// 4. GREEN LEAF BOTANICAL GARDEN & VINYL PLAYER ORNAMENTS
+// ============================================================================
+
+// Botanical Sage Corner Leaves Filigree
+export const BotanicalCornerOrnament: React.FC<{ 
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  className?: string;
+}> = ({ position = 'top-left', className = 'w-14 h-14' }) => {
+  const transform = {
+    'top-left': 'scale(1, 1)',
+    'top-right': 'scale(-1, 1)',
+    'bottom-left': 'scale(1, -1)',
+    'bottom-right': 'scale(-1, -1)',
+  }[position];
+
+  return (
+    <svg
+      viewBox="0 0 60 60"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      style={{ transform, transformOrigin: 'center center' }}
+    >
+      <defs>
+        <linearGradient id="sageLeafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#DFE8DF" />
+          <stop offset="50%" stopColor="#8DA390" />
+          <stop offset="100%" stopColor="#4A5D4E" />
+        </linearGradient>
+      </defs>
+      <path d="M4 4 L56 4 M4 4 L4 56" stroke="url(#sageLeafGrad)" strokeWidth="1.2" strokeLinecap="round" />
+      {/* Botanical Tendril & Leaves */}
+      <path
+        d="M6 6 Q30 12, 38 4 M6 6 Q12 30, 4 38"
+        stroke="url(#sageLeafGrad)"
+        strokeWidth="1.2"
+        fill="none"
+      />
+      <path d="M16 10 C18 4, 26 6, 24 12" stroke="url(#sageLeafGrad)" strokeWidth="1" fill="url(#sageLeafGrad)" fillOpacity="0.4" />
+      <path d="M10 16 C4 18, 6 26, 12 24" stroke="url(#sageLeafGrad)" strokeWidth="1" fill="url(#sageLeafGrad)" fillOpacity="0.4" />
+      <circle cx="28" cy="28" r="2" fill="url(#sageLeafGrad)" />
+    </svg>
+  );
+};
+
+// Victorian Scalloped Botanical Arched Window Frame (Green Leaf Signature)
+export const BotanicalArchFrame: React.FC<{
+  className?: string;
+  isLight?: boolean;
+  children?: React.ReactNode;
+}> = ({ className = '', isLight = false, children }) => (
+  <div className={`relative p-5 sm:p-6 rounded-[38px] border-2 backdrop-blur-md transition-all shadow-xl ${
+    isLight 
+      ? 'bg-[#F4F7F4]/90 border-[#A2B5A5]/60 text-stone-900 shadow-sage-950/10' 
+      : 'bg-[#1C261F]/85 border-[#758E79]/50 text-stone-100 shadow-2xl'
+  } ${className}`}>
+    {/* Top Ornate Arch Crest Accent */}
+    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-[#8DA390] via-[#D4AF37] to-[#8DA390] text-[9px] font-black uppercase tracking-[0.25em] text-stone-900 shadow-md flex items-center gap-1.5 z-10">
+      <span>🌿</span>
+      <span>Green Leaf</span>
+      <span>🌿</span>
+    </div>
+
+    {/* Arched Inner Border Ridge */}
+    <div className={`absolute inset-2 rounded-[32px] border border-dashed pointer-events-none ${
+      isLight ? 'border-[#8DA390]/50' : 'border-[#A2B5A5]/30'
+    }`} />
+
+    {children}
+  </div>
+);
+
+// Interactive Rotating Vinyl Disc Audio Player Badge (as seen in screenshots 2, 3, 4)
+export const VinylMusicBadge: React.FC<{
+  isPlaying: boolean;
+  onToggle: () => void;
+  className?: string;
+}> = ({ isPlaying, onToggle, className = '' }) => (
+  <button
+    onClick={onToggle}
+    type="button"
+    title={isPlaying ? 'Jeda Musik' : 'Putar Musik'}
+    className={`group relative flex items-center justify-center cursor-pointer transition-transform hover:scale-110 active:scale-95 z-30 ${className}`}
+  >
+    {/* Vinyl Outer Disc */}
+    <div className={`w-11 h-11 rounded-full bg-[#111] border-2 border-stone-800 shadow-2xl flex items-center justify-center relative overflow-hidden ${
+      isPlaying ? 'animate-[spin_4s_linear_infinite]' : ''
+    }`}>
+      {/* Grooves */}
+      <div className="absolute inset-1 rounded-full border border-stone-700/60" />
+      <div className="absolute inset-2.5 rounded-full border border-stone-600/40" />
+      <div className="absolute inset-4 rounded-full border border-stone-700/60" />
+      
+      {/* Center Label (Pink/Gold Satin) */}
+      <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-rose-500 via-amber-400 to-rose-600 border border-white/80 flex items-center justify-center shadow-inner">
+        <div className="w-1 h-1 rounded-full bg-[#111]" />
+      </div>
+    </div>
+
+    {/* Music Note Floating Particle when playing */}
+    {isPlaying && (
+      <span className="absolute -top-1 -right-1 text-xs animate-bounce pointer-events-none">
+        🎵
+      </span>
+    )}
+  </button>
+);
+
 // Full Card Luxury Filigree Border with 4 Corner Accents
 export const CardFrameBorder: React.FC<{ 
-  template?: 'modern' | 'jawa' | 'minang';
+  template?: 'modern' | 'jawa' | 'minang' | 'botanical';
   isLight?: boolean;
 }> = ({ template = 'modern', isLight = false }) => {
   const isJawa = template === 'jawa';
   const isMinang = template === 'minang';
+  const isBotanical = template === 'botanical';
 
   return (
     <div className="absolute inset-2.5 sm:inset-3 pointer-events-none z-20">
@@ -471,29 +581,33 @@ export const CardFrameBorder: React.FC<{
       <div className="absolute top-0 left-0">
         {isJawa ? <JawaCornerOrnament position="top-left" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          isMinang ? <MinangCornerOrnament position="top-left" className="w-10 h-10 sm:w-12 sm:h-12" /> :
+         isBotanical ? <BotanicalCornerOrnament position="top-left" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          <ModernCornerOrnament position="top-left" className="w-10 h-10 sm:w-12 sm:h-12" />}
       </div>
       <div className="absolute top-0 right-0">
         {isJawa ? <JawaCornerOrnament position="top-right" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          isMinang ? <MinangCornerOrnament position="top-right" className="w-10 h-10 sm:w-12 sm:h-12" /> :
+         isBotanical ? <BotanicalCornerOrnament position="top-right" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          <ModernCornerOrnament position="top-right" className="w-10 h-10 sm:w-12 sm:h-12" />}
       </div>
       <div className="absolute bottom-0 left-0">
         {isJawa ? <JawaCornerOrnament position="bottom-left" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          isMinang ? <MinangCornerOrnament position="bottom-left" className="w-10 h-10 sm:w-12 sm:h-12" /> :
+         isBotanical ? <BotanicalCornerOrnament position="bottom-left" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          <ModernCornerOrnament position="bottom-left" className="w-10 h-10 sm:w-12 sm:h-12" />}
       </div>
       <div className="absolute bottom-0 right-0">
         {isJawa ? <JawaCornerOrnament position="bottom-right" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          isMinang ? <MinangCornerOrnament position="bottom-right" className="w-10 h-10 sm:w-12 sm:h-12" /> :
+         isBotanical ? <BotanicalCornerOrnament position="bottom-right" className="w-10 h-10 sm:w-12 sm:h-12" /> :
          <ModernCornerOrnament position="bottom-right" className="w-10 h-10 sm:w-12 sm:h-12" />}
       </div>
 
       {/* Perimeter Inner Line */}
       <div className={`w-full h-full rounded-[36px] border ${
         isLight
-          ? isJawa ? 'border-amber-700/30' : isMinang ? 'border-red-800/30' : 'border-amber-400/40'
-          : isJawa ? 'border-[#c6923c]/30' : isMinang ? 'border-[#e0b042]/30' : 'border-[#dfb051]/30'
+          ? isJawa ? 'border-amber-700/30' : isMinang ? 'border-red-800/30' : isBotanical ? 'border-[#5A735E]/40' : 'border-amber-400/40'
+          : isJawa ? 'border-[#c6923c]/30' : isMinang ? 'border-[#e0b042]/30' : isBotanical ? 'border-[#A2B5A5]/40' : 'border-[#dfb051]/30'
       }`} />
     </div>
   );

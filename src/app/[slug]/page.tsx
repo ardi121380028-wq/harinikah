@@ -19,10 +19,39 @@ import {
   X,
   Sparkles,
   Sun,
-  Moon
+  Moon,
+  Video,
+  Download,
+  Share2,
+  Globe,
+  MessageCircle
 } from 'lucide-react';
-import { INITIAL_PAGES, TEMPLATE_PRESETS } from '../../constants/initialData';
-import { GununganWayang, SuntiangMinang, BatikParangDivider, MinangUkiranDivider } from '../../components/cultural/CulturalOrnaments';
+
+const InstagramIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+import { INITIAL_PAGES, TEMPLATE_PRESETS, BOTANICAL_SAGE_PAGES } from '../../constants/initialData';
+import {
+  GununganWayang,
+  SuntiangMinang,
+  BatikParangDivider,
+  MinangUkiranDivider,
+  BotanicalArchFrame,
+  BotanicalCornerOrnament,
+  VinylMusicBadge
+} from '../../components/cultural/CulturalOrnaments';
 import { weddingAudio } from '../../utils/audioEngine';
 import type { CulturalTemplate } from '../../types';
 
@@ -203,11 +232,55 @@ export default function GuestInvitationPage() {
   // Cultural theme styling variables
   const isJawa = activeTemplate === 'jawa';
   const isMinang = activeTemplate === 'minang';
+  const isBotanical = activeTemplate === 'botanical';
   const isGuestLight = guestTheme === 'light';
+
+  // Save The Date Handlers
+  const handleAddToGoogleCalendar = () => {
+    const groom = coverData.groomName || 'Dimas';
+    const bride = coverData.brideName || 'Clarissa';
+    const title = encodeURIComponent(`The Wedding of ${groom} & ${bride}`);
+    const details = encodeURIComponent(`Undangan Pernikahan ${groom} & ${bride}.\nAcara: ${eventsData.akadTitle || 'Akad Nikah'} & ${eventsData.resepsiTitle || 'Resepsi'}\nLokasi: ${eventsData.resepsiPlace || 'The Glass House Ballroom'}`);
+    const location = encodeURIComponent(eventsData.resepsiPlace || 'The Glass House Ballroom, Jakarta');
+    const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=20260718T020000Z/20260718T070000Z`;
+    window.open(calUrl, '_blank');
+  };
+
+  const handleDownloadIcs = () => {
+    const groom = coverData.groomName || 'Dimas';
+    const bride = coverData.brideName || 'Clarissa';
+    const location = eventsData.resepsiPlace || 'The Glass House Ballroom, Jakarta';
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//HariNikah//Wedding Invitation//ID',
+      'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `SUMMARY:The Wedding of ${groom} & ${bride}`,
+      `DESCRIPTION:Pernikahan ${groom} & ${bride}. Lokasi: ${location}`,
+      `LOCATION:${location}`,
+      'DTSTART:20260718T020000Z',
+      'DTEND:20260718T070000Z',
+      'STATUS:CONFIRMED',
+      'END:VEVENT',
+      'END:VCALENDAR'
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `Wedding-${groom}-${bride}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const themeClasses = {
     bgMain: isGuestLight
       ? 'bg-[#FAF8F5]'
+      : isBotanical
+      ? 'bg-[#354838]'
       : isJawa
       ? 'bg-[#180e09]'
       : isMinang
@@ -215,6 +288,8 @@ export default function GuestInvitationPage() {
       : 'bg-[#051817]',
     cardBg: isGuestLight
       ? 'bg-white/95 border-amber-300 text-stone-900 shadow-xl shadow-amber-950/5'
+      : isBotanical
+      ? 'bg-[#243527]/90 border-[#7A937D]/50 text-stone-100 shadow-xl'
       : isJawa
       ? 'bg-[#28170e]/90 border-[#c6923c]/40'
       : isMinang
@@ -222,15 +297,17 @@ export default function GuestInvitationPage() {
       : 'bg-[#061e1d]/90 border-[#dfb051]/40',
     goldAccent: isGuestLight
       ? 'text-amber-800'
-      : isJawa ? 'text-[#e6ba64]' : isMinang ? 'text-[#f5d77f]' : 'text-[#dfb051]',
-    btnGrad: isJawa
+      : isBotanical ? 'text-[#D8B467]' : isJawa ? 'text-[#e6ba64]' : isMinang ? 'text-[#f5d77f]' : 'text-[#dfb051]',
+    btnGrad: isBotanical
+      ? 'from-[#8DA390] via-[#C9A050] to-[#5C7560]'
+      : isJawa
       ? 'from-[#e6ba64] via-[#c6923c] to-[#a37222]'
       : isMinang
       ? 'from-[#f5d77f] via-[#e0b042] to-[#b3821a]'
       : 'from-amber-400 via-gold-300 to-amber-500',
     sectionBorder: isGuestLight
       ? 'border-amber-200'
-      : isJawa ? 'border-[#c6923c]/20' : isMinang ? 'border-[#e0b042]/20' : 'border-[#dfb051]/20',
+      : isBotanical ? 'border-[#7A937D]/30' : isJawa ? 'border-[#c6923c]/20' : isMinang ? 'border-[#e0b042]/20' : 'border-[#dfb051]/20',
   };
 
   return (
@@ -321,36 +398,45 @@ export default function GuestInvitationPage() {
         )}
       </AnimatePresence>
 
-      {/* 2. FLOATING MUSIC & THEME TOGGLE BUTTONS */}
+      {/* 2. FLOATING ROTATING VINYL BADGE (Bottom-Left) & CONTROLS (Bottom-Right) */}
       {isOpened && (
-        <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2">
-          {/* Light / Dark Mode Toggle */}
-          <button
-            onClick={() => setGuestTheme(t => t === 'dark' ? 'light' : 'dark')}
-            title={isGuestLight ? 'Ganti ke Mode Gelap' : 'Ganti ke Mode Terang (Champagne Ivory)'}
-            className={`w-11 h-11 rounded-full border-2 flex items-center justify-center shadow-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95 ${
-              isGuestLight
-                ? 'bg-white border-amber-300 text-amber-900 shadow-md'
-                : 'bg-[#061e1d] border-gold-400 text-gold-300'
-            }`}
-          >
-            {isGuestLight ? <Moon className="w-4 h-4 text-amber-800" /> : <Sun className="w-4 h-4 text-gold-400" />}
-          </button>
-
-          <div className="hidden sm:flex items-center px-3 py-1.5 rounded-full bg-black/70 border border-gold-subtle text-[11px] text-stone-300 backdrop-blur-md">
-            <span>{isJawa ? '🎵 Gamelan Jawa' : isMinang ? '🎵 Saluang Minang' : '🎵 Romantic Suite'}</span>
+        <>
+          <div className="fixed bottom-6 left-6 z-40">
+            <VinylMusicBadge
+              isPlaying={isPlayingMusic}
+              onToggle={toggleMusic}
+            />
           </div>
 
-          <button
-            onClick={toggleMusic}
-            title={isPlayingMusic ? 'Heningkan Musik' : 'Putar Musik'}
-            className={`w-12 h-12 rounded-full border-2 border-gold-400 flex items-center justify-center shadow-2xl backdrop-blur-md transition-all ${
-              isPlayingMusic ? 'bg-gold-400 text-black animate-spin-slow' : 'bg-[#061e1d] text-gold-300 hover:scale-110'
-            }`}
-          >
-            {isPlayingMusic ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-          </button>
-        </div>
+          <div className="fixed bottom-6 right-6 z-40 flex items-center gap-2">
+            {/* Light / Dark Mode Toggle */}
+            <button
+              onClick={() => setGuestTheme(t => t === 'dark' ? 'light' : 'dark')}
+              title={isGuestLight ? 'Ganti ke Mode Gelap' : 'Ganti ke Mode Terang (Champagne Ivory)'}
+              className={`w-11 h-11 rounded-full border-2 flex items-center justify-center shadow-2xl backdrop-blur-md transition-all hover:scale-105 active:scale-95 ${
+                isGuestLight
+                  ? 'bg-white border-amber-300 text-amber-900 shadow-md'
+                  : 'bg-[#061e1d] border-gold-400 text-gold-300'
+              }`}
+            >
+              {isGuestLight ? <Moon className="w-4 h-4 text-amber-800" /> : <Sun className="w-4 h-4 text-gold-400" />}
+            </button>
+
+            <div className="hidden sm:flex items-center px-3 py-1.5 rounded-full bg-black/70 border border-gold-subtle text-[11px] text-stone-300 backdrop-blur-md">
+              <span>{isJawa ? '🎵 Gamelan Jawa' : isMinang ? '🎵 Saluang Minang' : isBotanical ? '🌿 Pastoral Harp & Cello' : '🎵 Romantic Suite'}</span>
+            </div>
+
+            <button
+              onClick={toggleMusic}
+              title={isPlayingMusic ? 'Heningkan Musik' : 'Putar Musik'}
+              className={`w-12 h-12 rounded-full border-2 border-gold-400 flex items-center justify-center shadow-2xl backdrop-blur-md transition-all ${
+                isPlayingMusic ? 'bg-gold-400 text-black animate-spin-slow' : 'bg-[#061e1d] text-gold-300 hover:scale-110'
+              }`}
+            >
+              {isPlayingMusic ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
+          </div>
+        </>
       )}
 
       {/* 3. MAIN LIVE WEDDING WEBSITE CONTENT */}
@@ -367,6 +453,10 @@ export default function GuestInvitationPage() {
                   <GununganWayang className="w-16 h-24 object-contain text-gold-300 drop-shadow-[0_4px_12px_rgba(218,165,32,0.4)]" />
                 ) : isMinang ? (
                   <SuntiangMinang className="w-24 h-16 object-contain text-gold-300 drop-shadow-[0_4px_12px_rgba(218,165,32,0.4)]" />
+                ) : isBotanical ? (
+                  <div className="w-14 h-14 rounded-full border-2 border-[#8DA390] bg-[#2E4133] flex items-center justify-center text-xl shadow-lg">
+                    🌿
+                  </div>
                 ) : (
                   <div className="w-16 h-16 rounded-full border border-gold-400/80 p-1 shadow-gold-sm">
                     <img src="/assets/favicon-h.png" alt="HariNikah Monogram" className="w-full h-full object-contain rounded-full" />
@@ -375,15 +465,25 @@ export default function GuestInvitationPage() {
               </div>
 
               <p className={`text-[11px] uppercase font-bold tracking-[0.3em] ${themeClasses.goldAccent}`}>
-                {isJawa ? 'SERAT DHAUPIPUN TEMANTEN' : isMinang ? 'BARALEK GADANG MINANGKABAU' : 'THE WEDDING CELEBRATION OF'}
+                {isJawa ? 'SERAT DHAUPIPUN TEMANTEN' : isMinang ? 'BARALEK GADANG MINANGKABAU' : isBotanical ? 'THE BOTANICAL GARDEN CELEBRATION' : 'THE WEDDING CELEBRATION OF'}
               </p>
 
-              {/* ONLY H1 USES SERIF */}
-              <h1 className="text-4xl sm:text-5xl font-serif font-bold text-gold-bright tracking-tight leading-tight">
-                {coverData.groomName || 'Dimas'} <br />
-                <span className="font-sans font-light text-2xl text-amber-200">&</span> <br />
-                {coverData.brideName || 'Clarissa'}
-              </h1>
+              {/* ONLY H1 USES SERIF - Botanical Arch Frame Support */}
+              {isBotanical ? (
+                <BotanicalArchFrame className="max-w-md mx-auto my-4 py-8">
+                  <h1 className="text-4xl sm:text-5xl font-serif font-bold text-white tracking-tight leading-tight">
+                    {coverData.groomName || 'Rian'} <br />
+                    <span className="font-sans font-light text-2xl text-amber-200">&</span> <br />
+                    {coverData.brideName || 'Irna'}
+                  </h1>
+                </BotanicalArchFrame>
+              ) : (
+                <h1 className="text-4xl sm:text-5xl font-serif font-bold text-gold-bright tracking-tight leading-tight">
+                  {coverData.groomName || 'Dimas'} <br />
+                  <span className="font-sans font-light text-2xl text-amber-200">&</span> <br />
+                  {coverData.brideName || 'Clarissa'}
+                </h1>
+              )}
 
               {/* Divider Ornament */}
               <div className="my-2">
@@ -391,6 +491,12 @@ export default function GuestInvitationPage() {
                   <BatikParangDivider className="mx-auto" />
                 ) : isMinang ? (
                   <MinangUkiranDivider className="mx-auto" />
+                ) : isBotanical ? (
+                  <div className="flex items-center justify-center gap-2 text-sm text-[#8DA390]">
+                    <span>🌿</span>
+                    <div className="w-16 h-px bg-[#8DA390]/50" />
+                    <span>🌿</span>
+                  </div>
                 ) : (
                   <div className="w-24 h-px bg-gradient-to-r from-transparent via-gold-400 to-transparent mx-auto" />
                 )}
@@ -416,18 +522,22 @@ export default function GuestInvitationPage() {
           <section className={`px-6 py-16 space-y-12 text-center border-b ${themeClasses.sectionBorder}`}>
             <div>
               <p className={`text-[10px] uppercase font-extrabold tracking-widest ${themeClasses.goldAccent}`}>
-                {isJawa ? 'TEMANTEN KEKALIH' : isMinang ? 'ANAK DARO JO MARAPULAI' : 'PASANGAN MEMPELAI'}
+                {isJawa ? 'TEMANTEN KEKALIH' : isMinang ? 'ANAK DARO JO MARAPULAI' : isBotanical ? 'PASANGAN MEMPELAI' : 'PASANGAN MEMPELAI'}
               </p>
               <h2 className="text-2xl font-bold text-gold-bright mt-1">Mempelai yang Berbahagia</h2>
             </div>
 
-            {/* Mempelai Pria */}
+            {/* Mempelai Pria (Oval in Botanical, Rounded Rect in Others) */}
             <div className="space-y-4">
-              <div className="w-36 h-36 mx-auto rounded-3xl p-1.5 border-2 border-gold-400 shadow-xl overflow-hidden bg-gradient-to-tr from-amber-400 via-gold-200 to-amber-600">
+              <div className={`mx-auto p-1.5 border-2 shadow-xl overflow-hidden ${
+                isBotanical
+                  ? 'w-36 h-48 rounded-[50%] border-[#8DA390] bg-[#F4F7F4]'
+                  : 'w-36 h-36 rounded-3xl border-gold-400 bg-gradient-to-tr from-amber-400 via-gold-200 to-amber-600'
+              }`}>
                 <img
                   src={coupleData.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'}
                   alt="Mempelai Pria"
-                  className="w-full h-full object-cover rounded-[22px]"
+                  className={`w-full h-full object-cover ${isBotanical ? 'rounded-[50%]' : 'rounded-[22px]'}`}
                 />
               </div>
               <div>
@@ -446,13 +556,17 @@ export default function GuestInvitationPage() {
               <div className="h-px w-16 bg-gold-subtle" />
             </div>
 
-            {/* Mempelai Wanita */}
+            {/* Mempelai Wanita (Oval in Botanical, Rounded Rect in Others) */}
             <div className="space-y-4">
-              <div className="w-36 h-36 mx-auto rounded-3xl p-1.5 border-2 border-gold-400 shadow-xl overflow-hidden bg-gradient-to-tr from-amber-400 via-gold-200 to-amber-600">
+              <div className={`mx-auto p-1.5 border-2 shadow-xl overflow-hidden ${
+                isBotanical
+                  ? 'w-36 h-48 rounded-[50%] border-[#8DA390] bg-[#F4F7F4]'
+                  : 'w-36 h-36 rounded-3xl border-gold-400 bg-gradient-to-tr from-amber-400 via-gold-200 to-amber-600'
+              }`}>
                 <img
                   src={coupleData.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'}
                   alt="Mempelai Wanita"
-                  className="w-full h-full object-cover rounded-[22px]"
+                  className={`w-full h-full object-cover ${isBotanical ? 'rounded-[50%]' : 'rounded-[22px]'}`}
                 />
               </div>
               <div>
@@ -554,17 +668,70 @@ export default function GuestInvitationPage() {
                 <span>Petunjuk Arah (Google Maps)</span>
               </a>
             </div>
+            {/* SAVE THE DATE ACTIONS (Feature 3) */}
+            <div className={`p-6 rounded-3xl ${themeClasses.cardBg} border text-center space-y-3`}>
+              <div className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-wider text-gold-300">
+                <Calendar className="w-4 h-4 text-amber-400" />
+                <span>Simpan Tanggal Acara (Save The Date)</span>
+              </div>
+              <p className="text-xs text-stone-300 max-w-sm mx-auto leading-relaxed">
+                Pasang pengingat otomatis di kalender smartphone Anda agar tidak melewatkan momen bahagia kami.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2">
+                <button
+                  type="button"
+                  onClick={handleAddToGoogleCalendar}
+                  className="px-4 py-2.5 rounded-xl bg-white text-stone-900 font-bold text-xs shadow-md hover:bg-stone-100 flex items-center gap-1.5 transition-all"
+                >
+                  <Calendar className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Google Calendar</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadIcs}
+                  className="px-4 py-2.5 rounded-xl bg-black/50 border border-white/20 text-stone-100 font-bold text-xs shadow-md hover:bg-black/70 flex items-center gap-1.5 transition-all"
+                >
+                  <Download className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Apple / Outlook (.ics)</span>
+                </button>
+              </div>
+            </div>
           </section>
 
-          {/* SECTION 5: GALERI PREWEDDING */}
+          {/* SECTION 5: GALERI PREWEDDING & VIDEO (Feature 7 & 8) */}
           <section className={`px-6 py-16 space-y-6 bg-black/20 border-b ${themeClasses.sectionBorder} text-center`}>
             <div>
               <p className={`text-[10px] uppercase font-extrabold tracking-widest ${themeClasses.goldAccent}`}>
-                {isJawa ? 'LELAKON ASMARADANA' : isMinang ? 'RANAH JO RINDU MINANG' : 'GALERI PREWEDDING'}
+                {isJawa ? 'LELAKON ASMARADANA' : isMinang ? 'RANAH JO RINDU MINANG' : isBotanical ? 'KISAH KASIH BOTANIKAL' : 'GALERI PREWEDDING'}
               </p>
               <h2 className="text-2xl font-bold text-gold-bright mt-1">
                 {pages[3]?.data?.storyTitle || 'Momen Bahagia Kami'}
               </h2>
+            </div>
+
+            {/* Video Prewedding Embed / Showcase (Feature 8) */}
+            <div className={`p-4 sm:p-5 rounded-3xl ${themeClasses.cardBg} border space-y-3 text-left`}>
+              <div className="flex items-center justify-between px-1">
+                <span className={`text-xs font-bold ${themeClasses.goldAccent} flex items-center gap-1.5`}>
+                  <Video className="w-4 h-4 text-red-400" />
+                  <span>Video Teaser Prewedding</span>
+                </span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-950/80 border border-red-500/30 text-red-300 font-bold">
+                  HD 4K
+                </span>
+              </div>
+              <div className="relative aspect-video rounded-2xl overflow-hidden shadow-inner border border-white/10 bg-black">
+                <iframe
+                  className="w-full h-full"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&rel=0"
+                  title="Video Prewedding Teaser"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <p className="text-[11px] text-stone-300 italic text-center">
+                {pages[3]?.data?.videoCaption || 'Cuplikan teaser romantis kisah kasih kami berdua.'}
+              </p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -744,8 +911,8 @@ export default function GuestInvitationPage() {
             </div>
           </section>
 
-          {/* FOOTER & WATERMARK */}
-          <footer className="px-6 py-12 text-center bg-black/50 text-xs text-stone-400 space-y-4">
+          {/* FOOTER & WATERMARK (Matching Screenshot 4) */}
+          <footer className="px-6 py-12 text-center bg-black/50 text-xs text-stone-400 space-y-5">
             <p className="text-sm font-serif italic text-gold-300">
               "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu."
             </p>
@@ -753,6 +920,41 @@ export default function GuestInvitationPage() {
               Kami yang berbahagia, <br />
               {coverData.groomName || 'Dimas'} & {coverData.brideName || 'Clarissa'}
             </p>
+
+            {/* "See you on our wedding day!" & Social Connect */}
+            <div className="pt-6 border-t border-white/10 space-y-4">
+              <p className="text-base font-serif italic text-amber-200 tracking-wide">
+                See you on our wedding day!
+              </p>
+
+              <div className="flex items-center justify-center gap-3">
+                <a
+                  href="https://wa.me/6281234567890"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Hubungi Pengantin via WhatsApp"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-emerald-600/30 border border-white/20 flex items-center justify-center text-stone-200 hover:text-emerald-300 transition-all hover:scale-110"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                </a>
+                <a
+                  href="/"
+                  title="Kunjungi Website Resmi"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-amber-600/30 border border-white/20 flex items-center justify-center text-stone-200 hover:text-amber-300 transition-all hover:scale-110"
+                >
+                  <Globe className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Instagram Pengantin"
+                  className="w-10 h-10 rounded-full bg-white/10 hover:bg-pink-600/30 border border-white/20 flex items-center justify-center text-stone-200 hover:text-pink-300 transition-all hover:scale-110"
+                >
+                  <InstagramIcon className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
 
             <div className="pt-6 border-t border-white/10 flex flex-col items-center gap-1">
               <div className="flex items-center gap-2">

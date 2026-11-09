@@ -14,6 +14,7 @@ import { HeroSection } from '../components/landing/HeroSection';
 import { TrustBar } from '../components/landing/TrustBar';
 import { DualProductSection } from '../components/landing/DualProductSection';
 import { DoneForYouSection } from '../components/landing/DoneForYouSection';
+import { FeaturesAccordionSection } from '../components/landing/FeaturesAccordionSection';
 import { BundlingSection } from '../components/landing/BundlingSection';
 import { CatalogSection } from '../components/landing/CatalogSection';
 import { PhysicalCalculator } from '../components/landing/PhysicalCalculator';
@@ -98,6 +99,8 @@ export default function HomePage() {
         <BundlingSection
           onOpenSampleModal={() => setSampleModalOpen(true)}
         />
+
+        <FeaturesAccordionSection />
 
         <CatalogSection
           onSelectTheme={handleSelectTheme}

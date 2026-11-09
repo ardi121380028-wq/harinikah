@@ -313,6 +313,111 @@ export const MINANG_BARALEK_PAGES: PageData[] = [
   }
 ];
 
+// ==========================================
+// 4. TEMPLATE 4: GREEN LEAF BOTANICAL SAGE (GARDEN LUXURY)
+// ==========================================
+export const BOTANICAL_SAGE_PAGES: PageData[] = [
+  {
+    id: 'p1',
+    title: '1. Sampul Green Leaf',
+    type: 'cover',
+    bgTheme: 'botanical_sage',
+    data: {
+      template: 'botanical',
+      monogram: 'I & R',
+      subheading: 'THE WEDDING CELEBRATION OF',
+      groomName: 'Rian',
+      brideName: 'Irna',
+      dateText: 'Minggu, 27 April 2025',
+      venueCity: 'Pine Hill Garden Pavilion, Lembang, Bandung',
+      buttonText: 'Buka Undangan'
+    }
+  },
+  {
+    id: 'p2',
+    title: '2. Bride and Groom',
+    type: 'couple',
+    bgTheme: 'botanical_sage',
+    data: {
+      template: 'botanical',
+      introQuote: '“Maha suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan, Ya Allah rahmatilah pernikahan kami.”',
+      brideFullName: 'Irna Agustiani, S.Farm.',
+      brideParents: 'Putri Kedua dari Bpk. Agus Firmansyah & Ibu Lilis Kutiangsih',
+      brideIg: '@irnaagustiani',
+      bridePhoto: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+      groomFullName: 'Rian Firmansyah, S.T.',
+      groomParents: 'Putra Pertama dari Bpk. Hendra Gunawan & Ibu Hj. Ratna Dewi',
+      groomIg: '@rianfirmansyah',
+      groomPhoto: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'
+    }
+  },
+  {
+    id: 'p3',
+    title: '3. Waktu & Lokasi Acara',
+    type: 'events',
+    bgTheme: 'botanical_sage',
+    data: {
+      template: 'botanical',
+      title: 'Rangkaian Hari Bahagia',
+      akadTitle: 'Akad Nikah',
+      akadDate: 'Minggu, 27 April 2025',
+      akadTime: '08.00 - 10.00 WIB',
+      akadPlace: 'Pine Hill Outdoor Garden, Lembang',
+      resepsiTitle: 'Resepsi Pernikahan',
+      resepsiDate: 'Minggu, 27 April 2025',
+      resepsiTime: '11.00 - 14.30 WIB',
+      resepsiPlace: 'Pine Hill Glasshouse Pavilion, Lembang, Bandung',
+      mapsUrl: 'https://maps.google.com'
+    }
+  },
+  {
+    id: 'p4',
+    title: '4. Galeri & Video Prewedding',
+    type: 'story',
+    bgTheme: 'botanical_sage',
+    data: {
+      template: 'botanical',
+      storyTitle: 'Kisah Cinta & Galeri Abadi',
+      storyIntro: 'Tumbuh bersama dalam keteduhan cinta dan doa yang tak henti mengalir.',
+      videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+      photos: [
+        'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=500&q=80'
+      ]
+    }
+  },
+  {
+    id: 'p5',
+    title: '5. Tanda Kasih & Hadiah',
+    type: 'gift',
+    bgTheme: 'botanical_sage',
+    data: {
+      template: 'botanical',
+      bankName1: 'Bank Central Asia (BCA)',
+      accNumber1: '8820 1234 5678',
+      accHolder1: 'RIAN FIRMANSYAH',
+      bankName2: 'Bank Mandiri',
+      accNumber2: '1370 0098 7654',
+      accHolder2: 'IRNA AGUSTIANI',
+      qrisActive: true,
+      giftAddress: 'Jl. Maribaya No. 88, Lembang, Bandung Barat (Penerima: Irna & Rian)'
+    }
+  },
+  {
+    id: 'p6',
+    title: '6. RSVP & Doa Restu',
+    type: 'rsvp',
+    bgTheme: 'botanical_sage',
+    data: {
+      template: 'botanical',
+      heading: 'Konfirmasi Kehadiran & Doa',
+      note: 'Merupakan sebuah kehormatan bagi kami atas kehadiran dan doa restu Bapak/Ibu/Saudara/i.'
+    }
+  }
+];
+
 // Default initial pages is modern emerald
 export const INITIAL_PAGES: PageData[] = MODERN_EMERALD_PAGES;
 
@@ -335,48 +440,179 @@ export const TEMPLATE_PRESETS: Record<CulturalTemplate, { name: string; desc: st
     icon: '👑',
     pages: MINANG_BARALEK_PAGES,
   },
+  botanical: {
+    name: 'Green Leaf Botanical Garden',
+    desc: 'Hijau Sage teduh, bingkai floral klasik & alunan piringan hitam',
+    icon: '🌿',
+    pages: BOTANICAL_SAGE_PAGES,
+  },
 };
 
 export const CATALOG_THEMES: CatalogItem[] = [
   {
     id: 1,
-    name: "Royal Emerald Velvet",
-    category: "Velvet Luxury",
-    tag: "Signature",
-    image: "/assets/velvet-bg.jpg",
-    description: "Balutan beludru hijau zamrud dengan tipografi emas modern berkilau.",
-    type: "Digital & Fisik",
-    templateKey: 'modern'
+    slug: "green-leaf",
+    name: "Green Leaf — Botanical Garden",
+    category: "Botanical Sage",
+    tag: "Best Seller",
+    price: 113400,
+    originalPrice: 180000,
+    rating: 5.0,
+    salesCount: 28,
+    reviewCount: 7,
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
+    description: "Kesegaran Alam dalam Balutan Klasik yang Teduh berpadu dengan bingkai lengkung Victorian dan pemutar vinyl.",
+    longDescription: "Green Leaf dirancang untuk pasangan yang menyukai ketenangan dan keindahan alam yang abadi. Mengusung warna hijau sage yang teduh, bias arsitektur klasik, serta sentuhan ilustrasi botani yang segar, template ini menghadirkan suasana yang tenang dan anggun. Sebuah cara yang pantas dan berkesan untuk mengajak para insan merayakan awal baru yang berakar di hati selamanya.",
+    type: "Digital Interaktif & Fisik",
+    templateKey: 'botanical',
+    features: [
+      "Entrance Animation: Tampilan animasi pembuka amplop romantis",
+      "Rotating Vinyl Disc: Pemutar musik piringan hitam interaktif",
+      "Countdown Timer: Hitung mundur hari pernikahan live",
+      "Save The Date: 1-klik simpan ke Google Calendar / Apple iCal",
+      "Love Story: Timeline babak perjalanan cinta",
+      "Navigasi Maps: Petunjuk rute langsung Google Maps",
+      "Galeri Foto Prewedding & Pemutar Video Terintegrasi",
+      "Amplop Digital Multi-Bank & Scan Barcode QRIS",
+      "Buku Tamu Real-time RSVP & Ucapan Doa Restu",
+      "Bebas Kuota Tamu & Personalisasi Nama Otomatis"
+    ],
+    specifications: {
+      "Gaya Desain": "Victorian Botanical Arch & Classical Sage",
+      "Nuansa Warna": "Sage Green (#4A5D4E), Soft Ivory & Warm Gold",
+      "Tipografi": "Playfair Display & Plus Jakarta Sans",
+      "Musik Rekomendasi": "Pastoral Romance Acoustic & Cello (Web Audio)",
+      "Masa Aktif": "Aktif Selamanya (Tanpa Batas Waktu)",
+      "Waktu Pengerjaan": "Instan (Langsung aktif dalam 5 menit)"
+    }
   },
   {
     id: 2,
-    name: "Jawa Keraton Kasunanan",
-    category: "Adat Nusantara",
-    tag: "Budaya Ageng",
-    image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80",
-    description: "Motif Coklat Sogan Keraton, ornamen Gunungan Wayang emas prada, dan musik gamelan lembut.",
-    type: "Digital & Fisik",
-    templateKey: 'jawa'
+    slug: "royal-emerald",
+    name: "Royal Emerald Velvet",
+    category: "Velvet Luxury",
+    tag: "Signature",
+    price: 125000,
+    originalPrice: 195000,
+    rating: 4.9,
+    salesCount: 45,
+    reviewCount: 12,
+    image: "/assets/velvet-bg.jpg",
+    description: "Balutan beludru hijau zamrud dengan tipografi emas modern berkilau dan ornamen filigri mewah.",
+    longDescription: "Royal Emerald Velvet menghadirkan kemewahan tertinggi pesta pernikahan Anda. Memadukan kedalaman warna zamrud gelap dengan sentuhan hotprint foil emas 24k dan alunan musik Canon in D Piano & Harp.",
+    type: "Digital Interaktif & Fisik",
+    templateKey: 'modern',
+    features: [
+      "Entrance Animation Wax Seal Lilin Emas",
+      "4-Corner Filigree Frame Art Deco Emas",
+      "Hitung Mundur Countdown Timer Live",
+      "Save The Date Google Calendar 1-klik",
+      "Galeri Prewedding 4K Lightbox",
+      "Amplop Digital Multi-Bank & QRIS",
+      "Live RSVP & Buku Tamu Interaktif",
+      "Alunan Musik Harp & Piano Orchestra"
+    ],
+    specifications: {
+      "Gaya Desain": "Royal Emerald Velvet & Haute Couture",
+      "Nuansa Warna": "Deep Emerald (#051817) & Pure Gold",
+      "Tipografi": "Playfair Display Serif & Modern Sans",
+      "Masa Aktif": "Aktif Selamanya"
+    }
   },
   {
     id: 3,
-    name: "Minangkabau Baralek Gadang",
+    slug: "adat-jawa",
+    name: "Jawa Keraton Kasunanan",
     category: "Adat Nusantara",
-    tag: "Kemegahan Ranah Minang",
-    image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80",
-    description: "Merah Marun Marawa dengan mahkota Suntiang Minang emas bertingkat dan alunan Saluang syahdu.",
-    type: "Digital & Fisik",
-    templateKey: 'minang'
+    tag: "Budaya Ageng",
+    price: 119000,
+    originalPrice: 185000,
+    rating: 5.0,
+    salesCount: 38,
+    reviewCount: 9,
+    image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=600&q=80",
+    description: "Motif Coklat Sogan Keraton, ornamen Gunungan Wayang emas prada, dan alunan Gamelan Slendro syahdu.",
+    longDescription: "Adat Jawa Kasunanan merajut nilai luhur filosofi pernikahan Jawa ke dalam lembaran digital modern. Lengkap dengan ornamen Gunungan Kayon Pohon Hayat, Aksara Jawa, tata upacara Midodareni & Panggih, serta alunan Gamelan Pelog yang menggetarkan sukma.",
+    type: "Digital Interaktif & Fisik",
+    templateKey: 'jawa',
+    features: [
+      "Gunungan Wayang Kayon & Paduraksa Emas",
+      "Ukiran Sudut Keraton Jepara 4 Penjuru",
+      "Pembatas Aksara Jawa & Ronce Melati",
+      "Tata Upacara Adat Siraman & Panggih",
+      "Alunan Suara Gamelan Pelog Asli",
+      "Countdown Timer Kalender Jawa",
+      "Save The Date & Google Maps Navigasi",
+      "Amplop Digital & Buku Tamu Pangestu"
+    ],
+    specifications: {
+      "Gaya Desain": "Kasunanan Sogan & Prada Keraton",
+      "Nuansa Warna": "Sogan Brown (#180E09) & Golden Ochre",
+      "Musik": "Gamelan Pelog/Slendro Kasunanan",
+      "Masa Aktif": "Aktif Selamanya"
+    }
   },
   {
     id: 4,
+    slug: "adat-minang",
+    name: "Minangkabau Baralek Gadang",
+    category: "Adat Nusantara",
+    tag: "Kemegahan Ranah Minang",
+    price: 119000,
+    originalPrice: 185000,
+    rating: 5.0,
+    salesCount: 32,
+    reviewCount: 8,
+    image: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=600&q=80",
+    description: "Merah Marun Marawa dengan mahkota Suntiang Minang emas bertingkat, Rumah Gadang, dan alunan Saluang.",
+    longDescription: "Baralek Gadang Pernikahan Adat Minangkabau mengusung kemegahan bumi Ranah Minang. Dilengkapi Mahkota Suntiang Minang bertingkat emas, siluet Gonjong Rumah Gadang, ukiran Itiak Pulang Patang, pepatah adat pusako, dan alunan Saluang jo Talempong yang hangat.",
+    type: "Digital Interaktif & Fisik",
+    templateKey: 'minang',
+    features: [
+      "Mahkota Suntiang Minang Emas 7 Tingkat",
+      "Siluet Atap Gonjong Rumah Gadang",
+      "Ukiran Khas Itiak Pulang Patang & Pucuk Rebung",
+      "Pepatah Pusako Adat Basandi Syarak",
+      "Alunan Musik Saluang jo Talempong",
+      "Rangkaian Acara Malam Bainai & Ijab",
+      "Save The Date & Navigasi Lokasi",
+      "Amplop Digital & Buku Tamu Barakeh"
+    ],
+    specifications: {
+      "Gaya Desain": "Marawa Crimson & Suntiang Pusako",
+      "Nuansa Warna": "Maroon Crimson (#220508) & Gold",
+      "Musik": "Saluang jo Talempong Minangkabau",
+      "Masa Aktif": "Aktif Selamanya"
+    }
+  },
+  {
+    id: 5,
+    slug: "champagne-noir",
     name: "Champagne Noir Gold",
     category: "Minimalist Modern",
     tag: "Monochrome Luxury",
+    price: 99000,
+    originalPrice: 160000,
+    rating: 4.8,
+    salesCount: 19,
+    reviewCount: 4,
     image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80",
-    description: "Hitam onyx dipadukan dengan garis foil emas murni dan segel wax hitam.",
-    type: "Digital & Fisik",
-    templateKey: 'modern'
+    description: "Hitam onyx dipadukan dengan garis foil emas murni dan segel wax hitam elegan.",
+    longDescription: "Desain minimalis monokrom modern berpadu dengan kemewahan garis emas dan tipografi editorial majalah internasional.",
+    type: "Digital Interaktif",
+    templateKey: 'modern',
+    features: [
+      "Monochrome Minimalist Luxury",
+      "Gold Foil Lines & Monogram",
+      "Countdown Timer",
+      "Google Maps Navigation",
+      "Amplop Digital & Live RSVP"
+    ],
+    specifications: {
+      "Gaya Desain": "Minimalist Noir Editorial",
+      "Nuansa Warna": "Noir Black (#0a0a0a) & Champagne Gold",
+      "Masa Aktif": "Aktif Selamanya"
+    }
   }
 ];
 

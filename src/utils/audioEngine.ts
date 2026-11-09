@@ -88,7 +88,7 @@ class WeddingAudioEngine {
     osc.stop(time + duration);
   }
 
-  public play(template: 'modern' | 'jawa' | 'minang' = 'modern') {
+  public play(template: 'modern' | 'jawa' | 'minang' | 'botanical' = 'modern') {
     this.initContext();
     if (!this.ctx) return;
 
@@ -132,6 +132,15 @@ class WeddingAudioEngine {
         if (step % 2 === 0) {
           this.playMinangTone(659.25, now + 0.3, 1.0, true);
         }
+      } else if (template === 'botanical') {
+        // Botanical Garden Romantic Pastoral (G Major: G4, B4, D5, E5, C5, A4)
+        const botanicalScale = [392.00, 440.00, 493.88, 523.25, 587.33, 659.25];
+        const note = botanicalScale[step % botanicalScale.length];
+        this.playPianoHarpTone(note, now, 2.4);
+
+        if (step % 2 === 0) {
+          this.playPianoHarpTone(196.00, now, 3.2); // Low G3 cello anchor
+        }
       } else {
         // Modern Romance (D major / Canon in D arpeggio: D4, F#4, A4, D5)
         const modernScale = [293.66, 369.99, 440.00, 587.33, 329.63, 392.00, 493.88];
@@ -163,7 +172,7 @@ class WeddingAudioEngine {
     }
   }
 
-  public toggle(template: 'modern' | 'jawa' | 'minang' = 'modern'): boolean {
+  public toggle(template: 'modern' | 'jawa' | 'minang' | 'botanical' = 'modern'): boolean {
     if (this.isPlaying) {
       this.stop();
       return false;
