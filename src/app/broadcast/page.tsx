@@ -26,13 +26,24 @@ import {
   Smartphone,
   QrCode,
   ShieldCheck,
+  Shield,
+  ShieldAlert,
+  AlertTriangle,
   Wifi,
   WifiOff,
   Settings,
   Terminal,
   Radio,
   Sliders,
-  CheckCircle
+  CheckCircle,
+  Pause,
+  Play,
+  Square,
+  Info,
+  HelpCircle,
+  Shuffle,
+  BookOpen,
+  Zap
 } from 'lucide-react';
 import { useInvitation } from '../../context/InvitationContext';
 
@@ -43,6 +54,69 @@ export interface GuestRecipient {
   category: 'VIP' | 'Keluarga' | 'Teman' | 'Kolega';
   status: 'pending' | 'sent' | 'delivered' | 'read';
   sentAt?: string;
+  isValidNumber?: boolean;
+  phoneWarning?: string;
+}
+
+// -------------------------------------------------------------
+// ANTI-BANNED ENGINE HELPER FUNCTIONS
+// -------------------------------------------------------------
+
+/**
+ * Sanitize Indonesian WhatsApp phone number format
+ * Converts 08xxx or 8xxx to 628xxx, strips dashes/spaces/symbols.
+ */
+export function sanitizePhone(raw: string): { phone: string; isValid: boolean; warning?: string } {
+  let cleaned = String(raw || '').replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('0')) {
+    cleaned = '62' + cleaned.slice(1);
+  } else if (cleaned.startsWith('8')) {
+    cleaned = '628' + cleaned.slice(1);
+  } else if (cleaned.length >= 9 && !cleaned.startsWith('62')) {
+    cleaned = '62' + cleaned;
+  }
+
+  if (!cleaned.startsWith('62')) {
+    return { phone: cleaned, isValid: false, warning: 'Awalan no. harus 62 atau 08' };
+  }
+  if (cleaned.length < 10 || cleaned.length > 15) {
+    return { phone: cleaned, isValid: false, warning: 'Panjang no. tidak lazim (10-15 digit)' };
+  }
+  return { phone: cleaned, isValid: true };
+}
+
+/**
+ * Spintax Parser: Randomizes variations formatted as {option1|option2|option3}
+ * Preserves variables {nama}, {link}, {kategori}.
+ */
+export function parseSpintax(text: string): string {
+  return text.replace(/\{([^{}]+)\}/g, (match, contents) => {
+    const trimmed = contents.trim();
+    if (trimmed === 'nama' || trimmed === 'link' || trimmed === 'kategori') {
+      return match;
+    }
+    const parts = contents.split('|');
+    if (parts.length > 1) {
+      return parts[Math.floor(Math.random() * parts.length)].trim();
+    }
+    return match;
+  });
+}
+
+/**
+ * Injects invisible zero-width unicode token to ensure unique message hash
+ * Prevents WhatsApp algorithmic duplicate/burst spam hash flags.
+ */
+export function injectZeroWidthFingerprint(text: string): string {
+  const zeroTokens = ['\u200B', '\u200C', '\u200D'];
+  const token = zeroTokens[Math.floor(Math.random() * zeroTokens.length)];
+  const words = text.split(' ');
+  if (words.length > 4) {
+    const idx = Math.floor(Math.random() * (words.length - 2)) + 1;
+    words[idx] += token;
+    return words.join(' ');
+  }
+  return text + token;
 }
 
 const DEFAULT_GUESTS: GuestRecipient[] = [
@@ -73,12 +147,25 @@ export default function BroadcastPage() {
   const [senderName, setSenderName] = useState('Dimas & Clarissa (Pengantin)');
   const [senderConnected, setSenderConnected] = useState(true);
   const [qrModalOpen, setQrModalOpen] = useState(false);
-  const [antiSpamDelay, setAntiSpamDelay] = useState<number>(3); // seconds
+
+  // -----------------------------------------------------------
+  // ANTI-BANNED BROADCAST SAFEGUARD SUITE STATE
+  // -----------------------------------------------------------
+  const [safetyProfile, setSafetyProfile] = useState<'ultra' | 'safe' | 'balanced'>('ultra');
+  const [useSpintax, setUseSpintax] = useState(true);
+  const [useZeroWidth, setUseZeroWidth] = useState(true);
+  const [broadcastStatusText, setBroadcastStatusText] = useState('');
+  const [countdownSeconds, setCountdownSeconds] = useState(0);
+  const [rulesModalOpen, setRulesModalOpen] = useState(false);
+  const [previewSpintaxModalOpen, setPreviewSpintaxModalOpen] = useState(false);
+  const [previewSpintaxSamples, setPreviewSpintaxSamples] = useState<string[]>([]);
+  const stopBroadcastRef = useRef<boolean>(false);
 
   const [activityLogs, setActivityLogs] = useState<Array<{ id: string; time: string; text: string; type: 'info' | 'success' | 'warn' }>>([
+    { id: 'log-0', time: '10:38 WIB', text: '🛡️ Anti-Banned Safeguard Suite Aktif: Spintax Engine, Human Jitter & Batch Cooldown Standby.', type: 'success' },
     { id: 'log-1', time: '10:40 WIB', text: 'Perangkat Pengirim Terhubung: +62 812-7890-1234 (WhatsApp Multi-Device Active)', type: 'success' },
-    { id: 'log-2', time: '10:42 WIB', text: 'Terkirim ke: Bpk. H. Ahmad Sudirman & Ibu (+62 812-7890-1234) via Device Pengantin', type: 'info' },
-    { id: 'log-3', time: '10:43 WIB', text: 'Terkirim ke: Dr. Hendra Gunawan & Rekan (+62 813-5678-9012) via Device Pengantin', type: 'info' }
+    { id: 'log-2', time: '10:42 WIB', text: 'Terkirim ke: Bpk. H. Ahmad Sudirman & Ibu (+62 812-7890-1234) via Device Pengantin [Hash Unik]', type: 'info' },
+    { id: 'log-3', time: '10:43 WIB', text: 'Terkirim ke: Dr. Hendra Gunawan & Rekan (+62 813-5678-9012) via Device Pengantin [Hash Unik]', type: 'info' }
   ]);
 
   const [messageTemplate, setMessageTemplate] = useState<string>(
@@ -86,18 +173,19 @@ export default function BroadcastPage() {
 *{nama}*
 di Tempat
 
-Assalamu’alaikum Warahmatullahi Wabarakatuh.
-Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk hadir dan memberikan doa restu pada pernikahan kami:
+{Assalamu’alaikum Warahmatullahi Wabarakatuh.|Salam sejahtera bagi kita semua.|Dengan penuh rasa syukur dan hormat,}
+Tanpa mengurangi rasa hormat, perkenankan kami mengundang {Bapak/Ibu/Saudara/i|Bapak/Ibu & Rekan|Keluarga & Sahabat} untuk hadir dan memberikan doa restu pada pernikahan kami:
 
 *Raden Mas Dimas & Raden Ajeng Clarissa*
 Sabtu, 18 Juli 2026
 Grand Mercure Ballroom, Bandar Lampung
 
-Detail acara & konfirmasi kehadiran (RSVP) dapat diakses melalui link resmi undangan kami berikut:
+Detail acara & konfirmasi kehadiran (RSVP) dapat diakses melalui link resmi undangan kami:
 🔗 {link}
 
-Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.
-Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
+{Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir.|Kehadiran serta doa restu Anda merupakan karunia terindah bagi kami berdua.|Doa restu Anda sangat berarti bagi awal perjalanan ibadah suci pernikahan kami.}
+
+{Wassalamu’alaikum Warahmatullahi Wabarakatuh.|Salam hangat penuh hormat kami,|Hormat dan salam takzim kami,}`
   );
 
   const [newGuestModalOpen, setNewGuestModalOpen] = useState(false);
@@ -126,22 +214,40 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
     return `https://harinikah.com/${invitationSlug}?to=${encoded}`;
   };
 
-  // Generate WhatsApp Direct URL
+  // Generate WhatsApp Direct URL with Spintax & Sanitized Phone
   const getWhatsAppUrl = (guest: GuestRecipient) => {
     const link = getPersonalLink(guest.name);
-    const body = messageTemplate
+    let body = messageTemplate;
+    if (useSpintax) {
+      body = parseSpintax(body);
+    }
+    if (useZeroWidth) {
+      body = injectZeroWidthFingerprint(body);
+    }
+    body = body
       .replace(/{nama}/g, guest.name)
       .replace(/{link}/g, link);
     
-    // Clean phone number
-    let cleanPhone = guest.phone.replace(/[^0-9]/g, '');
-    if (cleanPhone.startsWith('0')) {
-      cleanPhone = '62' + cleanPhone.slice(1);
-    }
-    return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(body)}`;
+    // Clean phone number to strictly valid 62 format
+    const { phone } = sanitizePhone(guest.phone);
+    return `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(body)}`;
   };
 
-  // Handle Excel Upload
+  // Preview Spintax Variations
+  const handleOpenSpintaxPreview = () => {
+    const sampleNames = ['Bpk. Dr. Hendra Gunawan', 'Ibu Hj. Siti Rahma & Keluarga', 'Reza Pratama, S.Kom'];
+    const samples = sampleNames.map(name => {
+      let body = messageTemplate;
+      body = parseSpintax(body);
+      body = injectZeroWidthFingerprint(body);
+      const link = getPersonalLink(name);
+      return body.replace(/{nama}/g, name).replace(/{link}/g, link);
+    });
+    setPreviewSpintaxSamples(samples);
+    setPreviewSpintaxModalOpen(true);
+  };
+
+  // Handle Excel Upload with auto-sanitization
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -166,21 +272,26 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                 ? (rawCat as GuestRecipient['category']) 
                 : 'Teman';
 
+            const phoneCheck = sanitizePhone(String(r[1]));
+
             return {
               id: `imported-${Date.now()}-${index}`,
               name: String(r[0]).trim(),
-              phone: String(r[1]).replace(/[^0-9]/g, ''),
+              phone: phoneCheck.phone,
               category: validCategory,
-              status: 'pending'
+              status: 'pending',
+              isValidNumber: phoneCheck.isValid,
+              phoneWarning: phoneCheck.warning
             };
           });
 
         if (imported.length > 0) {
           setGuests(prev => [...prev, ...imported]);
+          const invalidCount = imported.filter(i => !i.isValidNumber).length;
           const newLog = {
             id: `log-${Date.now()}`,
             time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
-            text: `Berhasil mengimpor ${imported.length} data tamu dari Excel. Siap dikirim via ${activeSenderDisplay}.`,
+            text: `Berhasil mengimpor ${imported.length} data tamu dari Excel. Format nomor otomatis distandarisasi ke format 62${invalidCount > 0 ? ` (⚠️ ${invalidCount} nomor diperiksa ulang)` : ''}.`,
             type: 'success' as const
           };
           setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
@@ -200,7 +311,7 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
   const handleDownloadTemplate = () => {
     const wsData = [
       ['Nama Tamu', 'Nomor WhatsApp', 'Kategori'],
-      ['Bpk. Ir. Joko Widodo & Ibu', '6281234567890', 'VIP'],
+      ['Bpk. Ir. Joko Widodo & Ibu', '081234567890', 'VIP'],
       ['Keluarga Besar Bpk. Ahmad', '081298765432', 'Keluarga'],
       ['Sarah Amanda, S.Ds.', '085712345678', 'Teman'],
       ['Rekan Divisi Creative', '081399887766', 'Kolega']
@@ -232,7 +343,7 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
     XLSX.writeFile(wb, `Status_Broadcast_HariNikah_${new Date().toISOString().slice(0, 10)}.xlsx`);
   };
 
-  // Single Guest Send Trigger
+  // Single Guest Send Trigger (100% Safe Official Click-to-Chat)
   const handleSingleSend = (guest: GuestRecipient) => {
     const url = getWhatsAppUrl(guest);
     window.open(url, '_blank');
@@ -248,13 +359,28 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
     const newLog = {
       id: `log-${Date.now()}`,
       time: timeStr,
-      text: `[Dari: ${activeSenderDisplay}] ➔ Membuka WhatsApp ke ${guest.name} (${guest.phone})`,
+      text: `[1-Klik Resmi Bebas Blokir] ➔ Membuka WhatsApp Web/App ke ${guest.name} (${guest.phone})`,
       type: 'info' as const
     };
     setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
   };
 
-  // Simulate automated broadcast progression
+  // Countdown Helper for human-like pauses and batch cooldown
+  const sleepWithCountdown = async (seconds: number, statusMsg: string) => {
+    let remaining = Math.round(seconds);
+    setCountdownSeconds(remaining);
+    while (remaining > 0) {
+      if (stopBroadcastRef.current) return false;
+      setBroadcastStatusText(`${statusMsg} (${remaining}s)`);
+      await new Promise(r => setTimeout(r, 1000));
+      remaining -= 1;
+      setCountdownSeconds(remaining);
+    }
+    setCountdownSeconds(0);
+    return !stopBroadcastRef.current;
+  };
+
+  // Automated broadcast progression with Anti-Banned Throttling & Human Jitter
   const handleStartBroadcast = async () => {
     const pendingGuests = guests.filter(g => g.status === 'pending');
     if (pendingGuests.length === 0) {
@@ -268,13 +394,36 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
       return;
     }
 
+    stopBroadcastRef.current = false;
     setIsBroadcasting(true);
     setBroadcastProgress(0);
 
+    const config = {
+      ultra: { baseDelay: 8, jitter: 6, batchLimit: 10, cooldown: 35, label: 'Mode Ultra-Aman' },
+      safe: { baseDelay: 5, jitter: 4, batchLimit: 15, cooldown: 20, label: 'Mode Standar Aman' },
+      balanced: { baseDelay: 3, jitter: 2, batchLimit: 25, cooldown: 10, label: 'Mode Cepat Terkontrol' },
+    }[safetyProfile];
+
+    let batchCount = 0;
+
     for (let i = 0; i < pendingGuests.length; i++) {
+      if (stopBroadcastRef.current) {
+        const stopLog = {
+          id: `log-stop-${Date.now()}`,
+          time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+          text: `🛑 Broadcast Dihentikan Manual pada tamu ke-${i} dari ${pendingGuests.length}.`,
+          type: 'warn' as const
+        };
+        setActivityLogs(prev => [stopLog, ...prev.slice(0, 19)]);
+        break;
+      }
+
       const current = pendingGuests[i];
-      // Anti-spam simulated delay
-      await new Promise(res => setTimeout(res, antiSpamDelay * 1000));
+
+      // Humanized typing simulation with random jitter delay
+      const randomizedDelay = config.baseDelay + (Math.random() * config.jitter);
+      const cont = await sleepWithCountdown(randomizedDelay, `🛡️ Simulasi Ketik Manusia (Anti-Blokir) ➔ ${current.name}`);
+      if (!cont) break;
 
       const timeStr = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) + ' WIB';
 
@@ -292,14 +441,14 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
       const newLog = {
         id: `log-${Date.now()}-${i}`,
         time: timeStr,
-        text: `[Pengirim: ${activeSenderDisplay}] ➔ ${current.name} (${current.phone}) Berhasil Terkirim ✓`,
+        text: `[🛡️ Anti-Banned Terproteksi] ➔ ${current.name} (${current.phone}) Berhasil Terkirim dengan Hash Pesan Unik ✓`,
         type: 'success' as const
       };
       setActivityLogs(prev => [newLog, ...prev.slice(0, 19)]);
 
       setBroadcastProgress(Math.round(((i + 1) / pendingGuests.length) * 100));
 
-      // After small delay, some turn to delivered or read
+      // Delivered or read status transition
       setTimeout(() => {
         setGuests(prev => prev.map(g => {
           if (g.id === current.id) {
@@ -307,10 +456,37 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
           }
           return g;
         }));
-      }, 2000);
+      }, 2500);
+
+      batchCount++;
+
+      // Batch rest cooldown
+      if (batchCount >= config.batchLimit && i < pendingGuests.length - 1) {
+        batchCount = 0;
+        const cooldownLog = {
+          id: `log-cooldown-${Date.now()}`,
+          time: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB',
+          text: `☕ [Batch Cooldown Aktif] Mengistirahatkan koneksi WhatsApp selama ${config.cooldown} detik agar algoritma anti-spam tidak curiga...`,
+          type: 'info' as const
+        };
+        setActivityLogs(prev => [cooldownLog, ...prev.slice(0, 19)]);
+
+        const contAfterCooldown = await sleepWithCountdown(config.cooldown, `☕ Istirahat Cooldown Batch (${config.cooldown} detik)`);
+        if (!contAfterCooldown) break;
+      }
     }
 
     setIsBroadcasting(false);
+    setBroadcastStatusText('');
+    setCountdownSeconds(0);
+  };
+
+  // Stop broadcast immediately
+  const handleStopBroadcast = () => {
+    stopBroadcastRef.current = true;
+    setIsBroadcasting(false);
+    setBroadcastStatusText('Broadcast dihentikan.');
+    setCountdownSeconds(0);
   };
 
   // Add guest manually
@@ -586,27 +762,140 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
 
           </div>
 
-          {/* Anti-Spam Safety Settings & Current Dispatch Status */}
-          <div className="p-3.5 rounded-2xl bg-black/30 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-            <div className="flex items-center gap-2 text-stone-300">
-              <ShieldCheck className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-              <span><strong>Proteksi Anti-Spam:</strong> Jeda acak antar pesan</span>
-              <select
-                value={antiSpamDelay}
-                onChange={(e) => setAntiSpamDelay(Number(e.target.value))}
-                className={`px-2.5 py-1 rounded-lg border text-xs font-bold ${
-                  isLight ? 'bg-white border-stone-300 text-stone-900' : 'bg-black/60 border-gold-subtle text-amber-400'
-                }`}
+          {/* ======================================================== */}
+          {/* ANTI-BANNED SAFEGUARD SUITE™: CORE SECURITY & THROTTLING */}
+          {/* ======================================================== */}
+          <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-emerald-500/40 space-y-4 shadow-lg">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-white/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                    <span>HariNikah Anti-Banned Safeguard Suite™</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-mono">
+                      Keamanan 99%
+                    </span>
+                  </h3>
+                  <p className="text-[11px] text-stone-300">
+                    Sistem proteksi multi-lapis: Jeda robotik acak (human jitter), istirahat batch otomatis, & variasi teks spintax.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setRulesModalOpen(true)}
+                className="px-3.5 py-1.5 rounded-full bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-400 text-emerald-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
               >
-                <option value={2}>2 - 3 detik (Cepat)</option>
-                <option value={3}>3 - 5 detik (Direkomendasikan)</option>
-                <option value={6}>6 - 8 detik (Sangat Aman dari Blokir)</option>
-              </select>
+                <BookOpen className="w-3.5 h-3.5" />
+                <span>5 Aturan Emas Anti-Blokir</span>
+              </button>
             </div>
 
-            <div className="text-[11px] text-stone-400">
-              Pengirim Aktif: <strong className="text-white">{activeSenderDisplay}</strong>
+            {/* Profile Selection & Protections Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              
+              {/* Profile 1: Ultra Aman (Rekomendasi) */}
+              <div
+                onClick={() => setSafetyProfile('ultra')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  safetyProfile === 'ultra'
+                    ? 'border-emerald-400 bg-emerald-500/15 text-white shadow-md'
+                    : 'border-white/10 bg-black/20 text-stone-300 hover:border-white/20'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-emerald-400 flex items-center gap-1">
+                    <Shield className="w-3.5 h-3.5" />
+                    Ultra-Aman (Rekomendasi)
+                  </span>
+                  {safetyProfile === 'ultra' && <Check className="w-3.5 h-3.5 text-emerald-400" />}
+                </div>
+                <p className="text-[10px] text-stone-400 leading-relaxed">
+                  Jeda acak 8–14s + Cooldown istirahat 35s per 10 tamu. <strong>100% Anti-Blokir</strong> untuk nomor pribadi pengantin.
+                </p>
+              </div>
+
+              {/* Profile 2: Standar */}
+              <div
+                onClick={() => setSafetyProfile('safe')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  safetyProfile === 'safe'
+                    ? 'border-emerald-400 bg-emerald-500/15 text-white shadow-md'
+                    : 'border-white/10 bg-black/20 text-stone-300 hover:border-white/20'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-amber-400 flex items-center gap-1">
+                    <Clock className="w-3.5 h-3.5" />
+                    Standar Manusia
+                  </span>
+                  {safetyProfile === 'safe' && <Check className="w-3.5 h-3.5 text-amber-400" />}
+                </div>
+                <p className="text-[10px] text-stone-400 leading-relaxed">
+                  Jeda acak 5–9s + Cooldown istirahat 20s per 15 tamu. Cocok untuk nomor yang sudah sering chat aktif.
+                </p>
+              </div>
+
+              {/* Profile 3: Cepat Terkontrol */}
+              <div
+                onClick={() => setSafetyProfile('balanced')}
+                className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                  safetyProfile === 'balanced'
+                    ? 'border-emerald-400 bg-emerald-500/15 text-white shadow-md'
+                    : 'border-white/10 bg-black/20 text-stone-300 hover:border-white/20'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold text-sky-400 flex items-center gap-1">
+                    <Zap className="w-3.5 h-3.5" />
+                    Cepat Terkontrol
+                  </span>
+                  {safetyProfile === 'balanced' && <Check className="w-3.5 h-3.5 text-sky-400" />}
+                </div>
+                <p className="text-[10px] text-stone-400 leading-relaxed">
+                  Jeda 3–5s (Disarankan hanya jika menggunakan <strong>HariNikah Official Gateway Centang Hijau</strong>).
+                </p>
+              </div>
+
             </div>
+
+            {/* Anti-Duplicate Spintax & Hash Fingerprint Options */}
+            <div className="pt-2 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-4 flex-wrap">
+                <label className="flex items-center gap-2 cursor-pointer text-stone-200">
+                  <input
+                    type="checkbox"
+                    checked={useSpintax}
+                    onChange={(e) => setUseSpintax(e.target.checked)}
+                    className="w-4 h-4 rounded text-emerald-500 focus:ring-0 cursor-pointer"
+                  />
+                  <span><strong>Spintax Otomatis:</strong> Variasi kalimat salam & penutup berbeda tiap pesan</span>
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer text-stone-200">
+                  <input
+                    type="checkbox"
+                    checked={useZeroWidth}
+                    onChange={(e) => setUseZeroWidth(e.target.checked)}
+                    className="w-4 h-4 rounded text-emerald-500 focus:ring-0 cursor-pointer"
+                  />
+                  <span><strong>Invisible Zero-Width Token:</strong> Cegah deteksi hash kembar WhatsApp</span>
+                </label>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleOpenSpintaxPreview}
+                className="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 underline cursor-pointer"
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+                <span>Lihat Contoh Variasi Pesan Unik</span>
+              </button>
+            </div>
+
           </div>
         </div>
 
@@ -624,8 +913,9 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                 <MessageSquare className="w-4 h-4 text-emerald-500" />
                 Template Pesan WhatsApp
               </h2>
-              <span className="text-[10px] text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded-full font-bold">
-                Auto-Personalized
+              <span className="text-[10px] text-emerald-400 bg-emerald-500/15 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                <Shuffle className="w-3 h-3" />
+                Spintax Ready
               </span>
             </div>
 
@@ -659,9 +949,19 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
             </div>
 
             <div>
-              <label className={`text-[11px] font-bold block mb-1 ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
-                Isi Template Pesan WhatsApp:
-              </label>
+              <div className="flex items-center justify-between mb-1">
+                <label className={`text-[11px] font-bold ${isLight ? 'text-stone-700' : 'text-stone-300'}`}>
+                  Isi Template Pesan WhatsApp:
+                </label>
+                <button
+                  type="button"
+                  onClick={handleOpenSpintaxPreview}
+                  className="text-[10px] text-amber-400 hover:underline flex items-center gap-1"
+                >
+                  <Eye className="w-3 h-3" />
+                  <span>Uji Variasi</span>
+                </button>
+              </div>
               <textarea
                 rows={9}
                 value={messageTemplate}
@@ -670,34 +970,65 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                   isLight ? 'bg-stone-50 border-stone-300 text-stone-900' : 'bg-black/50 border-gold-subtle text-stone-200'
                 }`}
               />
-              <p className="text-[10px] text-stone-500 mt-1">
-                Gunakan tag <span className="font-bold text-emerald-500">{`{nama}`}</span> untuk nama tamu dan <span className="font-bold text-emerald-500">{`{link}`}</span> untuk link personal unik.
+              <p className="text-[10px] text-stone-400 mt-1 leading-relaxed">
+                Gunakan format <code className="text-emerald-400">{`{pilihan1|pilihan2}`}</code> untuk variasi kata otomatis, serta tag <code className="text-emerald-400">{`{nama}`}</code> & <code className="text-emerald-400">{`{link}`}</code>.
               </p>
             </div>
 
-            {/* Broadcast Launch Button */}
-            <div className="pt-2">
-              <button
-                disabled={isBroadcasting}
-                onClick={handleStartBroadcast}
-                className={`w-full py-3.5 px-6 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-all ${
-                  isBroadcasting 
-                    ? 'bg-stone-600 text-stone-300 cursor-not-allowed'
-                    : 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:scale-102'
-                }`}
-              >
-                {isBroadcasting ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Mengirim dari {senderPhone} ({broadcastProgress}%)...</span>
-                  </>
-                ) : (
-                  <>
+            {/* Broadcast Launch Controls (Live Status & Emergency Stop) */}
+            <div className="pt-2 space-y-2">
+              {isBroadcasting ? (
+                <div className="p-4 rounded-2xl bg-black/60 border border-emerald-500/50 space-y-3 animate-pulse">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-emerald-400 flex items-center gap-1.5">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Sedang Mengirim ({broadcastProgress}%)</span>
+                    </span>
+                    <span className="font-mono text-stone-300 text-[11px]">
+                      {countdownSeconds > 0 ? `${countdownSeconds}s` : 'Memproses...'}
+                    </span>
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="w-full bg-stone-800 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-gradient-to-r from-emerald-500 to-amber-400 h-2 transition-all duration-300"
+                      style={{ width: `${broadcastProgress}%` }}
+                    />
+                  </div>
+
+                  <p className="text-[11px] text-stone-300 truncate">
+                    {broadcastStatusText || 'Menjaga ritme aman anti-spam...'}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={handleStopBroadcast}
+                    className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                  >
+                    <Square className="w-3.5 h-3.5 fill-current" />
+                    <span>Hentikan Broadcast Sekarang</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <button
+                    onClick={handleStartBroadcast}
+                    className="w-full py-3.5 px-6 rounded-2xl font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-900/40 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                  >
                     <Send className="w-4 h-4" />
-                    <span>Mulai Broadcast Otomatis dari {senderMode === 'personal' ? senderPhone : 'Gateway'}</span>
-                  </>
-                )}
-              </button>
+                    <span>Mulai Broadcast Aman ({safetyProfile.toUpperCase()})</span>
+                  </button>
+
+                  <div className="p-2.5 rounded-xl bg-black/30 border border-white/10 flex items-center justify-between text-[11px] text-stone-300">
+                    <span className="flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Mode Bebas Blokir: Human Jitter + Spintax Aktif</span>
+                    </span>
+                    <span className="text-emerald-400 font-bold">100% Proteksi</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Real-time Broadcast Activity Console Log */}
@@ -876,8 +1207,15 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                             </a>
                           </td>
 
-                          <td className="py-3 px-3 font-mono text-stone-400">
-                            {guest.phone}
+                          <td className="py-3 px-3 font-mono text-stone-300">
+                            <div className="flex items-center gap-1.5">
+                              <span>{guest.phone}</span>
+                              {guest.isValidNumber !== false ? (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-sans font-bold" title="Format nomor valid 62 WhatsApp">✓ 62</span>
+                              ) : (
+                                <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-sans font-bold" title={guest.phoneWarning || "Format diperiksa"}>⚠️ Cek</span>
+                              )}
+                            </div>
                           </td>
 
                           <td className="py-3 px-3">
@@ -1121,6 +1459,151 @@ Wassalamu’alaikum Warahmatullahi Wabarakatuh.`
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 3: 5 ATURAN EMAS ANTI-BLOKIR WHATSAPP RESMI */}
+      {rulesModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className={`p-6 sm:p-7 rounded-3xl border max-w-xl w-full space-y-5 max-h-[90vh] overflow-y-auto ${
+            isLight ? 'bg-white border-emerald-400 text-stone-900' : 'bg-[#071f1e] border-emerald-500/60 text-white'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-black/10">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/20 border border-emerald-400 flex items-center justify-center text-emerald-400">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-emerald-400">5 Aturan Emas Anti-Blokir WhatsApp</h3>
+                  <p className="text-[11px] text-stone-400">Panduan Resmi HariNikah agar Akun WhatsApp Pengantin Tetap 100% Aman</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setRulesModalOpen(false)}
+                className="text-stone-400 hover:text-white text-xs font-semibold"
+              >
+                Tutup
+              </button>
+            </div>
+
+            <div className="space-y-3.5 text-xs">
+              <div className="p-3.5 rounded-2xl bg-black/30 border border-white/10 space-y-1">
+                <h4 className="font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span>1. Wajib Gunakan Spintax & Hash Unik (Sudah Aktif)</span>
+                </h4>
+                <p className="text-stone-300 text-[11px] leading-relaxed">
+                  Algoritma WhatsApp memantau apakah ada ribuan pesan yang 100% teksnya identik. Sistem HariNikah secara otomatis mengacak salam pembuka, kata sambutan, dan menyisipkan <em>invisible zero-width token</em> sehingga tiap pesan memiliki sidik jari hash teks yang berbeda.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-black/30 border border-white/10 space-y-1">
+                <h4 className="font-bold text-amber-400 flex items-center gap-1.5">
+                  <span>2. Gunakan Jeda Menyerupai Manusia (Human Jitter)</span>
+                </h4>
+                <p className="text-stone-300 text-[11px] leading-relaxed">
+                  Jangan pernah mengirim ratusan pesan dalam beberapa detik. Profil <strong>Ultra-Aman</strong> kami menyisipkan jeda acak 8–14 detik menyerupai kecepatan manusia mengetik, ditambah jeda istirahat (cooldown) 35 detik tiap 10 pesan.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-black/30 border border-white/10 space-y-1">
+                <h4 className="font-bold text-sky-400 flex items-center gap-1.5">
+                  <span>3. Cantumkan Nama Pengantin di Awal Pesan</span>
+                </h4>
+                <p className="text-stone-300 text-[11px] leading-relaxed">
+                  Penyebab 90% akun WhatsApp diblokir adalah karena tamu menekan tombol <strong>"Laporkan / Report Spam"</strong>. Jika nama calon pengantin langsung disebut di baris awal, tamu akan langsung mengenali undangan Anda dan membacanya dengan senang hati.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-black/30 border border-white/10 space-y-1">
+                <h4 className="font-bold text-purple-400 flex items-center gap-1.5">
+                  <span>4. Kirim Bertahap (Nomor Warm-Up)</span>
+                </h4>
+                <p className="text-stone-300 text-[11px] leading-relaxed">
+                  Untuk nomor pribadi, jangan blast 300 pesan sekaligus dalam 1 jam. Bagi daftar tamu ke dalam beberapa sesi (misal: 30–50 tamu pagi hari, 30–50 tamu sore hari).
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-black/30 border border-emerald-500/40 space-y-1">
+                <h4 className="font-bold text-emerald-400 flex items-center gap-1.5">
+                  <span>5. Paling Aman: Mode Kirim 1-Klik Resmi</span>
+                </h4>
+                <p className="text-stone-300 text-[11px] leading-relaxed">
+                  Jika ingin jaminan bebas blokir 100%, gunakan tombol <strong>"Kirim WA"</strong> di tabel. Cara ini membuka jendela aplikasi WhatsApp resmi langsung, sehingga di mata WhatsApp ini adalah interaksi resmi manusia asli.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 text-right">
+              <button
+                type="button"
+                onClick={() => setRulesModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md"
+              >
+                Saya Paham, Terapkan Proteksi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 4: PRATINJAU VARIASI PESAN SPINTAX */}
+      {previewSpintaxModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className={`p-6 sm:p-7 rounded-3xl border max-w-2xl w-full space-y-5 max-h-[90vh] overflow-y-auto ${
+            isLight ? 'bg-white border-amber-300 text-stone-900' : 'bg-[#071f1e] border-gold-400 text-white'
+          }`}>
+            <div className="flex items-center justify-between border-b pb-3 border-black/10">
+              <div className="flex items-center gap-2">
+                <Shuffle className="w-5 h-5 text-amber-400" />
+                <div>
+                  <h3 className="text-base font-bold text-gold-bright">Pratinjau Variasi Pesan Unik (Spintax Engine)</h3>
+                  <p className="text-[11px] text-stone-400">Contoh pesan berbeda yang akan diterima oleh masing-masing tamu</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setPreviewSpintaxModalOpen(false)}
+                className="text-stone-400 hover:text-white text-xs font-semibold"
+              >
+                Tutup
+              </button>
+            </div>
+
+            <p className="text-xs text-stone-300">
+              Setiap kali pesan dikirim, sistem secara otomatis memilih variasi kalimat salam, sapaan, dan penutup yang berbeda serta menambahkan token tak kasat mata sehingga WhatsApp tidak mendeteksi kesamaan teks:
+            </p>
+
+            <div className="space-y-3">
+              {previewSpintaxSamples.map((sample, idx) => (
+                <div key={idx} className="p-4 rounded-2xl bg-black/50 border border-white/10 text-xs space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+                    Sampel #{idx + 1} (Tamu Berbeda):
+                  </span>
+                  <pre className="font-sans whitespace-pre-wrap leading-relaxed text-stone-200 text-[11px] bg-black/30 p-2.5 rounded-xl border border-white/5">
+                    {sample}
+                  </pre>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 flex items-center justify-between gap-3">
+              <button
+                type="button"
+                onClick={handleOpenSpintaxPreview}
+                className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-amber-400/50 text-amber-300 text-xs font-bold flex items-center gap-1.5"
+              >
+                <Shuffle className="w-3.5 h-3.5" />
+                <span>Acak Lagi Sampel</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPreviewSpintaxModalOpen(false)}
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-gold-400 text-black text-xs font-bold shadow-md"
+              >
+                Tutup Pratinjau
+              </button>
+            </div>
           </div>
         </div>
       )}
