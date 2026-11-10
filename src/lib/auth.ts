@@ -137,3 +137,4 @@ export const authOptions: NextAuthOptions = {
 
   secret: process.env.NEXTAUTH_SECRET || 'harinikah-jwt-secret-luxury-wedding-suite-2026',
 };
+

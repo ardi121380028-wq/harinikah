@@ -166,3 +166,4 @@ export async function submitRsvpWishToDb(slug: string, wish: { name: string; sta
     return { success: false, error: String(err) };
   }
 }
+
