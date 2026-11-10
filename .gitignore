@@ -37,3 +37,9 @@ lerna-debug.log*
 *.sw?
 *.local
 *.zip
+
+# Agent cache and logs
+.agents/
+.claude/
+.cursor/
+.devin/

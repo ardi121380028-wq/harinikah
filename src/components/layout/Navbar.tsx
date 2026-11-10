@@ -8,8 +8,11 @@ import {
   X, 
   ArrowRight,
   Sun,
-  Moon
+  Moon,
+  LogOut,
+  User as UserIcon
 } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
 import { useInvitation } from '../../context/InvitationContext';
 
 interface NavbarProps {
@@ -26,6 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenDiscount
 }) => {
   const { themeMode, toggleThemeMode } = useInvitation();
+  const { data: session } = useSession();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -145,23 +149,47 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="text-[11px] font-semibold">{isLight ? 'Mode Gelap' : 'Mode Terang'}</span>
               </button>
 
-              <a
-                href="/profile"
-                className={`text-xs font-medium transition-colors whitespace-nowrap ${
-                  isLight ? 'text-stone-700 hover:text-amber-700' : 'text-stone-300 hover:text-gold-300'
-                }`}
-              >
-                Akun Saya
-              </a>
+              {session?.user ? (
+                <div className="flex items-center gap-2.5">
+                  <a
+                    href="/profile"
+                    className="flex items-center gap-2 p-1 pl-2 pr-2.5 rounded-full border border-gold-400/40 bg-black/30 hover:bg-black/50 transition-all text-xs text-stone-200"
+                    title="Buka Profil Pengantin"
+                  >
+                    {session.user.image ? (
+                      <img
+                        src={session.user.image}
+                        alt={session.user.name || 'User'}
+                        className="w-5 h-5 rounded-full object-cover border border-gold-400"
+                      />
+                    ) : (
+                      <UserIcon className="w-4 h-4 text-gold-400" />
+                    )}
+                    <span className="font-semibold text-[11px] max-w-[100px] truncate">
+                      {session.user.name?.split(' ')[0] || 'Akun'}
+                    </span>
+                  </a>
 
-              <button
-                onClick={onOpenAuth}
-                className={`text-xs font-medium transition-colors whitespace-nowrap ${
-                  isLight ? 'text-stone-700 hover:text-stone-900' : 'text-stone-300 hover:text-white'
-                }`}
-              >
-                Masuk
-              </button>
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="p-1.5 rounded-full text-stone-400 hover:text-red-400 hover:bg-white/5 transition-colors"
+                    title="Keluar (Sign Out)"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={onOpenAuth}
+                  className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all whitespace-nowrap ${
+                    isLight 
+                      ? 'border-amber-300/80 bg-amber-50 text-amber-950 hover:bg-amber-100' 
+                      : 'border-gold-subtle bg-white/5 text-stone-200 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Masuk / Daftar
+                </button>
+              )}
 
               {/* Primary CTA Button */}
               <button

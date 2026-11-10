@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   User, 
   Settings, 
@@ -23,18 +23,22 @@ import {
   MapPin, 
   Phone, 
   Mail,
-  Share2
+  Share2,
+  LogOut,
+  LogIn
 } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
 import { useInvitation } from '../../context/InvitationContext';
 
 export default function ProfilePage() {
   const { themeMode, toggleThemeMode } = useInvitation();
+  const { data: session, status } = useSession();
   const isLight = themeMode === 'light';
 
   const [activeTab, setActiveTab] = useState<'invitations' | 'transactions' | 'settings'>('invitations');
   const [copiedLink, setCopiedLink] = useState(false);
 
-  // User details state
+  // User details state initialized with session or default values
   const [userProfile, setUserProfile] = useState({
     name: 'Dimas Setiawan & Clarissa Putri',
     email: 'dimas.clarissa@harinikah.com',
@@ -43,6 +47,16 @@ export default function ProfilePage() {
     tier: 'Member VIP HariNikah',
     joinedDate: 'Januari 2026'
   });
+
+  useEffect(() => {
+    if (session?.user) {
+      setUserProfile(prev => ({
+        ...prev,
+        name: session.user?.name || prev.name,
+        email: session.user?.email || prev.email,
+      }));
+    }
+  }, [session]);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText('https://harinikah.com/dimas-clarissa');
@@ -107,8 +121,8 @@ export default function ProfilePage() {
           <div className="flex items-center gap-5">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
-                alt="Avatar"
+                src={session?.user?.image || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"}
+                alt={userProfile.name}
                 className="w-20 h-20 rounded-2xl object-cover ring-2 ring-amber-400/60 shadow-lg"
               />
               <span className="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white" title="Akun Terverifikasi">
@@ -121,6 +135,11 @@ export default function ProfilePage() {
                 <h1 className={`text-xl sm:text-2xl font-serif font-bold ${isLight ? 'text-stone-900' : 'text-gold-bright'}`}>
                   {userProfile.name}
                 </h1>
+                {session?.user && (
+                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                    Google OAuth Terhubung
+                  </span>
+                )}
               </div>
               <p className="text-xs text-stone-400 flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-amber-500" />
@@ -129,12 +148,12 @@ export default function ProfilePage() {
                 <span className="text-amber-500 font-semibold">{userProfile.tier}</span>
               </p>
               <p className="text-[11px] text-stone-500">
-                Terdaftar sejak {userProfile.joinedDate} • ID Pasangan: #HN-78921
+                {userProfile.email} • ID Pasangan: #HN-78921
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 w-full md:w-auto">
+          <div className="flex items-center gap-2.5 w-full md:w-auto flex-wrap">
             <a
               href="/broadcast"
               className="flex-1 md:flex-initial px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow transition-all"
@@ -149,6 +168,24 @@ export default function ProfilePage() {
               <Layers className="w-3.5 h-3.5" />
               <span>Edit Undangan</span>
             </a>
+            {session?.user ? (
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="px-3.5 py-2.5 rounded-full border border-red-500/30 text-red-400 hover:bg-red-500/10 font-medium text-xs flex items-center justify-center gap-1.5 transition-all"
+                title="Keluar dari akun HariNikah"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Keluar</span>
+              </button>
+            ) : (
+              <a
+                href="/"
+                className="px-3.5 py-2.5 rounded-full border border-gold-400/40 text-gold-300 hover:bg-gold-400/10 font-medium text-xs flex items-center justify-center gap-1.5 transition-all"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                <span>Masuk Akun</span>
+              </a>
+            )}
           </div>
         </div>
 

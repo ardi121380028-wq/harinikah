@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import '../index.css';
 import { InvitationProvider } from '../context/InvitationContext';
+import { AuthProvider } from '../components/providers/AuthProvider';
 
 export const metadata: Metadata = {
   metadataBase: new URL('http://localhost:3000'),
@@ -30,9 +31,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Great+Vibes&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-[#051817] text-stone-100 antialiased selection:bg-[#dfb051] selection:text-[#0c2b29]">
-        <InvitationProvider>
-          {children}
-        </InvitationProvider>
+        <AuthProvider>
+          <InvitationProvider>
+            {children}
+          </InvitationProvider>
+        </AuthProvider>
       </body>
     </html>
   );
