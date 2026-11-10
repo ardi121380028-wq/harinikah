@@ -24,7 +24,11 @@ import {
   Download,
   Share2,
   Globe,
-  MessageCircle
+  MessageCircle,
+  ChevronLeft,
+  ChevronRight,
+  Smartphone,
+  Layers
 } from 'lucide-react';
 
 const InstagramIcon: React.FC<{ className?: string }> = ({ className = 'w-4 h-4' }) => (
@@ -51,7 +55,11 @@ import {
   RonceMelatiDivider,
   BotanicalArchFrame,
   BotanicalCornerOrnament,
-  VinylMusicBadge
+  VinylMusicBadge,
+  CardFrameBorder,
+  KawungMotifDivider,
+  RumahGadangMotif,
+  BotanicalFoilDivider
 } from '../../components/cultural/CulturalOrnaments';
 import { weddingAudio } from '../../utils/audioEngine';
 import type { CulturalTemplate } from '../../types';
@@ -80,6 +88,8 @@ export default function GuestInvitationPage() {
   const [activeTemplate, setActiveTemplate] = useState<CulturalTemplate>('modern');
   const [guestTheme, setGuestTheme] = useState<'dark' | 'light'>('dark');
   const [isOpened, setIsOpened] = useState(false);
+  const [currentPageIndex, setCurrentPageIndex] = useState<number>(0);
+  const [viewStyle, setViewStyle] = useState<'card' | 'scroll'>('card');
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
   const [copiedBank, setCopiedBank] = useState<string | null>(null);
   const [showQRIS, setShowQRIS] = useState(false);
@@ -479,7 +489,7 @@ export default function GuestInvitationPage() {
   return (
     <div className={`min-h-screen ${themeClasses.bgMain} ${isGuestLight ? 'text-stone-900' : 'text-stone-100'} font-sans selection:bg-[#dfb051] selection:text-[#0c2b29] relative overflow-x-hidden transition-colors duration-300`}>
       
-      {/* 1. ENVELOPE OPENING FULLSCREEN COVER MODAL (Matching Image 1 Phone Bezel) */}
+      {/* 1. ENVELOPE OPENING FULLSCREEN COVER MODAL (Matching Editor Exactly with CardFrameBorder) */}
       <AnimatePresence>
         {!isOpened && (
           <motion.div
@@ -490,126 +500,181 @@ export default function GuestInvitationPage() {
             {/* Textured Cultural Overlay */}
             <div className="absolute inset-0 bg-black/75 backdrop-blur-md" />
 
-            {/* Smartphone Device Frame Matching Image 1 Exactly */}
+            {/* Smartphone Device Frame Matching Editor Exactly */}
             <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 20 }}
+              initial={{ scale: 0.94, opacity: 0, y: 15 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className={`relative z-10 w-full max-w-[340px] sm:max-w-[360px] min-h-[660px] max-h-[92vh] rounded-[48px] p-5 text-center shadow-2xl border-2 border-stone-800/80 flex flex-col justify-between overflow-hidden my-auto ${
-                isBotanical
-                  ? 'bg-gradient-to-b from-[#253629] via-[#354838] to-[#1C261F] text-stone-100 ring-2 ring-[#7A937D]/30'
+              transition={{ duration: 0.4 }}
+              style={{
+                borderRadius: pages[0]?.containerRadius === 'sm' ? 12 : pages[0]?.containerRadius === 'md' ? 24 : pages[0]?.containerRadius === '2xl' ? 36 : 44
+              }}
+              className={`relative z-10 w-full max-w-[370px] sm:max-w-[390px] h-[720px] max-h-[94vh] shadow-2xl border-4 border-gold-500/60 overflow-hidden flex flex-col justify-between p-6 text-center my-auto transition-all ${
+                pages[0]?.customBgGradient || pages[0]?.customBgColor
+                  ? ''
                   : isJawa
-                  ? 'bg-gradient-to-b from-[#2a170d] via-[#1c0e07] to-[#120803] text-stone-100 ring-2 ring-[#c6923c]/30'
+                  ? 'bg-[#180e09]'
                   : isMinang
-                  ? 'bg-gradient-to-b from-[#3a080e] via-[#220508] to-[#150204] text-stone-100 ring-2 ring-[#e0b042]/30'
-                  : 'bg-gradient-to-b from-[#0a2f2b] via-[#051817] to-[#020b0a] text-stone-100 ring-2 ring-gold-400/30'
+                  ? 'bg-[#220508]'
+                  : 'bg-[#051817] bg-velvet-texture'
               }`}
             >
-              {/* Dynamic Island Notch Top */}
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-20 h-3.5 bg-black rounded-full z-20 flex items-center justify-center gap-1.5 opacity-90">
-                <div className="w-1.5 h-1.5 rounded-full bg-stone-800" />
-                <div className="w-2 h-2 rounded-full bg-stone-900 border border-stone-800" />
-              </div>
+              {/* PAGE BACKGROUND LAYER */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-all duration-500 pointer-events-none"
+                style={{
+                  background: pages[0]?.customBgGradient || pages[0]?.customBgColor || undefined
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
 
-              {/* 4 Corner Ornaments */}
-              <div className="absolute top-2 left-2 pointer-events-none">
-                <BotanicalCornerOrnament position="top-left" className="w-12 h-12 opacity-80" />
-              </div>
-              <div className="absolute top-2 right-2 pointer-events-none">
-                <BotanicalCornerOrnament position="top-right" className="w-12 h-12 opacity-80" />
-              </div>
-              <div className="absolute bottom-2 left-2 pointer-events-none">
-                <BotanicalCornerOrnament position="bottom-left" className="w-12 h-12 opacity-80" />
-              </div>
-              <div className="absolute bottom-2 right-2 pointer-events-none">
-                <BotanicalCornerOrnament position="bottom-right" className="w-12 h-12 opacity-80" />
-              </div>
-
-              {/* Top Badge (Green Leaf circle with leaf icon in Image 1) */}
-              <div className="pt-5 flex flex-col items-center">
-                {isBotanical ? (
-                  <>
-                    <div className="w-14 h-14 rounded-full border-2 border-[#8DA390] bg-[#3B4E3F] p-1 flex items-center justify-center shadow-lg text-2xl">
-                      🌿
-                    </div>
-                    <span className="text-[9px] uppercase tracking-[0.25em] text-[#A2B5A5] font-extrabold mt-1">
-                      Green Leaf
-                    </span>
-                  </>
-                ) : isJawa ? (
-                  <GununganWayang className="w-12 h-16 object-contain text-gold-300 drop-shadow-md" />
-                ) : isMinang ? (
-                  <SuntiangMinang className="w-16 h-12 object-contain text-gold-300 drop-shadow-md" />
-                ) : (
-                  <div className="w-14 h-14 rounded-full border border-gold-400 p-1 flex items-center justify-center bg-black/40">
-                    <img src="/assets/favicon-h.png" alt="HariNikah Seal" className="w-full h-full object-contain rounded-full" />
+                {/* Background Watermark / PNG Overlay */}
+                {pages[0]?.bgPngOverlay?.url && (
+                  <div 
+                    className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0"
+                    style={{
+                      opacity: (pages[0].bgPngOverlay.opacity ?? 30) / 100,
+                      alignItems: pages[0].bgPngOverlay.position === 'top' ? 'flex-start' : pages[0].bgPngOverlay.position === 'bottom' ? 'flex-end' : 'center',
+                    }}
+                  >
+                    <img 
+                      src={pages[0].bgPngOverlay.url} 
+                      alt="Watermark" 
+                      className="object-contain filter drop-shadow-md"
+                      style={{
+                        transform: `scale(${(pages[0].bgPngOverlay.scale ?? 100) / 100})`,
+                        maxWidth: pages[0].bgPngOverlay.position === 'full' ? '100%' : '80%',
+                        maxHeight: pages[0].bgPngOverlay.position === 'full' ? '100%' : '70%'
+                      }}
+                    />
                   </div>
                 )}
               </div>
 
-              {/* Center Content with BotanicalArchFrame (Matching Image 1) */}
-              <div className="my-auto py-2 space-y-2">
-                <p className="text-[9px] uppercase font-bold tracking-[0.22em] text-[#C9A050]">
-                  {coverData.subheading || (isBotanical ? 'THE WEDDING CELEBRATION OF' : 'THE WEDDING CELEBRATION OF')}
+              {/* 4-CORNER ROYAL FILIGREE ORNAMENTS & INNER PERIMETER BORDER */}
+              <CardFrameBorder template={activeTemplate} isLight={isGuestLight} />
+
+              {/* Cultural Top Ornament */}
+              <div className="relative z-10 flex flex-col items-center mt-1">
+                {isJawa ? (
+                  <>
+                    <GununganWayang 
+                      isLight={isGuestLight} 
+                      className="w-16 h-24 text-gold-300 drop-shadow-[0_4px_16px_rgba(218,165,32,0.6)]" 
+                    />
+                    <div className="flex items-center gap-1 mt-0.5 text-[9px] text-amber-200/90 font-serif tracking-widest uppercase">
+                      <span>ꦱꦒꦸꦁ</span>
+                      <span>•</span>
+                      <span>ꦢꦸꦩꦢꦶ</span>
+                    </div>
+                  </>
+                ) : isMinang ? (
+                  <>
+                    <SuntiangMinang 
+                      isLight={isGuestLight} 
+                      className="w-24 h-16 text-gold-300 drop-shadow-[0_4px_16px_rgba(218,165,32,0.6)]" 
+                    />
+                    <RumahGadangMotif 
+                      isLight={isGuestLight} 
+                      className="w-20 h-7 text-gold-400 -mt-1 opacity-90" 
+                    />
+                  </>
+                ) : isBotanical ? (
+                  <>
+                    <div className="w-14 h-14 rounded-full border-2 border-[#8DA390] p-1 flex items-center justify-center shadow-lg bg-[#364939] text-2xl">
+                      🌿
+                    </div>
+                    <span className="text-[9px] tracking-[0.25em] text-[#8DA390] font-bold uppercase mt-1">Green Leaf</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-14 h-14 rounded-full border-2 border-gold-400 p-1 flex items-center justify-center shadow-gold-md bg-gradient-to-b from-amber-400/20 to-transparent">
+                      <img src="/assets/favicon-h.png" alt="Monogram" className="w-full h-full object-contain rounded-full" />
+                    </div>
+                    <span className="text-[9px] tracking-[0.25em] text-gold-300 font-bold uppercase mt-1">Eksklusif</span>
+                  </>
+                )}
+              </div>
+
+              {/* Center Content */}
+              <div className={`relative z-10 space-y-2 w-full my-auto ${
+                pages[0]?.data?.textAlign === 'left' ? 'text-left' : pages[0]?.data?.textAlign === 'right' ? 'text-right' : 'text-center'
+              }`}>
+                <p className={`text-[10px] uppercase font-bold tracking-[0.22em] ${
+                  isJawa ? 'text-[#e6ba64]' : isMinang ? 'text-[#f5d77f]' : isBotanical ? 'text-[#8DA390]' : 'text-gold-300'
+                }`}>
+                  {coverData.subheading || (isJawa ? 'PAHARGYAN DHAUPIPUN TEMANTEN' : isMinang ? 'BARALEK GADANG PERNIKAHAN MINANGKABAU' : isBotanical ? 'THE WEDDING OF' : 'THE WEDDING CELEBRATION OF')}
                 </p>
 
                 {isBotanical ? (
-                  <BotanicalArchFrame className="py-6 px-4 my-2">
-                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-wide">
-                      {coverData.groomName || 'Rian'}
-                    </h1>
-                    <span className="text-xl font-serif italic text-amber-200 block my-0.5">&</span>
-                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-wide">
+                  <BotanicalArchFrame className="py-5 px-3">
+                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-white tracking-tight leading-tight">
+                      {coverData.groomName || 'Rian'} <br />
+                      <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
                       {coverData.brideName || 'Irna'}
                     </h1>
                   </BotanicalArchFrame>
                 ) : (
-                  <div className="p-4 rounded-3xl bg-black/40 border border-white/10 my-2">
-                    <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gold-bright tracking-tight leading-snug">
-                      {coverData.groomName || 'Dimas'} <br />
-                      <span className="font-sans font-light text-2xl text-amber-200">&</span> <br />
-                      {coverData.brideName || 'Clarissa'}
-                    </h1>
-                  </div>
+                  <h1 className="text-3xl sm:text-4xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFF4BE] via-[#DFB051] to-[#F5D77F] tracking-tight leading-tight drop-shadow-md">
+                    {coverData.groomName || (isJawa ? 'Raden Mas Dimas' : isMinang ? 'Dimas Marah Sutan' : 'Dimas')} <br />
+                    <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
+                    {coverData.brideName || (isJawa ? 'Raden Ajeng Clarissa' : isMinang ? 'Clarissa Rangkayo' : 'Clarissa')}
+                  </h1>
                 )}
 
-                {/* Leaf divider with 🌿 */}
-                <div className="flex items-center justify-center gap-2 text-xs text-[#8DA390] py-0.5">
-                  <span>🌿</span>
-                  <div className="w-12 h-px bg-[#8DA390]/50" />
-                  <span>🌿</span>
+                {/* Cultural Divider */}
+                <div className="my-1.5 flex flex-col items-center">
+                  {isJawa ? (
+                    <>
+                      <KawungMotifDivider isLight={isGuestLight} className="mx-auto" />
+                      <RonceMelatiDivider isLight={isGuestLight} className="mx-auto mt-1 opacity-80" />
+                    </>
+                  ) : isMinang ? (
+                    <MinangUkiranDivider isLight={isGuestLight} className="mx-auto" />
+                  ) : isBotanical ? (
+                    <div className="flex items-center justify-center gap-2 text-sm text-[#8DA390] my-1">
+                      <span>🌿</span>
+                      <div className="w-16 h-px bg-[#8DA390]/50" />
+                      <span>🌿</span>
+                    </div>
+                  ) : (
+                    <BotanicalFoilDivider isLight={isGuestLight} className="mx-auto" />
+                  )}
                 </div>
 
-                <p className="text-xs font-semibold text-stone-200">
-                  {coverData.dateText || 'Minggu, 27 April 2025'}
+                <p className="text-xs text-stone-200 font-medium tracking-wide">
+                  {coverData.dateText || 'Sabtu, 18 Juli 2026'}
                 </p>
                 <p className="text-[10px] text-stone-300 max-w-[240px] mx-auto leading-relaxed">
-                  {coverData.venueCity || 'Pine Hill Garden Pavilion, Bandar Lampung'}
+                  {coverData.venueCity || 'Grand Mercure Ballroom, Bandar Lampung'}
                 </p>
               </div>
 
-              {/* Guest Box & Open Button (Matching Image 1) */}
-              <div className="space-y-2.5 pb-2 z-10">
-                <div className="bg-black/60 backdrop-blur-md border border-white/15 rounded-2xl p-2.5 text-center shadow-inner">
-                  <p className="text-[8px] text-stone-400 uppercase tracking-widest font-semibold">
+              {/* Guest Box & Open Button */}
+              <div className="relative z-10 w-full space-y-2 pt-2">
+                <div className="bg-black/60 backdrop-blur-md border border-gold-400/40 rounded-2xl p-2.5 shadow-gold-sm">
+                  <p className="text-[9px] text-gold-300/80 uppercase tracking-widest font-semibold">
                     Kepada Yth. Tamu Undangan:
                   </p>
-                  <p className={`text-xs font-bold ${themeClasses.goldAccent} mt-0.5`}>
-                    {guestName}
-                  </p>
+                  <p className="text-xs font-bold text-white mt-0.5">{guestName}</p>
                 </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
+                <button
                   onClick={handleOpenEnvelope}
-                  className={`w-full py-3 rounded-full bg-gradient-to-r ${themeClasses.btnGrad} text-stone-950 font-black text-xs uppercase tracking-wider shadow-xl flex items-center justify-center gap-1.5 cursor-pointer`}
+                  className={`w-full py-2.5 rounded-full bg-gradient-to-r ${
+                    isJawa
+                      ? 'from-[#e6ba64] to-[#c6923c]'
+                      : isMinang
+                      ? 'from-[#f5d77f] to-[#e0b042]'
+                      : 'from-amber-400 via-gold-300 to-amber-500'
+                  } text-black font-extrabold text-xs uppercase tracking-wider shadow-gold-sm hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer`}
                 >
                   <Heart className="w-3.5 h-3.5 fill-current" />
                   <span>{coverData.buttonText || 'Buka Undangan'}</span>
-                </motion.button>
+                </button>
               </div>
 
+              {/* Custom Elements from Page 0 */}
+              {renderSectionCustomElements(0)}
             </motion.div>
           </motion.div>
         )}
@@ -656,8 +721,640 @@ export default function GuestInvitationPage() {
         </>
       )}
 
-      {/* 3. MAIN LIVE WEDDING WEBSITE CONTENT */}
+      {/* 2.5 FLOATING TOP TOOLBAR: VIEW SWITCHER (MODE KARTU VS MODE SCROLL) */}
       {isOpened && (
+        <header className="sticky top-3 z-30 flex items-center justify-center px-4 mb-2 pointer-events-auto">
+          <div className="flex items-center gap-1.5 p-1.5 rounded-full bg-black/80 backdrop-blur-md border border-gold-400/40 shadow-2xl">
+            <button
+              onClick={() => setViewStyle('card')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                viewStyle === 'card'
+                  ? 'bg-gradient-to-r from-amber-400 to-gold-400 text-black shadow-gold-sm scale-105'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+              <span>Mode Kartu</span>
+            </button>
+
+            <button
+              onClick={() => setViewStyle('scroll')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                viewStyle === 'scroll'
+                  ? 'bg-gradient-to-r from-amber-400 to-gold-400 text-black shadow-gold-sm scale-105'
+                  : 'text-stone-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span>Mode Scroll</span>
+            </button>
+
+            <div className="w-px h-4 bg-white/20 mx-1" />
+
+            <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 rounded-full bg-gold-950/80 border border-gold-400/40 text-gold-300">
+              {activeTemplate === 'jawa' ? 'Adat Jawa' : activeTemplate === 'minang' ? 'Adat Minang' : activeTemplate === 'botanical' ? 'Green Leaf' : 'Modern Luxury'}
+            </span>
+          </div>
+        </header>
+      )}
+
+      {/* 3.1 MODE KARTU: 100% IDENTIK DENGAN STUDIO EDITOR (SMARTPHONE CANVAS FRAME + CARD FILIGREES) */}
+      {isOpened && viewStyle === 'card' && (
+        <main className="w-full flex-1 flex flex-col items-center justify-center px-2 sm:px-4 py-2 min-h-[calc(100vh-90px)]">
+          {/* SMARTPHONE CANVAS FRAME */}
+          <div
+            style={{
+              borderRadius: pages[currentPageIndex]?.containerRadius === 'sm' ? 12 : pages[currentPageIndex]?.containerRadius === 'md' ? 24 : pages[currentPageIndex]?.containerRadius === '2xl' ? 36 : 44
+            }}
+            className={`relative w-full max-w-[390px] h-[720px] max-h-[92vh] sm:h-[750px] shadow-[0_25px_70px_rgba(0,0,0,0.85)] border-4 border-gold-500/60 overflow-hidden flex flex-col mx-auto transition-all duration-300 ${
+              pages[currentPageIndex]?.customBgGradient || pages[currentPageIndex]?.customBgColor
+                ? ''
+                : isJawa
+                ? 'bg-[#180e09]'
+                : isMinang
+                ? 'bg-[#220508]'
+                : 'bg-[#051817] bg-velvet-texture'
+            }`}
+          >
+            {/* Active Page Background Layer */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center pointer-events-none"
+              style={{
+                background: pages[currentPageIndex]?.customBgGradient || pages[currentPageIndex]?.customBgColor || undefined
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black/80" />
+
+              {/* Watermark Overlay */}
+              {pages[currentPageIndex]?.bgPngOverlay?.url && (
+                <div 
+                  className="absolute inset-0 flex items-center justify-center overflow-hidden z-0"
+                  style={{
+                    opacity: (pages[currentPageIndex]?.bgPngOverlay.opacity ?? 30) / 100,
+                    alignItems: pages[currentPageIndex]?.bgPngOverlay.position === 'top' ? 'flex-start' : pages[currentPageIndex]?.bgPngOverlay.position === 'bottom' ? 'flex-end' : 'center',
+                  }}
+                >
+                  <img 
+                    src={pages[currentPageIndex]?.bgPngOverlay.url} 
+                    alt="Watermark" 
+                    className="object-contain filter drop-shadow-md"
+                    style={{
+                      transform: `scale(${(pages[currentPageIndex]?.bgPngOverlay.scale ?? 100) / 100})`,
+                      maxWidth: pages[currentPageIndex]?.bgPngOverlay.position === 'full' ? '100%' : '80%',
+                      maxHeight: pages[currentPageIndex]?.bgPngOverlay.position === 'full' ? '100%' : '70%'
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* 4-CORNER ROYAL FILIGREE ORNAMENTS & INNER BORDER */}
+            <CardFrameBorder template={activeTemplate} isLight={isGuestLight} />
+
+            {/* Dynamic Card Header Inside Phone Frame */}
+            <div className="relative z-20 flex items-center justify-between px-6 pt-4 pb-1 text-[10px] text-gold-300/80 font-medium">
+              <span className="uppercase tracking-widest font-bold">HariNikah Royal Suite</span>
+              <span className="bg-black/60 px-2.5 py-0.5 rounded-full border border-gold-400/30 text-gold-300 font-mono">
+                {currentPageIndex + 1} / {pages.length}
+              </span>
+            </div>
+
+            {/* Active Card Page Content with Framer Motion */}
+            <div className="relative z-10 flex-1 overflow-y-auto scrollbar-none p-5 sm:p-6 flex flex-col justify-between">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentPageIndex}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                  className="w-full flex-1 flex flex-col justify-between text-center"
+                >
+                  {/* ====================================================
+                      PAGE 0: COVER / SAMPUL DEPAN
+                      ==================================================== */}
+                  {currentPageIndex === 0 && (
+                    <div className="my-auto flex flex-col items-center justify-between h-full py-2">
+                      <div className="flex flex-col items-center">
+                        {isJawa ? (
+                          <>
+                            <GununganWayang className="w-16 h-24 text-gold-300 drop-shadow-[0_4px_16px_rgba(218,165,32,0.6)]" />
+                            <div className="flex items-center gap-1 mt-0.5 text-[9px] text-amber-200/90 font-serif tracking-widest uppercase">
+                              <span>ꦱꦒꦸꦁ</span>
+                              <span>•</span>
+                              <span>ꦢꦸꦩꦢꦶ</span>
+                            </div>
+                          </>
+                        ) : isMinang ? (
+                          <>
+                            <SuntiangMinang className="w-24 h-16 text-gold-300 drop-shadow-[0_4px_16px_rgba(218,165,32,0.6)]" />
+                            <RumahGadangMotif className="w-20 h-7 text-gold-400 -mt-1 opacity-90" />
+                          </>
+                        ) : isBotanical ? (
+                          <>
+                            <div className="w-14 h-14 rounded-full border-2 border-[#8DA390] p-1 flex items-center justify-center shadow-lg bg-[#364939] text-2xl">
+                              🌿
+                            </div>
+                            <span className="text-[9px] tracking-[0.25em] text-[#8DA390] font-bold uppercase mt-1">Green Leaf</span>
+                          </>
+                        ) : (
+                          <>
+                            <div className="w-14 h-14 rounded-full border-2 border-gold-400 p-1 flex items-center justify-center shadow-gold-md bg-gradient-to-b from-amber-400/20 to-transparent">
+                              <img src="/assets/favicon-h.png" alt="Monogram" className="w-full h-full object-contain rounded-full" />
+                            </div>
+                            <span className="text-[9px] tracking-[0.25em] text-gold-300 font-bold uppercase mt-1">Eksklusif</span>
+                          </>
+                        )}
+                      </div>
+
+                      <div className="space-y-2 w-full my-auto">
+                        <p className={`text-[10px] uppercase font-bold tracking-[0.22em] ${
+                          isJawa ? 'text-[#e6ba64]' : isMinang ? 'text-[#f5d77f]' : isBotanical ? 'text-[#8DA390]' : 'text-gold-300'
+                        }`}>
+                          {coverData.subheading || (isJawa ? 'PAHARGYAN DHAUPIPUN TEMANTEN' : isMinang ? 'BARALEK GADANG PERNIKAHAN MINANGKABAU' : isBotanical ? 'THE WEDDING OF' : 'THE WEDDING CELEBRATION OF')}
+                        </p>
+
+                        {isBotanical ? (
+                          <BotanicalArchFrame className="py-4 px-3">
+                            <h1 className="text-3xl font-serif font-bold text-white tracking-tight leading-tight">
+                              {coverData.groomName || 'Rian'} <br />
+                              <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
+                              {coverData.brideName || 'Irna'}
+                            </h1>
+                          </BotanicalArchFrame>
+                        ) : (
+                          <h1 className="text-3xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#FFF4BE] via-[#DFB051] to-[#F5D77F] tracking-tight leading-tight drop-shadow-md">
+                            {coverData.groomName || (isJawa ? 'Raden Mas Dimas' : isMinang ? 'Dimas Marah Sutan' : 'Dimas')} <br />
+                            <span className="font-sans font-light text-2xl text-amber-200/90">&</span> <br />
+                            {coverData.brideName || (isJawa ? 'Raden Ajeng Clarissa' : isMinang ? 'Clarissa Rangkayo' : 'Clarissa')}
+                          </h1>
+                        )}
+
+                        {/* Cultural Divider */}
+                        <div className="my-1.5 flex flex-col items-center">
+                          {isJawa ? (
+                            <>
+                              <KawungMotifDivider isLight={isGuestLight} className="mx-auto" />
+                              <RonceMelatiDivider isLight={isGuestLight} className="mx-auto mt-1 opacity-80" />
+                            </>
+                          ) : isMinang ? (
+                            <MinangUkiranDivider isLight={isGuestLight} className="mx-auto" />
+                          ) : isBotanical ? (
+                            <div className="flex items-center justify-center gap-2 text-sm text-[#8DA390] my-1">
+                              <span>🌿</span>
+                              <div className="w-16 h-px bg-[#8DA390]/50" />
+                              <span>🌿</span>
+                            </div>
+                          ) : (
+                            <BotanicalFoilDivider isLight={isGuestLight} className="mx-auto" />
+                          )}
+                        </div>
+
+                        <p className="text-xs text-stone-200 font-medium tracking-wide">
+                          {coverData.dateText || 'Sabtu, 18 Juli 2026'}
+                        </p>
+                        <p className="text-[10px] text-stone-300 max-w-[240px] mx-auto leading-relaxed">
+                          {coverData.venueCity || 'Grand Mercure Ballroom, Bandar Lampung'}
+                        </p>
+                      </div>
+
+                      {/* Guest Card & Navigation Button */}
+                      <div className="w-full space-y-2 pt-2">
+                        <div className="bg-black/60 backdrop-blur-md border border-gold-400/40 rounded-2xl p-2.5 shadow-gold-sm">
+                          <p className="text-[9px] text-gold-300/80 uppercase tracking-widest font-semibold">Kepada Yth. Tamu Undangan:</p>
+                          <p className="text-xs font-bold text-white mt-0.5">{guestName}</p>
+                        </div>
+
+                        <button
+                          onClick={() => setCurrentPageIndex(1)}
+                          className={`w-full py-2.5 rounded-full bg-gradient-to-r ${
+                            isJawa
+                              ? 'from-[#e6ba64] to-[#c6923c]'
+                              : isMinang
+                              ? 'from-[#f5d77f] to-[#e0b042]'
+                              : 'from-amber-400 via-gold-300 to-amber-500'
+                          } text-black font-extrabold text-xs uppercase tracking-wider shadow-gold-sm hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer`}
+                        >
+                          <span>Buka Profil Mempelai</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {renderSectionCustomElements(0)}
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      PAGE 1: MEMPELAI (GROOM & BRIDE)
+                      ==================================================== */}
+                  {currentPageIndex === 1 && (
+                    <div className="my-auto space-y-3 py-2">
+                      <div className="flex justify-center">
+                        {isJawa ? (
+                          <RonceMelatiDivider isLight={isGuestLight} className="w-36 h-3" />
+                        ) : isMinang ? (
+                          <RumahGadangMotif isLight={isGuestLight} className="w-16 h-5" />
+                        ) : (
+                          <BotanicalFoilDivider isLight={isGuestLight} className="w-36 h-3" />
+                        )}
+                      </div>
+
+                      <p className="text-[11px] italic text-gold-200/90 max-w-xs mx-auto leading-relaxed px-2">
+                        "{coupleData.introQuote || 'Maha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan...'}"
+                      </p>
+
+                      {/* Groom */}
+                      <div className="space-y-1">
+                        <div className={`mx-auto p-1 border-2 shadow-sm overflow-hidden ${
+                          isBotanical
+                            ? 'w-20 h-28 rounded-[50%] border-[#8DA390] bg-[#F4F7F4]'
+                            : 'w-20 h-20 rounded-full border-gold-400 bg-gradient-to-b from-amber-300/20 to-transparent'
+                        }`}>
+                          <img 
+                            src={coupleData.groomPhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80'} 
+                            alt="Groom" 
+                            className={`w-full h-full object-cover ${isBotanical ? 'rounded-[50%]' : 'rounded-full'}`} 
+                          />
+                        </div>
+                        <h3 className="text-sm font-bold text-gold-bright mt-1">
+                          {coupleData.groomFullName || (isJawa ? 'Raden Mas Dimas Setiadi, S.T.' : isMinang ? 'Dimas Marah Sutan, S.T.' : isBotanical ? 'Rian Firmansyah, S.T.' : 'Dimas Setiadi, S.T.')}
+                        </h3>
+                        <p className="text-[10px] text-stone-300 max-w-xs mx-auto leading-relaxed">
+                          {coupleData.groomParents || 'Putra Pertama dari Bpk. Ir. Bambang & Ibu Hj. Sri Wahyuni'}
+                        </p>
+                      </div>
+
+                      {/* Cultural Divider Between Groom & Bride */}
+                      <div className="py-0.5">
+                        {isJawa ? (
+                          <BatikParangDivider className="mx-auto w-36" />
+                        ) : isMinang ? (
+                          <MinangUkiranDivider className="mx-auto w-36" />
+                        ) : isBotanical ? (
+                          <div className="font-bold text-base text-[#8DA390]">&</div>
+                        ) : (
+                          <div className="font-bold text-base text-gold-300">&</div>
+                        )}
+                      </div>
+
+                      {/* Bride */}
+                      <div className="space-y-1">
+                        <div className={`mx-auto p-1 border-2 shadow-sm overflow-hidden ${
+                          isBotanical
+                            ? 'w-20 h-28 rounded-[50%] border-[#8DA390] bg-[#F4F7F4]'
+                            : 'w-20 h-20 rounded-full border-gold-400 bg-gradient-to-b from-amber-300/20 to-transparent'
+                        }`}>
+                          <img 
+                            src={coupleData.bridePhoto || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80'} 
+                            alt="Bride" 
+                            className={`w-full h-full object-cover ${isBotanical ? 'rounded-[50%]' : 'rounded-full'}`} 
+                          />
+                        </div>
+                        <h3 className="text-sm font-bold text-gold-bright mt-1">
+                          {coupleData.brideFullName || (isJawa ? 'Raden Ajeng Clarissa Putri, M.Ds.' : isMinang ? 'Clarissa Rangkayo, M.Ds.' : isBotanical ? 'Irna Agustiani, S.Pd.' : 'Clarissa Putri, M.Ds.')}
+                        </h3>
+                        <p className="text-[10px] text-stone-300 max-w-xs mx-auto leading-relaxed">
+                          {coupleData.brideParents || 'Putri Kedua dari Bpk. Dr. Hendra & Ibu Hj. Maya Kusuma'}
+                        </p>
+                      </div>
+
+                      {renderSectionCustomElements(1)}
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      PAGE 2: EVENTS & COUNTDOWN
+                      ==================================================== */}
+                  {currentPageIndex === 2 && (
+                    <div className="my-auto space-y-3 py-2 text-left">
+                      <h2 className="text-base font-bold text-gold-bright text-center">
+                        {eventsData.title || 'Rangkaian Hari Bahagia'}
+                      </h2>
+
+                      {/* Countdown Timer */}
+                      <div className="grid grid-cols-4 gap-1.5 max-w-[280px] mx-auto text-center">
+                        {[
+                          { val: timeLeft.days, label: 'Hari' },
+                          { val: timeLeft.hours, label: 'Jam' },
+                          { val: timeLeft.minutes, label: 'Mnt' },
+                          { val: timeLeft.seconds, label: 'Dtk' },
+                        ].map((box, i) => (
+                          <div key={i} className="bg-black/60 border border-gold-400/30 rounded-xl p-1.5 shadow-inner">
+                            <span className="block text-sm font-extrabold text-gold-bright font-mono">{box.val}</span>
+                            <span className="text-[9px] text-stone-400 uppercase tracking-wider">{box.label}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Akad Nikah */}
+                      <div className="p-3 rounded-2xl bg-black/50 border border-gold-400/40 space-y-1 shadow-gold-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-gold-300 uppercase tracking-wider">
+                            {eventsData.akadTitle || 'Akad Nikah'}
+                          </span>
+                          <Calendar className="w-3.5 h-3.5 text-gold-400" />
+                        </div>
+                        <p className="text-xs font-bold text-white">{eventsData.akadDate || 'Sabtu, 18 Juli 2026'}</p>
+                        <p className="text-[10px] text-stone-300">{eventsData.akadTime || '08.00 - 10.00 WIB'}</p>
+                        <p className="text-[10px] text-stone-400 flex items-start gap-1">
+                          <MapPin className="w-3 h-3 text-gold-400 flex-shrink-0 mt-0.5" />
+                          <span>{eventsData.akadPlace || 'Masjid Agung Al-Furqon, Bandar Lampung'}</span>
+                        </p>
+                      </div>
+
+                      {/* Resepsi */}
+                      <div className="p-3 rounded-2xl bg-black/50 border border-gold-400/40 space-y-1 shadow-gold-sm">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] font-bold text-gold-300 uppercase tracking-wider">
+                            {eventsData.resepsiTitle || 'Resepsi Pernikahan'}
+                          </span>
+                          <Calendar className="w-3.5 h-3.5 text-gold-400" />
+                        </div>
+                        <p className="text-xs font-bold text-white">{eventsData.resepsiDate || 'Sabtu, 18 Juli 2026'}</p>
+                        <p className="text-[10px] text-stone-300">{eventsData.resepsiTime || '11.00 - 14.00 WIB'}</p>
+                        <p className="text-[10px] text-stone-400 flex items-start gap-1">
+                          <MapPin className="w-3 h-3 text-gold-400 flex-shrink-0 mt-0.5" />
+                          <span>{eventsData.resepsiPlace || 'Grand Mercure Ballroom, Bandar Lampung'}</span>
+                        </p>
+                      </div>
+
+                      {/* Quick Action Links */}
+                      <div className="flex items-center justify-center gap-2 pt-1">
+                        <a
+                          href={eventsData.mapsUrl || "https://maps.google.com"}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-gold-400 text-stone-900 font-bold text-[10px] shadow-sm flex items-center gap-1 hover:scale-105 transition-transform"
+                        >
+                          <MapPin className="w-3 h-3" />
+                          <span>Buka Maps</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={handleAddToGoogleCalendar}
+                          className="px-3 py-1.5 rounded-xl bg-white text-stone-900 font-bold text-[10px] shadow-sm flex items-center gap-1 hover:bg-stone-100 transition-colors"
+                        >
+                          <Calendar className="w-3 h-3 text-blue-600" />
+                          <span>Simpan Kalender</span>
+                        </button>
+                      </div>
+
+                      {renderSectionCustomElements(2)}
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      PAGE 3: STORY & GALLERY
+                      ==================================================== */}
+                  {currentPageIndex === 3 && (
+                    <div className="my-auto space-y-2.5 py-2">
+                      <h2 className="text-base font-bold text-gold-bright">
+                        {pages[3]?.data?.storyTitle || 'Momen Bahagia Kami'}
+                      </h2>
+                      <p className="text-[11px] text-stone-300 max-w-xs mx-auto">
+                        {pages[3]?.data?.storyIntro || 'Dari ruang kuliah tahun 2021 hingga mengucap janji suci seumur hidup.'}
+                      </p>
+
+                      {/* Video Embed */}
+                      <div className="relative aspect-video rounded-xl overflow-hidden shadow-inner border border-gold-400/30 bg-black">
+                        <iframe
+                          className="w-full h-full"
+                          src="https://www.youtube.com/embed/dQw4w9WgXcQ?controls=1&rel=0"
+                          title="Video Prewedding Teaser"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                        />
+                      </div>
+
+                      {/* Photo Grid */}
+                      <div className="grid grid-cols-2 gap-2 pt-1">
+                        {[
+                          'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80',
+                          'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=400&q=80',
+                          'https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=400&q=80',
+                          'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=400&q=80',
+                        ].map((src, i) => (
+                          <div key={i} className="aspect-square rounded-xl overflow-hidden border border-gold-400/40 shadow-gold-sm">
+                            <img src={src} alt="Prewedding" className="w-full h-full object-cover hover:scale-105 transition-transform" />
+                          </div>
+                        ))}
+                      </div>
+
+                      {renderSectionCustomElements(3)}
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      PAGE 4: AMPLOP DIGITAL & KADO
+                      ==================================================== */}
+                  {currentPageIndex === 4 && (
+                    <div className="my-auto space-y-2.5 py-2 text-left">
+                      <h2 className="text-base font-bold text-gold-bright text-center">
+                        Tanda Kasih & Hadiah
+                      </h2>
+                      <p className="text-[11px] text-stone-300 text-center">
+                        Doa restu Anda merupakan karunia terindah bagi kami.
+                      </p>
+
+                      {/* Bank 1 */}
+                      <div className="p-3 rounded-2xl bg-black/50 border border-gold-400/40 shadow-gold-sm">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-bold text-gold-400">{giftData.bankName1 || 'BCA'}</p>
+                          <span className="text-[9px] text-stone-400">Transfer Bank</span>
+                        </div>
+                        <p className="text-sm font-mono font-bold text-white mt-0.5">{giftData.accNumber1 || '8820 1234 5678'}</p>
+                        <p className="text-[10px] text-stone-300">a.n. {giftData.accHolder1 || 'DIMAS SETIADI'}</p>
+                        <button
+                          onClick={() => copyToClipboard(giftData.accNumber1 || '882012345678', 'bca')}
+                          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black/60 border border-white/10 text-[10px] font-semibold text-gold-300 hover:bg-black/80 transition-colors"
+                        >
+                          {copiedBank === 'bca' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedBank === 'bca' ? 'Nomor Tersalin!' : 'Salin Nomor'}</span>
+                        </button>
+                      </div>
+
+                      {/* Bank 2 */}
+                      <div className="p-3 rounded-2xl bg-black/50 border border-gold-400/40 shadow-gold-sm">
+                        <div className="flex items-center justify-between">
+                          <p className="text-[10px] font-bold text-gold-400">{giftData.bankName2 || 'Bank Mandiri'}</p>
+                          <span className="text-[9px] text-stone-400">Transfer Bank</span>
+                        </div>
+                        <p className="text-sm font-mono font-bold text-white mt-0.5">{giftData.accNumber2 || '1370 0098 7654'}</p>
+                        <p className="text-[10px] text-stone-300">a.n. {giftData.accHolder2 || 'CLARISSA PUTRI'}</p>
+                        <button
+                          onClick={() => copyToClipboard(giftData.accNumber2 || '137000987654', 'mandiri')}
+                          className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black/60 border border-white/10 text-[10px] font-semibold text-gold-300 hover:bg-black/80 transition-colors"
+                        >
+                          {copiedBank === 'mandiri' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                          <span>{copiedBank === 'mandiri' ? 'Nomor Tersalin!' : 'Salin Nomor'}</span>
+                        </button>
+                      </div>
+
+                      {/* QRIS Button */}
+                      <button
+                        onClick={() => setShowQRIS(true)}
+                        className="w-full py-2 rounded-xl bg-black/60 border border-gold-400/40 text-[11px] font-semibold text-stone-200 hover:bg-black/80 flex items-center justify-center gap-1.5"
+                      >
+                        <QrCode className="w-3.5 h-3.5 text-gold-400" />
+                        <span>Scan QRIS Amplop (Semua E-Wallet)</span>
+                      </button>
+
+                      {renderSectionCustomElements(4)}
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      PAGE 5: RSVP & BUKU TAMU
+                      ==================================================== */}
+                  {currentPageIndex === 5 && (
+                    <div className="my-auto space-y-2.5 py-2 text-left">
+                      <h2 className="text-base font-bold text-gold-bright text-center">
+                        Konfirmasi Kehadiran & Doa
+                      </h2>
+
+                      <form onSubmit={handleRsvpSubmit} className="space-y-2 bg-black/50 p-3 rounded-2xl border border-gold-400/40 shadow-gold-sm">
+                        <div>
+                          <label className="text-[10px] text-stone-300 block mb-0.5">Nama Anda:</label>
+                          <input
+                            type="text"
+                            value={rsvpName}
+                            onChange={(e) => setRsvpName(e.target.value)}
+                            required
+                            className="w-full bg-[#041514] border border-gold-subtle rounded-lg px-2.5 py-1 text-xs text-stone-100 focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[10px] text-stone-300 block mb-0.5">Konfirmasi:</label>
+                            <select
+                              value={rsvpStatus}
+                              onChange={(e) => setRsvpStatus(e.target.value as any)}
+                              className="w-full bg-[#041514] border border-gold-subtle rounded-lg px-2 py-1 text-xs text-stone-100"
+                            >
+                              <option value="hadir">✓ Hadir</option>
+                              <option value="tidak">✕ Tidak Hadir</option>
+                              <option value="ragu">? Ragu-Ragu</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] text-stone-300 block mb-0.5">Jumlah Tamu:</label>
+                            <select
+                              value={rsvpGuests}
+                              onChange={(e) => setRsvpGuests(e.target.value)}
+                              className="w-full bg-[#041514] border border-gold-subtle rounded-lg px-2 py-1 text-xs text-stone-100"
+                            >
+                              <option value="1 Orang">1 Orang</option>
+                              <option value="2 Orang">2 Orang</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="text-[10px] text-stone-300 block mb-0.5">Doa & Ucapan:</label>
+                          <textarea
+                            rows={2}
+                            value={rsvpMessage}
+                            onChange={(e) => setRsvpMessage(e.target.value)}
+                            placeholder="Tuliskan doa restu Anda..."
+                            required
+                            className="w-full bg-[#041514] border border-gold-subtle rounded-lg px-2.5 py-1 text-xs text-stone-100 focus:outline-none focus:border-gold-400"
+                          />
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="w-full py-2 bg-gradient-to-r from-amber-400 via-gold-300 to-amber-500 text-black text-xs font-bold rounded-lg shadow-gold-sm hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Send className="w-3 h-3" />
+                          <span>Kirim Doa & Konfirmasi</span>
+                        </button>
+                      </form>
+
+                      {/* Recent Wishes Feed in Phone View */}
+                      <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                        {wishesList.slice(0, 3).map((wish) => (
+                          <div key={wish.id} className="p-2 rounded-xl bg-black/40 border border-white/10 text-[10px] space-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-bold text-gold-300">{wish.name}</span>
+                              <span className="text-[8px] text-emerald-400 font-semibold">{wish.status === 'hadir' ? 'Hadir' : 'Tidak Hadir'}</span>
+                            </div>
+                            <p className="text-stone-300 line-clamp-2">{wish.message}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {renderSectionCustomElements(5)}
+                    </div>
+                  )}
+
+                  {/* ====================================================
+                      EXTRA PAGES (INDEX 6+)
+                      ==================================================== */}
+                  {currentPageIndex >= 6 && pages[currentPageIndex] && (
+                    <div className="my-auto space-y-3 py-4 text-center">
+                      <h2 className="text-lg font-bold font-serif text-gold-bright">
+                        {pages[currentPageIndex]?.title}
+                      </h2>
+                      <p className="text-xs text-stone-300 max-w-xs mx-auto">
+                        Halaman khusus yang ditambahkan pengantin.
+                      </p>
+                      {renderSectionCustomElements(currentPageIndex)}
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* BOTTOM FILMSTRIP TABS & PREV/NEXT CONTROLS */}
+            <div className="relative z-20 border-t border-gold-400/30 bg-black/85 backdrop-blur-md px-3 py-2 flex items-center justify-between gap-1">
+              <button
+                onClick={() => setCurrentPageIndex(prev => Math.max(0, prev - 1))}
+                disabled={currentPageIndex === 0}
+                className="p-1 rounded-full hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-gold-300 transition-all cursor-pointer"
+                title="Halaman Sebelumnya"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              <div className="flex-1 flex items-center justify-center gap-1 overflow-x-auto scrollbar-none py-0.5 px-1">
+                {pages.slice(0, 6).map((p: any, idx: number) => {
+                  const labels = ['Sampul', 'Mempelai', 'Acara', 'Galeri', 'Amplop', 'RSVP'];
+                  const label = labels[idx] || `Hal ${idx + 1}`;
+                  const isActive = currentPageIndex === idx;
+                  return (
+                    <button
+                      key={p.id || idx}
+                      onClick={() => setCurrentPageIndex(idx)}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap cursor-pointer ${
+                        isActive
+                          ? 'bg-gradient-to-r from-amber-400 to-gold-400 text-black shadow-gold-sm scale-105'
+                          : 'text-stone-300 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <button
+                onClick={() => setCurrentPageIndex(prev => Math.min(pages.length - 1, prev + 1))}
+                disabled={currentPageIndex === pages.length - 1}
+                className="p-1 rounded-full hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-gold-300 transition-all cursor-pointer"
+                title="Halaman Berikutnya"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+          </div>
+        </main>
+      )}
+
+      {/* 3.2 MODE SCROLL: CONTINUOUS SCROLL WITH ROYAL FRAMED SECTIONS */}
+      {isOpened && viewStyle === 'scroll' && (
         <div className={`max-w-xl mx-auto min-h-screen ${themeClasses.bgMain} border-x ${themeClasses.sectionBorder} shadow-2xl relative`}>
           
           {/* SECTION 1: HERO & WELCOME */}

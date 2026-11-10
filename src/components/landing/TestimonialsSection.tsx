@@ -36,25 +36,21 @@ export const TestimonialsSection: React.FC = () => {
   ];
 
   return (
-    <section className={`py-20 lg:py-28 border-t transition-colors duration-300 ${
-      isLight ? 'bg-[#FAF8F5] border-[#E8DEC8]' : 'bg-[#051817] border-gold-subtle'
-    }`}>
+    <section className={`py-20 lg:py-28 border-t transition-colors duration-300 ${isLight ? 'bg-[#FAF8F5] border-[#E8DEC8]' : 'bg-[#051817] border-gold-subtle'
+      }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${
-            isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
-          }`}>
+          <span className={`text-xs uppercase font-extrabold tracking-widest px-3.5 py-1 rounded-full border shadow-sm ${isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950/80 border-gold-subtle'
+            }`}>
             Kisah Bahagia
           </span>
-          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 ${
-            isLight ? 'text-stone-900' : 'text-white'
-          }`}>
+          <h2 className={`text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 ${isLight ? 'text-stone-900' : 'text-white'
+            }`}>
             Dipercaya Ribuan Pasangan di Seluruh Indonesia
           </h2>
-          <p className={`text-sm sm:text-base mt-3 ${
-            isLight ? 'text-stone-600' : 'text-stone-300'
-          }`}>
+          <p className={`text-sm sm:text-base mt-3 ${isLight ? 'text-stone-600' : 'text-stone-300'
+            }`}>
             Simak pengalaman nyata calon pengantin yang telah mempercayakan momen sakral mereka bersama HariNikah.
           </p>
         </div>
@@ -63,11 +59,10 @@ export const TestimonialsSection: React.FC = () => {
           {reviews.map((item, idx) => (
             <div
               key={idx}
-              className={`rounded-3xl p-8 border shadow-xl flex flex-col justify-between transition-all ${
-                isLight
-                  ? 'bg-white border-[#E8DEC8] hover:border-amber-400 shadow-amber-950/5'
-                  : 'bg-[#061e1d] border-gold-subtle hover:border-gold-400 shadow-velvet-deep'
-              }`}
+              className={`rounded-3xl p-8 border shadow-xl flex flex-col justify-between transition-all ${isLight
+                ? 'bg-white border-[#E8DEC8] hover:border-amber-400 shadow-amber-950/5'
+                : 'bg-[#061e1d] border-gold-subtle hover:border-gold-400 shadow-velvet-deep'
+                }`}
             >
               <div>
                 <div className="flex items-center gap-1 text-amber-500 mb-4">
@@ -75,16 +70,14 @@ export const TestimonialsSection: React.FC = () => {
                     <Star key={i} className="w-4 h-4 fill-current" />
                   ))}
                 </div>
-                <p className={`text-xs sm:text-sm italic leading-relaxed ${
-                  isLight ? 'text-stone-700' : 'text-stone-300'
-                }`}>
+                <p className={`text-xs sm:text-sm italic leading-relaxed ${isLight ? 'text-stone-700' : 'text-stone-300'
+                  }`}>
                   "{item.review}"
                 </p>
               </div>
 
-              <div className={`mt-6 pt-6 border-t flex items-center gap-3.5 ${
-                isLight ? 'border-stone-200' : 'border-gold-subtle'
-              }`}>
+              <div className={`mt-6 pt-6 border-t flex items-center gap-3.5 ${isLight ? 'border-stone-200' : 'border-gold-subtle'
+                }`}>
                 <img
                   src={item.avatar}
                   alt={item.couple}
@@ -93,9 +86,8 @@ export const TestimonialsSection: React.FC = () => {
                 <div>
                   <h4 className={`text-sm font-bold ${isLight ? 'text-stone-900' : 'text-white'}`}>{item.couple}</h4>
                   <p className={`text-[11px] ${isLight ? 'text-stone-500' : 'text-stone-400'}`}>{item.location} • {item.date}</p>
-                  <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-                    isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950 border-gold-subtle'
-                  }`}>
+                  <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${isLight ? 'bg-amber-100 text-amber-900 border-amber-300' : 'text-gold-300 bg-gold-950 border-gold-subtle'
+                    }`}>
                     {item.type}
                   </span>
                 </div>
